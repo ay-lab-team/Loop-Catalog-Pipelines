@@ -1,0 +1,32 @@
+#configfile: 'config/config.yaml'
+#
+
+# rule to download sra fastq files which derived from paired sequencing
+# using the grabseqs tool.
+rule download_paired_fastq_sra:
+    output:
+        r1 = 'results/fastqs/{sample}/reads/{sample}/{srr}_1.fastq.gz',
+        r2 = 'results/fastqs/{sample}/reads/{sample}/{srr}_2.fastq.gz',
+        meta = 'results/fastqs/{sample}/reads/{sample}/{srr}.meta.csv'
+    log:
+        'results/fastqs/{sample}/logs/rule_download_paired_fastq_sra_{sample}_{srr}.log'
+    benchmark:
+        'results/fastqs/{sample}/benchmarks/rule_download_paired_fastq_sra_{sample}_{srr}.bmk'
+    shadow: 'shallow'
+    params:
+        outdir = 'results/fastqs/{sample}/reads/{sample}/',
+        meta = '{srr}.meta.csv'
+    conda:
+        'envs/hichip-db.yaml'
+    resources:
+        mem_mb = 32000,
+        nodes = 1,
+        ppn = 4
+    shell:
+        r"""
+            grabseqs sra -m {params.meta} \
+                        -o {params.outdir} \
+                        -r 4 \
+                        -t {resources.ppn} \
+                        {wildcards.srr} >> {log} 2>&1
+        """
