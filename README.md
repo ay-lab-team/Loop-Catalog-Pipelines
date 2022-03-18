@@ -6,6 +6,12 @@ For our pipeline we are using:
 2) Several peak callers including: hichipper, HiChIP Peaks, etc
 3) FitHiChip for loop calling
 
+For each sample we are using the following naming scheme:
+
+**{sample_name}.{gse_id}.{gsm_id}.{srr_id}.{organism}.{treatment (wt or stimulated)}.{target of antibody}.b{biological_rep}**
+
+And fastqs from technical replicates will be stored in it's biological replicate directory. 
+
 ## Tasks 
 - [ ] Ensure new tracker is complete and ready for application @Joaquin
 - [ ] Setup HiCPro using new project folder structure @Kyra @Nikhil
