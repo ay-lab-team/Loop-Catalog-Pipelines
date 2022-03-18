@@ -1,10 +1,18 @@
 # HiChIP repository for the loop calling pipeline
 
+## Pipeline Details 
 For our pipeline we are using:
 1) HiC-Pro for mapping
 2) Several peak callers including: hichipper, HiChIP Peaks, etc
 3) FitHiChip for loop calling
 
+## Tasks 
+- [ ] Ensure new tracker is complete and ready for application @Joaquin
+- [ ] Setup HiCPro using new project folder structure @Kyra @Nikhil
+- [ ] Setup peak callers @Kyra @Nikhil
+- [ ] Setup loop callrs @Kyra @Nihikl
+
+## Documentation
 We have the following documentation to help us in the development of this project:
 - Repository stored at: /mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling
 - HiChIP Tracker:<br>
@@ -12,3 +20,6 @@ We have the following documentation to help us in the development of this projec
 - We are testing the following HiChIP Peak Callers:<br>
   https://docs.google.com/document/d/1n6wH0OYHoLTwieS9SHblOWHaG2ixcxR81lH3bZm8oeY/edit?usp=sharing
 - We are testing the following HiChIP Loop Callers: **TBD**
+
+## Other Documentation
+Older task list (2022.02.26) for Kyra: https://docs.google.com/document/d/1n6wH0OYHoLTwieS9SHblOWHaG2ixcxR81lH3bZm8oeY/edit?usp=sharing
