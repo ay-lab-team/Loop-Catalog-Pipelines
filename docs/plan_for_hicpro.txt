@@ -1,0 +1,35 @@
+--RawData
+    |
+        sample1
+            |
+                split1
+                split2
+        sample2
+        sample3
+        sample4
+
+# make a temporary folder to run one 
+# sample at a time
+# ln -s for the split files
+{hichip_id}_temp_raw/
+        |
+            sample1
+                |
+                    split1
+                    split2
+
+# make a temporary folder to save the
+# sample data
+{hichip_id}_temp_paralell/
+        |
+            sample1
+                |
+                    split1
+                    split
+
+# move the results from the temp location to the 
+# final location
+mv {hichip_id}_temp_parallel/ results/hicpro
+
+# rmeove the temp raw data folder
+rm {hichip_id}_temp_raw/
