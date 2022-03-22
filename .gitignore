@@ -2,3 +2,5 @@
 *.ipynb
 *un~
 .snakemake
+!results/
+results/*
