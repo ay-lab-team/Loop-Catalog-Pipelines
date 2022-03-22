@@ -7,7 +7,7 @@
 #PBS -V
 
 # Example run:
-# qsub -F "GSE178598 2022.03.18.HiChIP_Tracker.tsv" results/samplesheets/hicpro/download_srr_fastqs.sh
+# qsub -F "GSE178598 results/samplesheets/hicpro/2022.03.18.HiChIP_Tracker.tsv" workflow/scripts/download_srr_fastqs.sh
 
 source ~/.bashrc
 hostname
