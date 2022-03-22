@@ -7,7 +7,7 @@
 #PBS -V
 
 # Example run:
-# qsub -F "GSE178598 results/samplesheets/hicpro/2022.03.18.HiChIP_Tracker.tsv" workflow/scripts/download_srr_fastqs.sh
+# qsub -F "SRR123456 SRR789000" workflow/scripts/download_srr_fastqs.sh
 
 source ~/.bashrc
 hostname
@@ -16,13 +16,8 @@ cd $PBS_O_WORKDIR
 
 source activate grabseqs
 
-gse=$1
-tracker=$2
-
-srr_array=($(python workflow/scripts/extract-srr-ids.py $gse $tracker))
-
 outdir="results/fastqs/raw/"
 retries=4
 threads=4
 
-grabseqs sra -o $outdir -r $retries -t $threads ${srr_array[@]}
+grabseqs sra -o $outdir -r $retries -t $threads $@
