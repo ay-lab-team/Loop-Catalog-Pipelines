@@ -587,3 +587,40 @@ export CONDA_PREFIX_1='\''/mnt/BioHome/nrao/anaconda3'\'''
 + retries=4
 + threads=4
 + grabseqs sra -o results/fastqs/raw/ -r 4 -t 4 SRR5831479
+spots read      : 186,651,698
+reads read      : 373,303,396
+reads written   : 373,303,396
+running: fasterq-dump -e 4 -f -3 -O results/fastqs/raw/ SRR5831479
+
+         ----- Job Summary Statistics -----
+                    Queue: default                  
+                   Job ID: 4892096.herman.hpc.lji.org
+                 Job Name: download_srr_fastqs.sh   
+                Node name: compute-1-1.hpc.lji.org  
+Job duration on this node: 02:08:21                 
+          Node Multiplier: 1.066                    
+      Normalized walltime: 02:16:49                 
+
+Job Requested resources:
+    nodes=1:ppn=4,mem=200gb,walltime=200:00:00,neednodes=1:ppn=4
+Used resources (as reported by Torque):
+    cput=02:46:04,vmem=1905024kb,walltime=02:16:50,mem=361540kb,energy_used=0
+
+
+Additional Statistics (cgroup stats):
+
+CPU core numbers on node assigned for usage: 0,4-6
+CPU work distribution:
+CPU Core #0: 24.28%
+CPU Core #4: 25.25%
+CPU Core #5: 25.22%
+CPU Core #6: 25.23%
+
+Memory requested: 204800 MB
+Memory used:      87975 MB
+Swap used:        0 MB
+
+Number times max memory limit reached or attempted to exceed: 0
+
+Max Memory Used / Memory Requested: 42.9566%
+
