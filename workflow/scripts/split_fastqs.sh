@@ -19,8 +19,6 @@ hostname
 TMPDIR=/scratch
 cd \$PBS_O_WORKDIR
 
-source activate hicpro
-
 fastqfolder="results/fastqs/raw/${sample}/"
 outdir="results/fastqs/parallel/${sample}/"
 
