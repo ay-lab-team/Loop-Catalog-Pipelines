@@ -21,6 +21,9 @@ And fastqs from technical replicates will be stored in it's biological replicate
 
 ## Sharing HiC-Pro and Other Resources
 - To share the same HiC-Pro (main) software please use:
+    ```
+      /mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/HiC-Pro
+    ```
 - To share the same HiC-Pro utils software please use:
   - For Python based scripts use:<br>
     ```
@@ -40,6 +43,17 @@ We have the following documentation to help us in the development of this projec
 - We are testing the following HiChIP Peak Callers:<br>
   https://docs.google.com/document/d/1n6wH0OYHoLTwieS9SHblOWHaG2ixcxR81lH3bZm8oeY/edit?usp=sharing
 - We are testing the following HiChIP Loop Callers: **TBD**
+- How to migrate conda environments:
+    - Create a yaml file
+      ```
+      conda env export > environment.yml
+      ```
+    - Re(create) an environment from a yaml file
+      ```
+      conda env create -f environment.yml
+      ```
+    - For more details visit: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file
+
 
 ## Other Documentation
 Older task list (2022.02.26) for Kyra: https://docs.google.com/document/d/1n6wH0OYHoLTwieS9SHblOWHaG2ixcxR81lH3bZm8oeY/edit?usp=sharing
