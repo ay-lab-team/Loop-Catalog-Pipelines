@@ -21,6 +21,9 @@ And fastqs from technical replicates will be stored in it's biological replicate
 
 ## Sharing HiC-Pro and Other Resources
 - To share the same HiC-Pro (main) software please use:
+    ```
+      /mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/HiC-Pro
+    ```
 - To share the same HiC-Pro utils software please use:
   - For Python based scripts use:<br>
     ```
