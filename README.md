@@ -40,6 +40,17 @@ We have the following documentation to help us in the development of this projec
 - We are testing the following HiChIP Peak Callers:<br>
   https://docs.google.com/document/d/1n6wH0OYHoLTwieS9SHblOWHaG2ixcxR81lH3bZm8oeY/edit?usp=sharing
 - We are testing the following HiChIP Loop Callers: **TBD**
+- How to migrate conda environments:
+    - Create a yaml file
+      ```
+      conda env export > environment.yml
+      ```
+    - Re(create) an environment from a yaml file
+      ```
+      conda env create -f environment.yml
+      ```
+    - For more details visit: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file
+
 
 ## Other Documentation
 Older task list (2022.02.26) for Kyra: https://docs.google.com/document/d/1n6wH0OYHoLTwieS9SHblOWHaG2ixcxR81lH3bZm8oeY/edit?usp=sharing
