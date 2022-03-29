@@ -26,7 +26,7 @@ outdir="results/fastqs/parallel/${sample}/"
 
 for fq in \$fastqfolder*'.fastq.gz';
     do
-        python /home/kfetter/packages/hicpro/compiled_code/HiC-Pro_3.1.0/bin/utils/split_reads.py --results_folder \$outdir --nreads 50000000 \$fq
+        /mnt/BioAdHoc/Groups/vd-ay/jreyna/software/mambaforge/envs/HiC-Pro_v3.1.0/bin/python /mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/utils/split_reads.py --results_folder \$outdir --nreads 50000000 \$fq
     done
 EOT
 
