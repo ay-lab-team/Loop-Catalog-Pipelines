@@ -18,6 +18,20 @@ And fastqs from technical replicates will be stored in it's biological replicate
 - [ ] Setup peak callers @Kyra @Nikhil
 - [ ] Setup loop callrs @Kyra @Nihikl
 
+
+## Sharing HiC-Pro and Other Resources
+- To share the same HiC-Pro (main) software please use:
+- To share the same HiC-Pro utils software please use:
+  - For Python based scripts use:<br>
+    ```
+    /mnt/BioAdHoc/Groups/vd-ay/jreyna/software/mambaforge/envs/HiC-Pro_v3.1.0/bin/python \
+         /mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/utils/<script_name>.py
+    ```
+  - For BASH based scripts use:<br>
+    ```
+        bash /mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/utils/<script_name>.sh
+    ```
+
 ## Documentation
 We have the following documentation to help us in the development of this project:
 - Repository stored at: /mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling
