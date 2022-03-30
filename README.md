@@ -6,11 +6,18 @@ For our pipeline we are using:
 2) Several peak callers including: hichipper, HiChIP Peaks, etc
 3) FitHiChip for loop calling
 
-For each sample we are using the following naming scheme:
 
-**{sample_name}.{gse_id}.{gsm_id}.{srr_id}.{organism}.{treatment (wt or stimulated)}.{target of antibody}.b{biological_rep}**
+### Naming Scheme for Data
+**For each biological replicate (typically thought of as a sample) we are using the following naming scheme:**
+```
+{sample_name}.{gse_id}.{organism}.{target of antibody}.b{biological_rep}
+```
 
-And fastqs from technical replicates will be stored in it's biological replicate directory. 
+**For each technical replicate we are using the following naming scheme:**
+```
+{sample_name}.{gse_id}.{gsm_id}.{srr_id}.{organism}.{target of antibody}.b{biological_rep}.t{technical_rep}
+```
+This naming scheme is only relevant for FASTQ downloading, FASTQs from technical replicates will be stored in it's biological replicate directory. 
 
 ## Tasks 
 - [ ] Ensure new tracker is complete and ready for application @Joaquin
@@ -37,7 +44,10 @@ And fastqs from technical replicates will be stored in it's biological replicate
 
 ## Documentation
 We have the following documentation to help us in the development of this project:
-- Repository stored at: /mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling
+- Repository stored at:<br>
+    ```
+    /mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/
+    ```
 - HiChIP Tracker:<br>
   https://docs.google.com/spreadsheets/d/1myw--D1_jMa3UFEUPyLy5C3MnbfcJzLIIJEoCS_3X4k/edit?usp=sharing 
 - We are testing the following HiChIP Peak Callers:<br>
