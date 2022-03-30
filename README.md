@@ -15,7 +15,7 @@ For our pipeline we are using:
 
 **For each technical replicate we are using the following naming scheme:**
 ```
-{sample_name}.{gse_id}.{gsm_id}.{srr_id}.{organism}.{treatment (wt or stimulated)}.{target of antibody}.b{biological_rep}
+{sample_name}.{gse_id}.{gsm_id}.{srr_id}.{organism}.{target of antibody}.b{biological_rep}
 ```
 This naming scheme is only relevant for FASTQ downloading, FASTQs from technical replicates will be stored in it's biological replicate directory. 
 
