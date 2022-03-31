@@ -7,7 +7,11 @@
 #PBS -V
 
 # example run:
-# qsub -t workflow/scripts/download_srr_fastqs.sh
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/download_srr_fastqs.sh
+# 2) qsub -t <index-range> workflow/scripts/download_srr_fastqs.sh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/download_srr_fastqs.sh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/download_srr_fastqs.sh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/download_srr_fastqs.sh
 
 # dummy pbs array environment values
 #PBS_ARRAYID=1
@@ -15,7 +19,7 @@
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
-echo "Start time: $start_time")
+echo "Start time: $start_time"
 
 # print start message
 echo "Started: download_srr_fastqs"
@@ -59,4 +63,4 @@ echo "Ended: download_srr_fastqs"
 
 # print end time message
 end_time=$(date "+%Y.%m.%d.%H.%M")
-echo "End time: $end_time")
+echo "End time: $end_time"
