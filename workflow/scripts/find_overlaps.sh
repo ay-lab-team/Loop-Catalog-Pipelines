@@ -1,9 +1,3 @@
-for sample in lee2021-gse179545-rna_pol_ii-hct116-wt-dpnii-rep1 lee2021-gse179545-rna_pol_ii-hct116-wt-dpnii-rep2 lee2021-gse179545-rna_pol_ii-hct116-auxin-dpnii-rep1 lee2021-gse179545-rna_pol_ii-hct116-auxin-dpnii-rep2 
-do
-    scriptfile=`pwd`'/find_overlaps_'${sample}'.sh'
-
-echo '' > ${scriptfile}
-cat <<EOT >> ${scriptfile}
 #!/bin/bash -ex
 #PBS -l nodes=1:ppn=1
 #PBS -l mem=20GB
@@ -69,9 +63,3 @@ rm \$HiCProBaseDir'expanded_all_pairs_${sample}.bedpe'
 rm \$HiCProBaseDir'expanded_all_pairs_rmdup_${sample}.bedpe'
 rm \$HiCProBaseDir'expanded_all_pairs_rmdup_sorted_${sample}.bedpe'
 rm \$HiCProBaseDir'overlaps_${sample}.txt'
-EOT
-
-	chmod +x ${scriptfile}
-	qsub ${scriptfile}
-
-done
