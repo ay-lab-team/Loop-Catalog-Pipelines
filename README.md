@@ -69,8 +69,9 @@ We have the following documentation to help us in the development of this projec
 - We are testing the following **HiChIP Loop Callers**: **(TBD)**
     - FitHiChIP
         - see dependencies for  FitHiChIP Peak Calling Utility (PeakInferHiChIP.sh)
-    - HiCCUPS
+    - HiCCUPS?
         - *Java Dependencies*: Java 1.7 or 1.8 JDK
+    - hichipper?
 
 - How to migrate conda environments:
     - Create a yaml file
