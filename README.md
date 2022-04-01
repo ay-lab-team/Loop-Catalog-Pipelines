@@ -50,9 +50,29 @@ We have the following documentation to help us in the development of this projec
     ```
 - HiChIP Tracker:<br>
   https://docs.google.com/spreadsheets/d/1myw--D1_jMa3UFEUPyLy5C3MnbfcJzLIIJEoCS_3X4k/edit?usp=sharing 
-- We are testing the following HiChIP Peak Callers:<br>
-  https://docs.google.com/document/d/1n6wH0OYHoLTwieS9SHblOWHaG2ixcxR81lH3bZm8oeY/edit?usp=sharing
-- We are testing the following HiChIP Loop Callers: **TBD**
+
+- We are testing the following **HiChIP Peak Callers** (to be used in pipeline if no corresponding ChIP-seq data avaliable):<br>
+    - **FitHiChIP Peak Calling Utility (`PeakInferHiChIP.sh`)**
+        - *Python Dependencies*: Python 3 (>=3.4), OptionParser (optparse library), gzip, networkx, numpy
+        - *R Dependencies*: R (>=3.4.3), optparse, ggplot2, data.table, splines, fdrtool, parallel, tools, plyr, dplyr
+            - Bioconductor packages: GenomicRanges, EdgeR
+        - *Additional Dependencies*: bedtools (>= 2.26.0), samtools (>=1.6), htslib (>=1.6), bowtie2, HiC-Pro (>=2.11.4), macs2
+    - **HiChIP-Peaks** (installed via pip into env)
+        - *Python Dependencies*: Python 3 (3.7 used in documentation)
+        - *Additional Dependencies*: bedtools, HiC-Pro (>2.11.1)
+    - **hichipper** (installed via pip into env)
+        - *Python Dependencies*: make sure pyyaml <5.1 (I used 3.13)
+        - *R Dependencies*: R, data.table, devtools, foreach, ggplot2, knitr, networkD3, readr, reshape2
+            - Bioconductor packages: diffloop
+        - *Additional Dependencies*: bedtools, OpenSSL, libcurl, libxml2, samtools, pandoc
+
+- We are testing the following **HiChIP Loop Callers**: **(TBD)**
+    - FitHiChIP
+        - see dependencies for  FitHiChIP Peak Calling Utility (PeakInferHiChIP.sh)
+    - HiCCUPS?
+        - *Java Dependencies*: Java 1.7 or 1.8 JDK
+    - hichipper?
+
 - How to migrate conda environments:
     - Create a yaml file
       ```
