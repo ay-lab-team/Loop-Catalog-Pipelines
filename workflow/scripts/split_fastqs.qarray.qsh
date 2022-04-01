@@ -1,0 +1,75 @@
+#PBS -l nodes=1:ppn=4
+#PBS -l mem=20gb
+#PBS -l walltime=200:00:00
+#PBS -e results/fastqs/parallel/logs/
+#PBS -o results/fastqs/parallel/logs/
+#PBS -N download_srr_fastqs
+#PBS -V
+
+# dummy pbs array environment values
+#PBS_ARRAYID=63
+#PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
+
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: split_fastqs" 
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# make sure to work starting from the base directory for this project 
+cd $PBS_O_WORKDIR
+
+# source tool paths
+source workflow/source_paths.sh
+
+# extract the sample information using the PBS ARRAYID
+samplesheet="results/samplesheets/hicpro/Current-HiChIP-Samplesheet.tsv"
+sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
+sample_name="${sample_info[0]}"
+srr_id="${sample_info[3]}"
+
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "sample_name: $sample_name"
+echo "srr_id: $srr_id"
+echo
+
+# make the output directory 
+fastqfolder="results/fastqs/raw/${sample_name}/"
+outdir="results/fastqs/parallel/${sample_name}/"
+mkdir -p $outdir
+
+echo "curr dir: $(pwd)"
+
+# run split_reads
+echo "# running split_reads"
+for fq in $fastqfolder/*.fastq.gz;
+do
+    echo "Splitting: $fq"
+    $hicpro_python $split_reads --results_folder $outdir --nreads 50000000 $fq
+done
+
+# softlink files with R1/R2 designation rather than 1/2 only (found bugs with this method)
+echo "# softlink files with R1/R2 designation"
+
+fqs=$(ls $outdir/*.fastq)
+for fq in $fqs;
+do
+    link_base=$(basename $fq | sed "s/\(.*_SRR.*_\)\([12]\)\(.fastq\)/\1R\2\3/")
+    link_path="$(dirname $fq)/$link_base"
+    ln -f -s -r $fq $link_path
+done
+
+# print end message
+echo "Ended: split_fastqs"
+
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"
