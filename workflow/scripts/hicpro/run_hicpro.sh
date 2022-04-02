@@ -1,14 +1,14 @@
-#PBS -l nodes=1:ppn=4
-#PBS -l mem=20gb
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=1gb
 #PBS -l walltime=200:00:00
-#PBS -e results/fastqs/parallel/logs/
-#PBS -o results/fastqs/parallel/logs/
-#PBS -N download_srr_fastqs
+#PBS -e results/hicpro/logs/
+#PBS -o results/hicpro/logs/
+#PBS -N run_hicpro
 #PBS -V
 
 # dummy pbs array environment values
-PBS_ARRAYID=42 # Ramos sample (only 6 million reads)
-PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
+#PBS_ARRAYID=42 # Ramos sample (only 6 million reads)
+#PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
 #PBS_ARRAYID=$1
 
 # print start message
