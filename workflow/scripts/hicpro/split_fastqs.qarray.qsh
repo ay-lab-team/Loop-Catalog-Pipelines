@@ -28,25 +28,23 @@ cd $PBS_O_WORKDIR
 source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/hicpro/Current-HiChIP-Samplesheet.tsv"
+samplesheet="results/samplesheets/hicpro/2022.03.30-hichip-hicpro.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
-srr_id="${sample_info[3]}"
+geo_id="${sample_info[1]}"
 
 # printing sample information
 echo
 echo "Processing"
 echo "----------"
 echo "sample_name: $sample_name"
-echo "srr_id: $srr_id"
+echo "geo_id: $geo_id"
 echo
 
 # make the output directory 
 fastqfolder="results/fastqs/raw/${sample_name}/"
 outdir="results/fastqs/parallel/${sample_name}/"
 mkdir -p $outdir
-
-echo "curr dir: $(pwd)"
 
 # run split_reads
 echo "# running split_reads"
