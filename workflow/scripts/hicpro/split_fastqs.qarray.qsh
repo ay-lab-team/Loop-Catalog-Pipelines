@@ -3,7 +3,7 @@
 #PBS -l walltime=200:00:00
 #PBS -e results/fastqs/parallel/logs/
 #PBS -o results/fastqs/parallel/logs/
-#PBS -N download_srr_fastqs
+#PBS -N split_fastqs
 #PBS -V
 
 # dummy pbs array environment values
