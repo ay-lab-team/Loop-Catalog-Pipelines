@@ -1,0 +1,6 @@
+digraph graphname {
+    google.samplesheet -> converter.google_to_fastq_samplesheet;
+    converter.google_to_fastq_samplesheet -> tracker.download_srr_fastqs;
+    tracker.download_srr_fastqs -> tracker.download_srr_fastqs;
+    tracker.split_fastqs -> converter.fastq_to_hicpro_samplesheet;
+}
