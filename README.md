@@ -67,9 +67,9 @@ We have the following documentation to help us in the development of this projec
         - *Additional Dependencies*: bedtools, OpenSSL, libcurl, libxml2, samtools, pandoc
     
 - We are testing the following **HiChIP Loop Callers**:
-    - FitHiChIP
+    - **FitHiChIP**
         - see dependencies for  FitHiChIP Peak Calling Utility (PeakInferHiChIP.sh)
-    - HiCCUPS
+    - **HiCCUPS**
         - *Java Dependencies*: Java 1.7 or 1.8 JDK
 
 - How to migrate conda environments:
