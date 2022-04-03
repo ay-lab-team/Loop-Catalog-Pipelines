@@ -65,13 +65,12 @@ We have the following documentation to help us in the development of this projec
         - *R Dependencies*: R, data.table, devtools, foreach, ggplot2, knitr, networkD3, readr, reshape2
             - Bioconductor packages: diffloop
         - *Additional Dependencies*: bedtools, OpenSSL, libcurl, libxml2, samtools, pandoc
-
-- We are testing the following **HiChIP Loop Callers**: **(TBD)**
+    
+- We are testing the following **HiChIP Loop Callers**:
     - FitHiChIP
         - see dependencies for  FitHiChIP Peak Calling Utility (PeakInferHiChIP.sh)
-    - HiCCUPS?
+    - HiCCUPS
         - *Java Dependencies*: Java 1.7 or 1.8 JDK
-    - hichipper?
 
 - How to migrate conda environments:
     - Create a yaml file
