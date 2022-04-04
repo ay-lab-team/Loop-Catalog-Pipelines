@@ -13,15 +13,9 @@ For our pipeline we are using:
 {sample_name}.{gse_id}.{organism}.{target of antibody}.b{biological_rep}
 ```
 
-**For each technical replicate we are using the following naming scheme:**
-```
-{sample_name}.{gse_id}.{gsm_id}.{srr_id}.{organism}.{target of antibody}.b{biological_rep}.t{technical_rep}
-```
-This naming scheme is only relevant for FASTQ downloading, FASTQs from technical replicates will be stored in it's biological replicate directory. 
-
 ## Tasks 
-- [ ] Ensure new tracker is complete and ready for application @Joaquin
-- [ ] Setup HiCPro using new project folder structure @Kyra @Nikhil
+- [x] Ensure new tracker is complete and ready for application @Joaquin
+- [x] Setup HiCPro using new project folder structure @Kyra @Nikhil
 - [ ] Setup peak callers @Kyra @Nikhil
 - [ ] Setup loop callrs @Kyra @Nihikl
 
