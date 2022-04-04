@@ -1,4 +1,4 @@
-# HiChIP repository for the loop calling pipeline
+# HiChIP Repository for the Loop Calling Pipeline
 
 ## Pipeline Details 
 For our pipeline we are using:
