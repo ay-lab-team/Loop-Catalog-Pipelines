@@ -2,9 +2,11 @@
 
 ## Pipeline Details 
 For our pipeline we are using:
-1) HiC-Pro for mapping
-2) Several peak callers including: hichipper, HiChIP Peaks, etc
-3) FitHiChip for loop calling
+1) Grabseqs (with fasterq-dump under the hood) for downloading fastqs
+2) Split fastqs with HiC-Pro split_reads.py utility script
+3) Use HiC-Pro for mapping and count processing
+4) Several peak callers including: hichipper, HiChIP Peaks, etc
+5) FitHiChip for loop calling
 
 
 ### Naming Scheme for Data
