@@ -88,8 +88,23 @@ step1_qids=$(qsub HiCPro_step1_.sh)
 echo "HiCPro Step1 will run with qsub ID: $step1_qids"
 
 # submit job 2 with dependency on job 1
+# when a single fastq pair is present HiCPro won't use the array based 
+# submission system for step1. This means the dependency qsub for step2
+# has to be slightly changed.
 echo "# submit job 2 with dependency on job 1"
-step2_qids=$(qsub -W depend=afterokarray:$step1_qids HiCPro_step2_.sh)
+
+if [[ "$step1_qids" == *"[]"* ]];
+then
+    # HiCPro with array based mode for step1
+    echo "# HiCPro with array based mode for step1. qid=$step1_qids"
+    step2_qids=$(qsub -W depend=afterokarray:$step1_qids HiCPro_step2_.sh)
+else
+    # HiCPro with single fastq pair mode for step1
+    # Need to first remove host info from the step1 qid
+    step1_qids_clean=$(echo $step1_qids | cut -f 1 -d .) 
+    echo "# HiCPro with single fastq pair mode for step1. qid=$step1_qids_clean"
+    step2_qids=$(qsub -W depend=afterok:$step1_qids_clean HiCPro_step2_.sh)
+fi
 echo "HiCPro Step2 is running with qsub ID: $step2_qids"
 
 # print end message
