@@ -4,4 +4,5 @@
 .snakemake
 !results/
 results/*
+!results/samplesheets/
 fasterq*
