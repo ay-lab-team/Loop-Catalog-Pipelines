@@ -1,5 +1,11 @@
 # HiChIP Repository for the Loop Calling Pipeline
 
+## Tasks 
+- [x] Ensure new tracker is complete and ready for application @Joaquin
+- [x] Setup HiCPro using new project folder structure @Kyra @Nikhil
+- [ ] Setup peak callers @Kyra @Nikhil
+- [ ] Setup loop callrs @Kyra @Nihikl
+
 ## Pipeline Details 
 For our pipeline we are using:
 1) Grabseqs (with fasterq-dump under the hood) for downloading fastqs
@@ -8,21 +14,35 @@ For our pipeline we are using:
 4) Several peak callers including: hichipper, HiChIP Peaks, etc
 5) FitHiChip for loop calling
 
-
 ### Naming Scheme for Data
-**For each biological replicate (typically thought of as a sample) we are using the following naming scheme:**
+For each biological replicate (typically thought of as a sample) we are using the following naming scheme:
 ```
 {sample_name}.{gse_id}.{organism}.{target of antibody}.b{biological_rep}
 ```
 
-## Tasks 
-- [x] Ensure new tracker is complete and ready for application @Joaquin
-- [x] Setup HiCPro using new project folder structure @Kyra @Nikhil
-- [ ] Setup peak callers @Kyra @Nikhil
-- [ ] Setup loop callrs @Kyra @Nihikl
+## Samplesheets for Data Analysis
+In order to share our datasets we are storing the results of our pipelines within:
+```
+/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/
+```
 
+To track all of our data we are using a Google Sheets Document: [HiChIP Tracker](https://docs.google.com/spreadsheets/d/1myw--D1_jMa3UFEUPyLy5C3MnbfcJzLIIJEoCS_3X4k/edit?usp=sharing). This document is then converted into a FASTQ based samplesheet by a Jupyter notebook and is located here:
+```
+results/samplesheets/fastq/2022.03.30.fastq.samplesheet.with_header.tsv
+```
 
-## Sharing HiC-Pro and Other Resources
+After all FASTQ analyses are complete we start working at the biological replicate level for which we generate a new samplesheet using another set of conversion and tracker scripts. This sample sheet is located at:
+```
+results/samplesheets/hicpro/2022.03.30.hicpro.samplesheet.with_header.tsv
+```
+
+***
+Note: For more information on the conversion and tracker scripts check out the README.md within:
+```
+hichip-db-loop-calling/workflow/scripts/trackers/
+```
+  
+## Sharing HiC-Pro and Other Related Resources
 - To share the same HiC-Pro (main) software please use:
     ```
       /mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/HiC-Pro
@@ -38,14 +58,7 @@ For our pipeline we are using:
         bash /mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/utils/<script_name>.sh
     ```
 
-## Documentation
-We have the following documentation to help us in the development of this project:
-- Repository stored at:<br>
-    ```
-    /mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/
-    ```
-- HiChIP Tracker:<br>
-  https://docs.google.com/spreadsheets/d/1myw--D1_jMa3UFEUPyLy5C3MnbfcJzLIIJEoCS_3X4k/edit?usp=sharing 
+## Software Dependencies
 
 - We are testing the following **HiChIP Peak Callers** (to be used in pipeline if no corresponding ChIP-seq data avaliable):<br>
     - **FitHiChIP Peak Calling Utility (`PeakInferHiChIP.sh`)**
