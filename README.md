@@ -93,5 +93,6 @@ hichip-db-loop-calling/workflow/scripts/trackers/
     - For more details visit: https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-from-an-environment-yml-file
 
 
-## Other Documentation
-Older task list (2022.02.26) for Kyra: https://docs.google.com/document/d/1n6wH0OYHoLTwieS9SHblOWHaG2ixcxR81lH3bZm8oeY/edit?usp=sharing
+## Meeting Minutes
+- 2022.04.05 - HiCPro Samples Ready - https://docs.google.com/document/d/1XiAUMIzygqb-6b0WFCZpSjvYjTLk-pOBjl3wWzCHXi4/edit?usp=sharing
+- Older task list (2022.02.26) for Kyra: https://docs.google.com/document/d/1n6wH0OYHoLTwieS9SHblOWHaG2ixcxR81lH3bZm8oeY/edit?usp=sharing
