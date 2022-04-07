@@ -79,7 +79,7 @@ hichip-db-loop-calling/workflow/scripts/trackers/
     - **FitHiChIP**
         - see dependencies for  FitHiChIP Peak Calling Utility (PeakInferHiChIP.sh)
     - **HiCCUPS**
-        - *Java Dependencies*: Java 1.7 or 1.8 JDK
+        - *Java Dependencies*: Java 1.7 or 1.8 JDK (hicpro2juicebox requires >1.8 JDK)
 
 - How to migrate conda environments:
     - Create a yaml file
