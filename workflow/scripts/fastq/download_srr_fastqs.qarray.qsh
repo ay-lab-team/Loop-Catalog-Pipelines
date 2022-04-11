@@ -35,7 +35,8 @@ cd $PBS_O_WORKDIR
 source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/fastq/Current-HiChIP-SRR-Samplesheet.tsv"
+IFS=$'\t'
+samplesheet="results/samplesheets/fastq/Current-HiChIP-SRR-Samplesheet-Without-Header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 srr_id="${sample_info[3]}"
@@ -54,7 +55,7 @@ mkdir -p $outdir
 
 # run grabseqs
 echo "# running grabseqs"
-retries=4
+retries=8
 threads=4
 $grabseqs sra -o $outdir -r $retries -t $threads $srr_id
 

@@ -32,11 +32,13 @@ cd $PBS_O_WORKDIR
 source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/hicpro/2022.03.30.hicpro.samplesheet.without_header.tsv"
+IFS=$'\t'
+samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 geo_id="${sample_info[1]}"
 re=$(echo ${sample_info[5]} | tr '[:upper:]' '[:lower:]')
+IFS=$'\n\t'
 
 # setting the config path. Make sure to include the proper reference files
 # which requires:

@@ -7,8 +7,8 @@
 #PBS -V
 
 # dummy pbs array environment values
-#PBS_ARRAYID=63
-#PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
+PBS_ARRAYID=$1
+PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
@@ -28,10 +28,12 @@ cd $PBS_O_WORKDIR
 source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/hicpro/2022.03.30-hichip-hicpro.without_header.tsv"
+IFS=$'\t'
+samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 geo_id="${sample_info[1]}"
+IFS=$'\n\t' # can go back to using \n\t
 
 # printing sample information
 echo
@@ -51,7 +53,7 @@ echo "# running split_reads"
 for fq in $fastqfolder/*.fastq.gz;
 do
     echo "Splitting: $fq"
-    $hicpro_python $split_reads --results_folder $outdir --nreads 50000000 $fq
+    #$hicpro_python $split_reads --results_folder $outdir --nreads 50000000 $fq
 done
 
 # softlink files with R1/R2 designation rather than 1/2 only (found bugs with this method)
