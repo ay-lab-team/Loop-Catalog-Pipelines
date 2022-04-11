@@ -58,7 +58,7 @@ echo "Ended: hicpro2juicebox"
 # run hiccups
 echo "# running hiccups"
 inpdir="results/loops/hiccups/$sample_name/hic_input/$sample_name.allValidPairs.hic"
-java -Xmx40g -jar $juicertools hiccups --cpu -r 5000,10000,25000 $inpdir $outdir
+java -Xmx40g -jar $juicertools hiccups --cpu --ignore-sparsity -r 5000,10000,25000 $inpdir $outdir
 
 # print end message
 echo "Ended: hiccups"
