@@ -6,3 +6,7 @@
 results/*
 !results/samplesheets/
 fasterq*
+!results/samplesheets/fastq/
+results/samplesheets/fastq/*
+!results/samplesheets/hicpro/
+results/samplesheets/hicpro/*
