@@ -8,7 +8,7 @@
 #PBS -V
 
 # Usage:
-# ./workflow/scripts/run_chipline.sh <input fastq folder> <output folder name>
+# ./workflow/scripts/run_chipline.sh <input fastq folder> <input control folder (bam files)> <output folder name>
 
 source ~/.bashrc
 hostname
@@ -45,6 +45,7 @@ genome="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowt
 # directory with input fastqs
 dirdata=$1
 
+# set variables for input fastqs
 fastqs=()
 for FILE in $dirdata/*.fastq.gz
 do
@@ -52,12 +53,41 @@ do
 done
 
 inpfile1=${fastqs[0]}
-inpfile2=${fastqs[1]}
 
-prefix=$2
+if [[ ${#a[@]} -eq 2 ]]
+then
+    inpfile2=${fastqs[1]}
+fi    
+
+if [[$# -eq 3]]
+then
+    prefix=$3
+else
+    prefix=$2
+fi
 
 outdir="$workdir/$prefix"
 mkdir -p $outdir
 
-# Note: no control file (-c parameter) used
-$CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
+
+# Set the control file
+
+control_pattern=""
+
+if [[$# -eq 3]]
+then
+    control_folder=$2
+    for i in $controlfolder/*.bam
+    do
+        control_pattern+="-c $i"
+    done
+fi
+
+# run the pipeline
+if [[ ${#a[@]} -eq 2 ]]
+then
+    $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
+else
+    $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
+fi
+

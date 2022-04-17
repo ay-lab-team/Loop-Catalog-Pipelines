@@ -7,7 +7,7 @@
 #PBS -V
 
 # Example run:
-# qsub -F "SRR123456 SRR789000" workflow/scripts/download_srr_fastqs.sh
+# qsub -F "SRR123456 SRR789000" workflow/scripts/archive/download_srr_fastqs_chipseq.sh
 
 source ~/.bashrc
 hostname
@@ -16,7 +16,7 @@ cd $PBS_O_WORKDIR
 
 source activate grabseqs
 
-outdir="results/fastqs/raw/"
+outdir="results/fastqs/chipseq/"
 retries=4
 threads=4
 
