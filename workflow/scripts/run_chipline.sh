@@ -3,12 +3,17 @@
 #PBS -l nodes=1:ppn=16
 #PBS -l mem=100GB
 #PBS -l walltime=40:00:00
+#PBS -o results/peaks/chipline/logs/
+#PBS -e results/peaks/chipline/logs/
+#PBS -N run_chipline
 #PBS -m ae
 #PBS -j oe
 #PBS -V
 
 # Usage:
 # qsub workflow/scripts/run_chipline.sh -F "<input fastq folder> <input control folder (bam files)>"
+
+echo "Start Job"
 
 source ~/.bashrc
 hostname
@@ -23,7 +28,6 @@ PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/bowtie2/b
 PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/phantompeakqualtools/:$PATH
 PATH=/share/apps/picard-tools/picard-tools-2.7.1/:$PATH
 PATH=/share/apps/python/python-3.4.6/bin/:$PATH # deeptools
-
 
 #=================
 # main executable script of the ChIP seq pipeline
@@ -81,4 +85,7 @@ else
     $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
     
 fi
+
+echo "End Job"
+
 
