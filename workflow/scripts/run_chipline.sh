@@ -8,7 +8,7 @@
 #PBS -V
 
 # Usage:
-# ./workflow/scripts/run_chipline.sh <input fastq folder> <input control folder (bam files)> <output folder name>
+# ./workflow/scripts/run_chipline.sh <input fastq folder> <input control folder (bam files)>
 
 source ~/.bashrc
 hostname
@@ -28,16 +28,13 @@ PATH=/share/apps/python/python-3.4.6/bin/:$PATH # deeptools
 # main executable script of the ChIP seq pipeline
 #=================
 # developed by - Sourya Bhattacharyya
+# modified by - Nikhil Rao
 # Vijay-AY lab
 # La Jolla Institute for Allergy and Immunology
 #=================
 
 CodeDir="/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/ChIPLine/"
 CodeExec="$CodeDir/bin/pipeline.sh"
-
-#=================
-# script 1 - when fastq files of paired end read are provided as the input
-#=================
 
 workdir="results/loops/chipline"
 genome="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/hg38/hg38"
@@ -46,25 +43,16 @@ genome="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowt
 dirdata=$1
 
 # set variables for input fastqs
-fastqs=()
-for FILE in $dirdata/*.fastq.gz
-do
-    fastqs+=($FILE)
-done
+fastqs=($dirdata/*.fastq.gz)
 
 inpfile1=${fastqs[0]}
 
-if [[ ${#a[@]} -eq 2 ]]
+if [[ ${#fastqs[@]} -eq 2 ]]
 then
     inpfile2=${fastqs[1]}
-fi    
-
-if [[$# -eq 3]]
-then
-    prefix=$3
-else
-    prefix=$2
 fi
+
+prefix=$(basename $1)
 
 outdir="$workdir/$prefix"
 mkdir -p $outdir
@@ -74,7 +62,7 @@ mkdir -p $outdir
 
 control_pattern=""
 
-if [[$# -eq 3]]
+if [[$# -eq 2]]
 then
     control_folder=$2
     for i in $controlfolder/*.bam
@@ -84,7 +72,7 @@ then
 fi
 
 # run the pipeline
-if [[ ${#a[@]} -eq 2 ]]
+if [[ ${#fastqs[@]} -eq 2 ]]
 then
     $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
 else
