@@ -1,0 +1,63 @@
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=20gb
+#PBS -l walltime=10:00:00
+#PBS -e results/peaks/logs/
+#PBS -o results/peaks/logs/
+#PBS -N run_fithichip_peakcalling
+#PBS -V
+
+# example run:
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/peaks/run_fithichip_peakcalling.sh
+# 2) qsub -t <index-range> workflow/scripts/peaks/run_fithichip_peakcalling.sh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/peaks/run_fithichip_peakcalling.sh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/peaks/run_fithichip_peakcalling.sh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/peaks/run_fithichip_peakcalling.sh
+
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: fithichip_peakcalling"
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# make sure to work starting from the github base directory for this script 
+cd $PBS_O_WORKDIR
+
+# source tool paths
+source workflow/source_paths.sh
+
+# extract the sample information using the PBS ARRAYID
+samplesheet="results/samplesheets/fastq/2022.04.09.16.57.fastq.samplesheet.without_header.tsv"
+sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
+sample_name="${sample_info[0]}"
+
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "sample_name: $sample_name"
+echo
+
+# make the output directory 
+outdir="results/peaks/fithichip/$sample_name/"
+cat_outdir="results/peaks/fithichip/$sample_name/cat_pairs/"
+mkdir -p $cat_outdir
+
+# concatenate pairs files
+pairs_folder="results/hicpro/$sample_name/hic_results/data/$sample_name"
+cat $pairs_folder/*'.DEPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.DEPairs"
+cat $pairs_folder/*'.SCPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.SCPairs"
+cat $pairs_folder/*'.REPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.REPairs"
+cat $pairs_folder/*'.validPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.validPairs"
+cat $pairs_folder/*'.allValidPairs' >> "$cat_outdir/$sample_name.allValidPairs"
+
+refGenomeStr="hs"
+
+# For this value, go to the SRA run selector, click on the SRR ID, then the length should be listed as "L=_"
+ReadLength=$2
+
+/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/fithichip/FitHiChIP/Imp_Scripts/PeakInferHiChIP.sh -H $concatenated_pairs -D $outdir -R $refGenomeStr -L $ReadLength
