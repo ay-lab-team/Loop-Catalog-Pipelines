@@ -8,7 +8,7 @@
 #PBS -V
 
 # Usage:
-# qsub -F "<input fastq folder> <input control folder (bam files)>" workflow/scripts/run_chipline.sh
+# qsub workflow/scripts/run_chipline.sh -F "<input fastq folder> <input control folder (bam files)>"
 
 source ~/.bashrc
 hostname
@@ -18,6 +18,7 @@ cd $PBS_O_WORKDIR
 source activate chipline
 PATH=/share/apps/R/3.6.1/bin/:$PATH
 PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software:$PATH
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/bowtie2/bowtie2-2.4.5:$PATH #bowtie2
 
 PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/phantompeakqualtools/:$PATH
 PATH=/share/apps/picard-tools/picard-tools-2.7.1/:$PATH
@@ -36,7 +37,7 @@ PATH=/share/apps/python/python-3.4.6/bin/:$PATH # deeptools
 CodeDir="/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/ChIPLine/"
 CodeExec="$CodeDir/bin/pipeline.sh"
 
-workdir="results/loops/chipline"
+workdir="results/peaks/chipline"
 genome="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/hg38/hg38"
 
 # directory with input fastqs
@@ -58,24 +59,26 @@ outdir="$workdir/$prefix"
 mkdir -p $outdir
 
 
-# Set the control file
-
+# Set the control file(s)
 control_pattern=""
 
-if [[$# -eq 2]]
+if [ $# -eq 2 ]
 then
     control_folder=$2
-    for i in $controlfolder/*.bam
+    for i in $control_folder/*.bam
     do
-        control_pattern+="-c $i"
+        control_pattern+="-c $i "
     done
 fi
 
 # run the pipeline
 if [[ ${#fastqs[@]} -eq 2 ]]
+
 then
-    $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
+    $CodeExec -f "$inpfile1" -r "$inpfile2" -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 "$control_pattern"
+    
 else
     $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
+    
 fi
 
