@@ -11,7 +11,7 @@
 #PBS -V
 
 # Usage:
-# qsub workflow/scripts/run_chipline.sh -F "<input fastq folder> <input control folder (bam files)>"
+# qsub workflow/scripts/run_chipline.sh -F "<input fastq folder> <input control bam file>"
 
 echo "Start Job"
 
@@ -19,6 +19,10 @@ source ~/.bashrc
 hostname
 TMPDIR=/scratch
 cd $PBS_O_WORKDIR
+
+# run bash in script mode
+set -euo pipefail
+IFS=$'\n\t'
 
 source activate chipline
 PATH=/share/apps/R/3.6.1/bin/:$PATH
@@ -68,18 +72,14 @@ control_pattern=""
 
 if [ $# -eq 2 ]
 then
-    control_folder=$2
-    for i in $control_folder/*.bam
-    do
-        control_pattern+="-c $i "
-    done
+    control_pattern+="-c $2"
 fi
 
 # run the pipeline
 if [[ ${#fastqs[@]} -eq 2 ]]
 
 then
-    $CodeExec -f "$inpfile1" -r "$inpfile2" -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 "$control_pattern"
+    $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
     
 else
     $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
