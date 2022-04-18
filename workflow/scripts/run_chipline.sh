@@ -8,7 +8,7 @@
 #PBS -V
 
 # Usage:
-# ./workflow/scripts/run_chipline.sh <input fastq folder> <input control folder (bam files)>
+# qsub -F "<input fastq folder> <input control folder (bam files)>" workflow/scripts/run_chipline.sh
 
 source ~/.bashrc
 hostname
