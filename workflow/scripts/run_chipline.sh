@@ -21,8 +21,8 @@ TMPDIR=/scratch
 cd $PBS_O_WORKDIR
 
 # run bash in script mode
-set -euo pipefail
-IFS=$'\n\t'
+# set -euo pipefail
+# IFS=$'\n\t'
 
 source activate chipline
 PATH=/share/apps/R/3.6.1/bin/:$PATH
@@ -79,10 +79,10 @@ fi
 if [[ ${#fastqs[@]} -eq 2 ]]
 
 then
-    $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
+    $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
     
 else
-    $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
+    $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
     
 fi
 
