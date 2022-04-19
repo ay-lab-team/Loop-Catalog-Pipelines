@@ -21,8 +21,8 @@ TMPDIR=/scratch
 cd $PBS_O_WORKDIR
 
 # run bash in script mode
-# set -euo pipefail
-# IFS=$'\n\t'
+set -euo pipefail
+IFS=$'\n\t'
 
 source activate chipline
 PATH=/share/apps/R/3.6.1/bin/:$PATH
