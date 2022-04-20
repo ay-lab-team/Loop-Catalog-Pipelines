@@ -20,18 +20,20 @@ hostname
 TMPDIR=/scratch
 cd $PBS_O_WORKDIR
 
-# run bash in script mode
+# run bash in strict mode
 set -euo pipefail
 IFS=$'\n\t'
 
-source activate chipline
+# source activate chipline
 PATH=/share/apps/R/3.6.1/bin/:$PATH
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software:$PATH
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/bowtie2/bowtie2-2.4.5:$PATH #bowtie2
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software:$PATH # Utilities "bedGraphToBigWig", "bedSort", "bigBedToBed", "hubCheck", "fetchChromSizes", and HOMER
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/bowtie2/bowtie2-2.4.5:$PATH # bowtie2
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/samtools/samtools-1.15.1:$PATH # samtools
 
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/phantompeakqualtools/:$PATH
-PATH=/share/apps/picard-tools/picard-tools-2.7.1/:$PATH
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/phantompeakqualtools/:$PATH # phantompeakqualtools
+PATH=/share/apps/picard-tools/picard-tools-2.7.1/:$PATH # picard
 PATH=/share/apps/python/python-3.4.6/bin/:$PATH # deeptools
+PATH=/share/apps/python/python-2.7.13/bin/:$PATH # macs2
 
 #=================
 # main executable script of the ChIP seq pipeline
@@ -79,10 +81,10 @@ fi
 if [[ ${#fastqs[@]} -eq 2 ]]
 
 then
-    $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
+    $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
     
 else
-    $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
+    $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
     
 fi
 
