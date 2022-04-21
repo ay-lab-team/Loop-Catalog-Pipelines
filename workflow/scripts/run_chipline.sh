@@ -42,9 +42,7 @@ PATH=/share/apps/R/3.6.1/bin/:$PATH # R
 # La Jolla Institute for Allergy and Immunology
 #=================
 
-pwd
-
-CodeDir="/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/ChIPLine/"
+CodeDir="/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/ChIPLine/"
 CodeExec="$CodeDir/bin/pipeline.sh"
 
 workdir="results/peaks/chipline"
@@ -65,7 +63,7 @@ fi
 
 prefix=$(basename $1)
 
-outdir="$workdir/$prefix"
+outdir=$(realpath "$workdir/$prefix")
 
 configfile=$(realpath "config/chipline/configfile.txt")
 
