@@ -42,6 +42,8 @@ PATH=/share/apps/R/3.6.1/bin/:$PATH # R
 # La Jolla Institute for Allergy and Immunology
 #=================
 
+pwd
+
 CodeDir="/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/ChIPLine/"
 CodeExec="$CodeDir/bin/pipeline.sh"
 
@@ -54,17 +56,18 @@ dirdata=$1
 # set variables for input fastqs
 fastqs=($dirdata/*.fastq.gz)
 
-inpfile1=${fastqs[0]}
+inpfile1=$(realpath ${fastqs[0]})
 
 if [[ ${#fastqs[@]} -eq 2 ]]
 then
-    inpfile2=${fastqs[1]}
+    inpfile2=$(realpath ${fastqs[1]})
 fi
 
 prefix=$(basename $1)
 
 outdir="$workdir/$prefix"
-mkdir -p $outdir
+
+configfile=$(realpath "config/chipline/configfile.txt")
 
 # run the pipeline
 if [ ${#fastqs[@]} -eq 2 ]
@@ -72,20 +75,20 @@ then
     
     if [ $# -eq 2 ]
     then
-        $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $2
+        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $2
     
     else
-        $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
+        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
     fi
     
 else
 
     if [ $# -eq 2 ]
     then
-        $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $2
+        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $2
     
     else
-        $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
+        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
     fi
     
 fi
