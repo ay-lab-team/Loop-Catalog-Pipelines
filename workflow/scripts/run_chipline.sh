@@ -24,16 +24,16 @@ cd $PBS_O_WORKDIR
 set -euo pipefail
 IFS=$'\n\t'
 
-# source activate chipline
-PATH=/share/apps/R/3.6.1/bin/:$PATH
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software:$PATH # Utilities "bedGraphToBigWig", "bedSort", "bigBedToBed", "hubCheck", "fetchChromSizes", and HOMER
+# set paths to softwares
 PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/bowtie2/bowtie2-2.4.5:$PATH # bowtie2
 PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/samtools/samtools-1.15.1:$PATH # samtools
-
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/phantompeakqualtools/:$PATH # phantompeakqualtools
 PATH=/share/apps/picard-tools/picard-tools-2.7.1/:$PATH # picard
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/phantompeakqualtools/:$PATH # phantompeakqualtools
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software:$PATH # Utilities "bedGraphToBigWig", "bedSort", "bigBedToBed", "hubCheck", "fetchChromSizes"
 PATH=/share/apps/python/python-3.4.6/bin/:$PATH # deeptools
 PATH=/share/apps/python/python-2.7.13/bin/:$PATH # macs2
+Path=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/homer/bin/:$PATH # HOMER
+PATH=/share/apps/R/3.6.1/bin/:$PATH # R
 
 #=================
 # main executable script of the ChIP seq pipeline
