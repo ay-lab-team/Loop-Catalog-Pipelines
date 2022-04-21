@@ -13,8 +13,6 @@
 # Usage:
 # qsub workflow/scripts/run_chipline.sh -F "<input fastq folder> <input control bam file>"
 
-echo "Start Job"
-
 source ~/.bashrc
 hostname
 TMPDIR=/scratch
@@ -32,7 +30,7 @@ PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/phantompe
 PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software:$PATH # Utilities "bedGraphToBigWig", "bedSort", "bigBedToBed", "hubCheck", "fetchChromSizes"
 PATH=/share/apps/python/python-3.4.6/bin/:$PATH # deeptools
 PATH=/share/apps/python/python-2.7.13/bin/:$PATH # macs2
-Path=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/homer/bin/:$PATH # HOMER
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/homer/bin/:$PATH # HOMER
 PATH=/share/apps/R/3.6.1/bin/:$PATH # R
 
 #=================
@@ -68,26 +66,26 @@ prefix=$(basename $1)
 outdir="$workdir/$prefix"
 mkdir -p $outdir
 
-
-# Set the control file(s)
-control_pattern=""
-
-if [ $# -eq 2 ]
-then
-    control_pattern+="-c $2"
-fi
-
 # run the pipeline
-if [[ ${#fastqs[@]} -eq 2 ]]
-
+if [ ${#fastqs[@]} -eq 2 ]
 then
-    $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
+    
+    if [ $# -eq 2 ]
+    then
+        $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $2
+    
+    else
+        $CodeExec -f $inpfile1 -r $inpfile2 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
+    fi
     
 else
-    $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 $control_pattern
+
+    if [ $# -eq 2 ]
+    then
+        $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $2
+    
+    else
+        $CodeExec -f $inpfile1 -C "config/chipline/configfile.txt" -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
+    fi
     
 fi
-
-echo "End Job"
-
-
