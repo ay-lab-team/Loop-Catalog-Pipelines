@@ -16,7 +16,7 @@ picardexec=/share/apps/picard-tools/picard-tools-2.7.1/picard.jar
 HOMERPath=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/homer/bin/homer
 
 # deeptools package - directory
-DeepToolsDir=/share/apps/python/python-3.4.6/bin/
+DeepToolsDir=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/deeptools/bin/
 
 # R package installed - executable
 RPackageExec=/share/apps/R/3.6.1/bin/Rscript

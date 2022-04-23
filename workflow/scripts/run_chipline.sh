@@ -13,6 +13,9 @@
 # Usage:
 # qsub workflow/scripts/run_chipline.sh -F "<input fastq folder> <input control bam file>"
 
+#cd /home/nrao/nrao/hichip_database/hichip-db-loop-calling
+#qsub workflow/scripts/run_chipline.sh -F "results/fastqs/chipseq/wang2020.gse136090.bc3.h3k27ac.b1 results/fastqs/chipseq/wang2020control.gse136090.bc3.h3k27ac.b1/SRR10008157.bam"
+
 source ~/.bashrc
 hostname
 TMPDIR=/scratch
@@ -28,7 +31,7 @@ PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/samtools/
 PATH=/share/apps/picard-tools/picard-tools-2.7.1/:$PATH # picard
 PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/phantompeakqualtools/:$PATH # phantompeakqualtools
 PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software:$PATH # Utilities "bedGraphToBigWig", "bedSort", "bigBedToBed", "hubCheck", "fetchChromSizes"
-PATH=/share/apps/python/python-3.4.6/bin/:$PATH # deeptools
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/deeptools/bin/:$PATH # deeptools
 PATH=/share/apps/python/python-2.7.13/bin/:$PATH # macs2
 PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/homer/bin/:$PATH # HOMER
 PATH=/share/apps/R/3.6.1/bin/:$PATH # R
@@ -73,20 +76,20 @@ then
     
     if [ $# -eq 2 ]
     then
-        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $2
+        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 0 -p "hs" -O 0 -c $(realpath $2)
     
     else
-        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
+        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 0 -p "hs" -O 0
     fi
     
 else
 
     if [ $# -eq 2 ]
     then
-        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $2
+        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 0 -p "hs" -O 0 -c $(realpath $2)
     
     else
-        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
+        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 0 -p "hs" -O 0
     fi
     
 fi
