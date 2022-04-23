@@ -78,7 +78,6 @@ then
     else
         $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
     fi
-    
 else
 
     if [ $# -eq 2 ]
@@ -88,5 +87,4 @@ else
     else
         $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
     fi
-    
 fi
