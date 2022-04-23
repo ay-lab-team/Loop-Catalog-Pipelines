@@ -7,11 +7,11 @@
 #PBS -V
 
 # example run:
-# 1) qsub -t <index1>,<index2>,... workflow/scripts/run_hiccups.qarray.qsh
-# 2) qsub -t <index-range> workflow/scripts/run_hiccups.qarray.qsh
-# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/run_hiccups.qarray.qsh
-# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/run_hiccups.qarray.qsh
-# 5) qsub -t <any combination of index + ranges> workflow/scripts/run_hiccups.qarray.qsh
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/loops/run_hiccups.sh
+# 2) qsub -t <index-range> workflow/scripts/loops/run_hiccups.sh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/loops/run_hiccups.sh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/loops/run_hiccups.sh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/loops/run_hiccups.sh
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
@@ -31,7 +31,7 @@ cd $PBS_O_WORKDIR
 source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/fastq/2022.04.09.16.57.fastq.samplesheet.without_header.tsv"
+samplesheet="results/samplesheets/hicpro/2022.04.09.16.57.hicpro.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 
