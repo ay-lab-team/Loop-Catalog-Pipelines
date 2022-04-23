@@ -13,9 +13,6 @@
 # Usage:
 # qsub workflow/scripts/run_chipline.sh -F "<input fastq folder> <input control bam file>"
 
-#cd /home/nrao/nrao/hichip_database/hichip-db-loop-calling
-#qsub workflow/scripts/run_chipline.sh -F "results/fastqs/chipseq/wang2020.gse136090.bc3.h3k27ac.b1 results/fastqs/chipseq/wang2020control.gse136090.bc3.h3k27ac.b1/SRR10008157.bam"
-
 source ~/.bashrc
 hostname
 TMPDIR=/scratch
@@ -76,20 +73,20 @@ then
     
     if [ $# -eq 2 ]
     then
-        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 0 -p "hs" -O 0 -c $(realpath $2)
+        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $(realpath $2)
     
     else
-        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 0 -p "hs" -O 0
+        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
     fi
     
 else
 
     if [ $# -eq 2 ]
     then
-        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 0 -p "hs" -O 0 -c $(realpath $2)
+        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $(realpath $2)
     
     else
-        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 0 -p "hs" -O 0
+        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
     fi
     
 fi
