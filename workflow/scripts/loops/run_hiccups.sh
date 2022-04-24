@@ -43,8 +43,8 @@ echo "sample_name: $sample_name"
 echo
 
 # make the output directory 
-outdir="results/loops/hiccups/$sample_name/"
-hic_outdir="results/loops/hiccups/$sample_name/hic_input/"
+outdir="results/loops/hiccups/threshold_200_10kb_loops/$sample_name/"
+hic_outdir="results/loops/hiccups/threshold_200_10kb_loops/$sample_name/hic_input/"
 mkdir -p $hic_outdir
 
 # run hicpro2juicebox.sh
@@ -57,7 +57,7 @@ echo "Ended: hicpro2juicebox"
 
 # run hiccups
 echo "# running hiccups"
-inpdir="results/loops/hiccups/$sample_name/hic_input/$sample_name.allValidPairs.hic"
+inpdir="results/loops/hiccups/threshold_200_10kb_loops/$sample_name/hic_input/$sample_name.allValidPairs.hic"
 java -Xmx40g -jar $juicertools hiccups --cpu --ignore-sparsity -r 5000,10000,25000 $inpdir $outdir
 
 # print end message
