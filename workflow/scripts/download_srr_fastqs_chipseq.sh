@@ -36,7 +36,7 @@ source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
-samplesheet="results/samplesheets/fastq/Current-HiChIP-SRR-Samplesheet-Without-Header.tsv"
+samplesheet="results/samplesheets/fastq/2022.05.08.chipseq_tracker.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 
 # construct the name of the sample using the naming scheme:
