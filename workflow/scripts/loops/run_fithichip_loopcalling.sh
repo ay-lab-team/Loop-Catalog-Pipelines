@@ -46,13 +46,17 @@ echo
 outdir="results/loops/fithichip/$sample_name/"
 mkdir -p $outdir
 
-# run fithichip
+# run fithichip, use chipseq peaks if avaliable, hichip peaks otherwise
 echo "# running fithichip"
-inpdir=""
-java -Xmx20g -jar $juicertools hiccups --cpu -r 5000 -f 0.01 -p 4 -i 7 -d 20000 $inpdir $outdir
+chipseq_file= # INSERT PATH TO CHIPSEQ FILE HERE
+if [ -f "$chipseq_file" ]; then
+    echo "chip-seq peaks found and will be used to call loops"
+else 
+    echo "chip-seq peaks not found. hichip peaks will be used to call loops"
+fi
 
 # print end message
-echo "Ended: fithichip"
+echo "Ended: fithichip loop calling"
 
 # print end time message
 end_time=$(date "+%Y.%m.%d.%H.%M")

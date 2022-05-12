@@ -48,6 +48,7 @@ cat_outdir="results/peaks/fithichip/$sample_name/cat_pairs/"
 mkdir -p $cat_outdir
 
 # concatenate pairs files
+echo "Concatenating pairs files"
 pairs_folder="results/hicpro/$sample_name/hic_results/data/$sample_name"
 cat $pairs_folder/*'.DEPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.DEPairs"
 cat $pairs_folder/*'.SCPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.SCPairs"
@@ -55,9 +56,20 @@ cat $pairs_folder/*'.REPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.REPairs
 cat $pairs_folder/*'.validPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.validPairs"
 cat $pairs_folder/*'.allValidPairs' >> "$cat_outdir/$sample_name.allValidPairs"
 
+# reference genome
 refGenomeStr="hs"
 
-# For this value, go to the SRA run selector, click on the SRR ID, then the length should be listed as "L=_"
-ReadLength=$2
+# get read length by counting length of line 2 of one fastq file
+fastq_file=$(echo results/fastqs/raw/$sample_name/* | awk '{print $1}')
+ReadLength=$(zcat $fastq_file | sed -n "2p" | awk '{print length}')
 
-/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/fithichip/FitHiChIP/Imp_Scripts/PeakInferHiChIP.sh -H $concatenated_pairs -D $outdir -R $refGenomeStr -L $ReadLength
+# run fithichip peak calling
+echo "running fithichip peak calling"
+$fithichip_peakinferhichip -H $cat_outdir -D $outdir -R $refGenomeStr -L $ReadLength
+
+# print end message
+echo "Ended: fithichip peak calling"
+
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"
