@@ -13,7 +13,8 @@ PATH=/mnt/BioApps/bedtools/bin/bedtools:$PATH # bedtools
 PATH=/mnt/BioApps/tabix/tabix-0.2.6/:$PATH # bgzip, tabix
 
 # create the output bedgraph file
-cat $inputfile | awk 'BEGIN{OFS="\t"}; {print $1, $2, $3, $5};' | bedtools sort -i - > "$outputfolder/$inputfoldername.bedgraph"
+# 
+cat $inputfile | awk 'BEGIN{OFS="\t"}; {print $1, $2, $3, $8};' | bedtools sort -i - > "$outputfolder/$inputfoldername.bedgraph"
 
 # create file.bedgraph.gz (input bedgraph file must be sorted)
 bgzip "$outputfolder/$inputfoldername.bedgraph"
