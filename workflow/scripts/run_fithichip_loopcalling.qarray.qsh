@@ -12,12 +12,27 @@
 
 
 # Usage:
-# workflow/scripts/run_fithichip_loopcalling.sh <HiCPro validPairs> <peak file> <output directory name>
+# qsub workflow/scripts/run_fithichip_loopcalling.sh -F "<HiCPro validPairs> <peak file> <output directory name>"
 
+# example run (indexes refer to row numbers on HiChIP tracker):
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/run_fithichip_loopcalling.qarray.qsh
+# 2) qsub -t <index-range> workflow/scripts/run_fithichip_loopcalling.qarray.qsh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/run_fithichip_loopcalling.qarray.qsh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/run_fithichip_loopcalling.qarray.qsh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/run_fithichip_loopcalling.qarray.qsh
 
-source ~/.bashrc
-hostname
-TMPDIR=/scratch
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: run_fithichip_loopcalling"
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# make sure to work starting from the base directory for this project 
 cd $PBS_O_WORKDIR
 
 # source tool paths
@@ -36,6 +51,34 @@ PATH=$(dirname $fithichip_peakinferhichip):$PATH
 PATH=$(dirname $fithichip_call_loops):$PATH
 
 PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/fithichip/software/bedtools2/bin:$PATH
+
+
+# extract the sample information using the PBS ARRAYID
+hichip_tracker="results/samplesheets/fastq/2022.05.13.hichip_tracker.tsv"
+hichip_sample_info=( $(cat $hichip_tracker | sed -n "${PBS_ARRAYID}p") )
+hichip_sample_name="${hichip_sample_info[0]}"
+
+# construct the name of the HiC-Pro output:
+# {sample_name}.{gse_id}.{organism}.{target of antibody}.b{biological_rep}
+name="${sample_info[0]}"
+gse_id="${sample_info[2]}"
+organism="${sample_info[8]}"
+target_of_antibody="${sample_info[12]}"
+biological_rep="${sample_info[10]}"
+
+# create sample name and replace spaces with underscores
+sample_name="$name.$gse_id.$organism.$target_of_antibody.b$biological_rep"
+#sample_name=( echo "${sample_name,,}" ) # convert to lowercase
+sample_name="${sample_name// /_}"
+
+# find HiC-Pro output with that name
+if [ ! -d "/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/hicpro/$sample_name" ]
+then
+    echo "HiCPro output directory $sample_name does not exist!"
+    exit 1
+fi
+
+
 
 # Config file input:
 # 1) Valid pairs from HiCPro

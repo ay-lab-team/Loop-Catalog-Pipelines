@@ -11,7 +11,14 @@
 #PBS -V
 
 # Usage:
-# qsub workflow/scripts/run_chipline.sh -F "<input fastq folder> <input control bam file (optional)>"
+# qsub workflow/scripts/run_chipline.qarray.qsh -F "<input fastq folder> <input control bam file (optional)>"
+
+# example run:
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/download_srr_fastqs_chipseq.sh
+# 2) qsub -t <index-range> workflow/scripts/download_srr_fastqs_chipseq.sh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/download_srr_fastqs_chipseq.sh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/download_srr_fastqs_chipseq.sh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/download_srr_fastqs_chipseq.sh
 
 source ~/.bashrc
 hostname
