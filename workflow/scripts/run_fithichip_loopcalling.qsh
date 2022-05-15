@@ -43,14 +43,13 @@ PATH=$(dirname $hicpro_python):$PATH
 PATH=$(dirname $hicpro):$PATH
 PATH=$(dirname $split_reads):$PATH
 PATH=$(dirname $hicpro2juicebox):$PATH
-
 PATH=$(dirname $fithichip_python):$PATH
 PATH=$(dirname $fithichip_r):$PATH
 PATH=$(dirname $fithichip_r_library):$PATH
 PATH=$(dirname $fithichip_peakinferhichip):$PATH
 PATH=$(dirname $fithichip_call_loops):$PATH
 
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/fithichip/software/bedtools2/bin:$PATH
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/fithichip/software/bedtools2/bin:$PATH # bedtools
 
 
 # extract the sample information using the PBS ARRAYID
@@ -72,13 +71,11 @@ sample_name="$name.$gse_id.$organism.$target_of_antibody.b$biological_rep"
 sample_name="${sample_name// /_}"
 
 # find HiC-Pro output with that name
-if [ ! -d "/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/hicpro/$sample_name" ]
+if [ ! -d "results/hicpro/$sample_name" ]
 then
     echo "HiCPro output directory $sample_name does not exist!"
     exit 1
 fi
-
-
 
 # Config file input:
 # 1) Valid pairs from HiCPro
