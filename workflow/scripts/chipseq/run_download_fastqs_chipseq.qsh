@@ -11,11 +11,11 @@
 #PBS -V
 
 # example run:
-# 1) qsub -t <index1>,<index2>,... workflow/scripts/run_download_fastqs_chipseq.qsh
-# 2) qsub -t <index-range> workflow/scripts/run_download_fastqs_chipseq.qarray.qsh
-# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/run_download_fastqs_chipseq.qsh
-# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/run_download_fastqs_chipseq.qsh
-# 5) qsub -t <any combination of index + ranges> workflow/scripts/run_download_fastqs_chipseq.qsh
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/chipseq/run_download_fastqs_chipseq.qsh
+# 2) qsub -t <index-range> workflow/scripts/chipseq/run_download_fastqs_chipseq.qsh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/chipseq/run_download_fastqs_chipseq.qsh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/chipseq/run_download_fastqs_chipseq.qsh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/chipseq/run_download_fastqs_chipseq.qsh
 
 
 # print start time message

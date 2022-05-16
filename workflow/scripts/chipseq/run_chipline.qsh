@@ -14,11 +14,11 @@
 # qsub workflow/scripts/run_chipline.qsh -F "<input fastq folder> <input control bam file (optional)>"
 
 # example run:
-# 1) qsub -t <index1>,<index2>,... workflow/scripts/run_chipline.qsh
-# 2) qsub -t <index-range> workflow/scripts/run_chipline.qsh
-# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/run_chipline.qsh
-# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/run_chipline.qsh
-# 5) qsub -t <any combination of index + ranges> workflow/scripts/run_chipline.qsh
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/chipseq/run_chipline.qsh
+# 2) qsub -t <index-range> workflow/scripts/chipseq/run_chipline.qsh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/chipseq/run_chipline.qsh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/chipseq/run_chipline.qsh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/chipseq/run_chipline.qsh
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
