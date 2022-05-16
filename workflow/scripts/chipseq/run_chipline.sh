@@ -25,7 +25,7 @@ start_time=$(date "+%Y.%m.%d.%H.%M")
 echo "Start time: $start_time"
 
 # print start message
-echo "Started: run_fastqtobam_chipseq"
+echo "Started: run_chipline"
 
 # run bash in strict mode
 set -euo pipefail
@@ -111,18 +111,87 @@ then
     
     if [ -f $controlbam ] # check if the control bam file exists
     then
-        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $controlbam
+        echo "Running peak calling on paired-end reads, with a specified control input"
+        $CodeExec \
+            -f $inpfile1 \
+            -r $inpfile2 \
+            -C $configfile \
+            -n $prefix \
+            -g $genome \
+            -d $outdir \
+            -w "hg38" \
+            -t 16 \
+            -m "16G" \
+            -T 0 \
+            -q 30 \
+            -D 1 \
+            -p "hs" \
+            -O 1 \
+            -c $controlbam
     
     else
-        $CodeExec -f $inpfile1 -r $inpfile2 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
+        echo "Running peak calling on paired-end reads, with no specified control input"
+        $CodeExec \
+            -f $inpfile1 \
+            -r $inpfile2 \
+            -C $configfile \
+            -n $prefix \
+            -g $genome \
+            -d $outdir \
+            -w "hg38" \
+            -t 16 \
+            -m "16G" \
+            -T 0 \
+            -q 30 \
+            -D 1 \
+            -p "hs" \
+            -O 1
     fi
 else
 
     if [ -f $controlbam ]
     then
-        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1 -c $controlbam
+        echo "Running peak calling on single-ended reads, with a specified control input"
+        $CodeExec \
+            -f $inpfile1 \
+            -C $configfile \
+            -n $prefix \
+            -g $genome \
+            -d $outdir \
+            -w "hg38" \
+            -t 16 \
+            -m "16G" \
+            -T 0 \
+            -q 30 \
+            -D 1 \
+            -p "hs" \
+            -O 1 \
+            -c $controlbam
     
     else
-        $CodeExec -f $inpfile1 -C $configfile -n $prefix -g $genome -d $outdir -w "hg38" -t 16 -m "16G" -T 0 -q 30 -D 1 -p "hs" -O 1
+        echo "Running peak calling on single-ended reads, with no specified control input"
+        $CodeExec \
+            -f $inpfile1 \
+            -C $configfile \
+            -n $prefix \
+            -g $genome \
+            -d $outdir \
+            -w "hg38" \
+            -t 16 \
+            -m "16G" \
+            -T 0 \
+            -q 30 \
+            -D 1 \
+            -p "hs" \
+            -O 1
     fi
 fi
+
+
+
+# print end message
+echo "Ended: run_chipline"
+
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"

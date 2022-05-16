@@ -13,6 +13,14 @@
 # Usage:
 # qsub workflow/scripts/chipseq/run_merge_chipline.sh -F "<row 1 of ChIP-seq tracker> <row 2 of ChIP-seq tracker> <...>"
 
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: run_merge_chipline"
+
+
 # run bash in strict mode
 set -euo pipefail
 IFS=$'\n\t'
@@ -94,5 +102,10 @@ $IDRScript \
     -P $IDRCodePackage
 
 
+# print end message
+echo "Ended: run_merge_chipline"
 
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"
 
