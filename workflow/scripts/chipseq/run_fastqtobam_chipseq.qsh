@@ -36,7 +36,7 @@ PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/bowtie2/b
 
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
-samplesheet="results/samplesheets/fastq/2022.05.13.chipseq_tracker.tsv"
+samplesheet="results/samplesheets/fastq/2022.05.17.chipseq_tracker.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 
 # construct the name of the control file:

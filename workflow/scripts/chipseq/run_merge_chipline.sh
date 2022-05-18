@@ -32,7 +32,7 @@ PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/sambamba:
 
 
 IFS=$'\t'
-samplesheet="results/samplesheets/fastq/2022.05.13.chipseq_tracker.tsv"
+samplesheet="results/samplesheets/fastq/2022.05.17.chipseq_tracker.tsv"
 
 samples_to_merge=()
 
@@ -77,11 +77,11 @@ mkdir -p "results/peaks/merged_chipline/$outputfoldername"
 outputfolder=$( realpath "results/peaks/merged_chipline/$outputfoldername" )
 
 
-inputfile1="$inputfolder1/MACS2_Ext_with_Control/$inputfolder1.macs2_peaks.narrowPeak_Q0.01filt"
-inputfile1=$( realpath "results/peaks/chipline/$inputfile1" )
+inputfile1="results/peaks/chipline/$inputfolder1/MACS2_Ext"*"/$inputfolder1.macs2_peaks.narrowPeak_Q0.01filt"
+inputfile1=$( realpath $inputfile1 )
 
-inputfile2="$inputfolder2/MACS2_Ext_with_Control/$inputfolder2.macs2_peaks.narrowPeak_Q0.01filt"
-inputfile2=$( realpath "results/peaks/chipline/$inputfile2" )
+inputfile2="results/peaks/chipline/$inputfolder2/MACS2_Ext"*"/$inputfolder2.macs2_peaks.narrowPeak_Q0.01filt"
+inputfile2=$( realpath $inputfile2 )
 
 
 # ChIPLine script base directory

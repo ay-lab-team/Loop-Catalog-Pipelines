@@ -41,7 +41,7 @@ PATH=/usr/bin/:$PATH # wget
 
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
-samplesheet="results/samplesheets/fastq/2022.05.13.chipseq_tracker.tsv"
+samplesheet="results/samplesheets/fastq/2022.05.17.chipseq_tracker.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 
 # construct the name of the sample using the naming scheme:
@@ -88,7 +88,7 @@ threads=4
 $grabseqs sra -o $outdir -r $retries -t $threads $srr_id
 
 # run grabseqs for the control file if it exists, but has not been downloaded yet
-if [ ! -z "$control_srr_id" ]
+if [ "$control_srr_id" != "N/A" ]
 then
     control_outdir="results/fastqs/chipseq/$control_sample_name/"
     if [ ! -d "$control_outdir" ]
