@@ -32,7 +32,7 @@ PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/sambamba:
 
 
 IFS=$'\t'
-samplesheet="results/samplesheets/fastq/2022.05.17.chipseq_tracker.tsv"
+samplesheet="results/samplesheets/fastq/chipseq_tracker.tsv"
 
 samples_to_merge=()
 
@@ -49,7 +49,7 @@ do
     organism=$(echo "$organism" | awk '{print tolower($0)}') # convert string to lowercase
     organism=$(echo "$organism" | awk '{for (i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)} 1') # Capitalize each word
 
-    target_of_antibody="${sample_info[15]}"
+    target_of_antibody="${sample_info[14]}"
     biological_rep="${sample_info[13]}"
     
     sample_name="$name.$gse_id.$organism.$target_of_antibody.b$biological_rep"
