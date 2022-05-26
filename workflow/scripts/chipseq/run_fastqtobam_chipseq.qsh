@@ -39,7 +39,7 @@ IFS=$'\t'
 samplesheet="results/samplesheets/fastq/chipseq_tracker.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 
-# construct the name of the control file:
+# begin to construct the name of the control directory
 name="${sample_info[0]}"
 gse_id="${sample_info[2]}"
 
@@ -47,28 +47,49 @@ organism="${sample_info[11]}"
 organism=$(echo "$organism" | awk '{print tolower($0)}') # convert string to lowercase
 organism=$(echo "$organism" | awk '{for (i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)} 1') # Capitalize each word
 
-control_sample_name="$name.$gse_id.$organism.input"
-control_sample_name="${control_sample_name// /_}"
+# note that this name is further modified within the for loop
+control_sample_name_temp="$name.$gse_id.$organism.input"
+control_sample_name_temp="${control_sample_name_temp// /_}"
 
-control_outdir="results/fastqs/chipseq/$control_sample_name/"
+# split the control SRR IDs with the separator ", "
 IFS=', ' read -r -a control_srr_ids <<< "${sample_info[7]}"
 
-# Check that the directory containing the control fastq file exists and that a bam file doesn't already exist
-# Then, create a bam file in the directory
-if [ ! -d $control_outdir ]
-then
-    echo "The directory $control_outdir does not exist!"
-else
+count=1
+for control_srr_id in ${control_srr_ids[@]}; do
+    control_sample_name="$control_sample_name_temp.b$count" # finish contructing the control directory name
+    control_outdir="results/fastqs/chipseq/$control_sample_name"
 
-    for control_srr_id in ${control_srr_ids[@]}; do
-        if [ -f "$control_outdir/$control_srr_id.bam" ]
-            echo "The file $control_outdir/$control_srr_id.bam already exists!"
-        else
-            bowtie2 -x /mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/hg38/hg38 -U "$control_outdir/$control_srr_id.fastq.gz" | samtools view -bS - > "$control_outdir/$control_srr_id.bam"
-        fi
-    done
+    # create an array of the fastq files to be aligned
+    fastqs=($control_outdir/$control_srr_id*.fastq.gz)
 
-fi
+    # check whether the corresponding fastq files have been downloaded
+    if [ ${#fastqs[@]} -eq 0 ]; then
+        echo "The fastq file(s) for $control_srr_id not downloaded in $control_outdir"
+    
+    # check whether the bam files were already downloaded
+    elif [ -f "$control_outdir/$control_srr_id.bam" ]; then
+        echo "The file $control_outdir/$control_srr_id.bam already exists"
+    
+    # download the fastq files, since all checks have been passed
+    elif [ ${#fastqs[@]} -eq 1 ]; then
+        echo "Aligning the single-ended fastq file ${fastqs[0]}"
+        bowtie2 \
+            -x /mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/hg38/hg38 \
+            -U "${fastqs[0]}" \
+            | samtools view -bS - > "$control_outdir/$control_srr_id.bam"
+    
+    else
+        echo "Aligning the paired-ended fastq files ${fastqs[0]} and ${fastqs[1]}"
+        bowtie2 \
+            -x /mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/hg38/hg38 \
+            -1 "${fastqs[0]}" \
+            -2 "${fastqs[1]}" \
+            | samtools view -bS - > "$control_outdir/$control_srr_id.bam"
+    
+    fi
+
+    count=$((count + 1))
+done
 
 
 # print end message

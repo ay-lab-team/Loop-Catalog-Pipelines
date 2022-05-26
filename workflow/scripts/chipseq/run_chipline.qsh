@@ -97,16 +97,31 @@ then
     inpfile2=$(realpath ${fastqs[1]})
 fi
 
-# control bam file
-controlbam="results/fastqs/chipseq/$control_sample_name"/*.bam
-if [ -f $controlbam ]
-then
-    controlbam=$(realpath $controlbam)
-fi
+# create an array of control bam files
+controlbams=("results/fastqs/chipseq/$control_sample_name"*/*.bam)
+control_bam_command=""
+for controlbam in ${controlbams[@]}; do
+    control_bam_command="$control_bam_command -c $(realpath $controlbam)"
+done
 
 prefix=$sample_name
 outdir=$(realpath "results/peaks/chipline/$prefix")
 configfile=$(realpath "config/chipline/configfile.txt")
+
+chipline_command="$CodeExec \
+-f $inpfile1 \
+-C $configfile \
+-n $prefix \
+-g $genome \
+-d $outdir \
+-w hg38 \
+-t 16 \
+-m 16G \
+-T 0 \
+-q 30 \
+-D 1 \
+-p hs \
+-O 1"
 
 # run the pipeline
 if [ ${#fastqs[@]} -eq 2 ] # check how many fastq files are in the folder (single-end or paired-end reads)
@@ -115,78 +130,22 @@ then
     if [ -f $controlbam ] # check if the control bam file exists
     then
         echo "Running peak calling on paired-end reads, with a specified control input"
-        $CodeExec \
-            -f $inpfile1 \
-            -r $inpfile2 \
-            -C $configfile \
-            -n $prefix \
-            -g $genome \
-            -d $outdir \
-            -w "hg38" \
-            -t 16 \
-            -m "16G" \
-            -T 0 \
-            -q 30 \
-            -D 1 \
-            -p "hs" \
-            -O 1 \
-            -c $controlbam
+        eval "$chipline_command -r $inpfile2 $control_bam_command"
     
     else
         echo "Running peak calling on paired-end reads, with no specified control input"
-        $CodeExec \
-            -f $inpfile1 \
-            -r $inpfile2 \
-            -C $configfile \
-            -n $prefix \
-            -g $genome \
-            -d $outdir \
-            -w "hg38" \
-            -t 16 \
-            -m "16G" \
-            -T 0 \
-            -q 30 \
-            -D 1 \
-            -p "hs" \
-            -O 1
+        eval "$chipline_command -r $inpfile2"
     fi
 else
 
     if [ -f $controlbam ]
     then
         echo "Running peak calling on single-ended reads, with a specified control input"
-        $CodeExec \
-            -f $inpfile1 \
-            -C $configfile \
-            -n $prefix \
-            -g $genome \
-            -d $outdir \
-            -w "hg38" \
-            -t 16 \
-            -m "16G" \
-            -T 0 \
-            -q 30 \
-            -D 1 \
-            -p "hs" \
-            -O 1 \
-            -c $controlbam
+        eval "$chipline_command $control_bam_command"
     
     else
         echo "Running peak calling on single-ended reads, with no specified control input"
-        $CodeExec \
-            -f $inpfile1 \
-            -C $configfile \
-            -n $prefix \
-            -g $genome \
-            -d $outdir \
-            -w "hg38" \
-            -t 16 \
-            -m "16G" \
-            -T 0 \
-            -q 30 \
-            -D 1 \
-            -p "hs" \
-            -O 1
+        eval "$chipline_command"
     fi
 fi
 

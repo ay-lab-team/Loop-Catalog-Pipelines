@@ -65,9 +65,10 @@ srr_id="${sample_info[4]}"
 # construct the control file name
 # note that the target of antibody name has been replaced with "input" and there is no replicate number
 # also note that this name is modified within the for loop for downloading control files
-control_sample_name="$name.$gse_id.$organism.input"
-control_sample_name="${control_sample_name// /_}"
+control_sample_name_temp="$name.$gse_id.$organism.input"
+control_sample_name_temp="${control_sample_name_temp// /_}"
 
+# split the control SRR IDs with the separator ", "
 IFS=', ' read -r -a control_srr_ids <<< "${sample_info[7]}"
 
 # printing sample information
@@ -88,22 +89,20 @@ retries=8
 threads=4
 
 # check that this SRR ID hasn't already been downloaded before downloading
-if [ -z $(compgen -G "$outdir/$srr_id*") ]
-then
+if [ -z $(compgen -G "$outdir/$srr_id*") ]; then
     $grabseqs sra -o $outdir -r $retries -t $threads $srr_id
 else
     echo "$srr_id already exists in $outdir."
 fi
 
 # run grabseqs for the control file if it exists
-if [ "$control_srr_ids" != "N/A" ]
-then
+if [ "$control_srr_ids" != "N/A" ]; then
     
     echo "Control file(s) found."
     
     count=1
     for control_srr_id in ${control_srr_ids[@]}; do
-        control_sample_name="$control_sample_name.b$count"
+        control_sample_name="$control_sample_name_temp.b$count"
     
         control_outdir="results/fastqs/chipseq/$control_sample_name/"
         mkdir -p $control_outdir
