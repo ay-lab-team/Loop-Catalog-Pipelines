@@ -59,29 +59,29 @@ do
     samples_to_merge+=($sample_name)
 done
 
-inputfolder1=${samples_to_merge[0]}
-inputfolder2=${samples_to_merge[1]}
-
-# outputfoldername=$( awk 'BEGIN{FS=OFS="."} NF--' <<< "$inputfolder1" ) # remove the biological replicate from the name
-outputfoldername=$inputfolder1
-
 
 # check whether the input rows are replicates
-if [ $( awk 'BEGIN{FS=OFS="."} NF--' <<< "$inputfolder1" ) != $( awk 'BEGIN{FS=OFS="."} NF--' <<< "$inputfolder2" ) ]
-then
-    echo "Input rows are not replicates!"
-    exit 1
-fi
+sample1=$( awk 'BEGIN{FS=OFS="."} NF--' <<< "${samples_to_merge[0]}" ) # remove biological replicate name from sample name
+for sample in ${samples_to_merge[@]}; do
+    if [[ $sample1 != $( awk 'BEGIN{FS=OFS="."} NF--' <<< "$sample" ) ]]; then
+        echo "Input rows are not replicates!"
+        exit 1
+    fi
+done
 
+# create the output folder
+outputfoldername=${samples_to_merge[0]}
 mkdir -p "results/peaks/merged_chipline/$outputfoldername"
 outputfolder=$( realpath "results/peaks/merged_chipline/$outputfoldername" )
 
-
-inputfile1="results/peaks/chipline/$inputfolder1/MACS2_Ext"*"/$inputfolder1.macs2_peaks.narrowPeak_Q0.01filt"
-inputfile1=$( realpath $inputfile1 )
-
-inputfile2="results/peaks/chipline/$inputfolder2/MACS2_Ext"*"/$inputfolder2.macs2_peaks.narrowPeak_Q0.01filt"
-inputfile2=$( realpath $inputfile2 )
+# create the portion of the command that takes the samples to merge
+inputfilecommand=""
+for sample in ${samples_to_merge[@]}; do
+    inputfile="results/peaks/chipline/$sample/MACS2_Ext"*"/$sample.macs2_peaks.narrowPeak_Q0.01filt"
+    inputfile=$( realpath $inputfile )
+    
+    inputfilecommand="$inputfilecommand -I $inputfile"
+done
 
 
 # ChIPLine script base directory
@@ -95,11 +95,7 @@ IDRScript="$ChIPLineDir/IDR_Codes/IDRMain.sh"
 IDRCodePackage=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/IDRCode/idrCode/
 
 
-$IDRScript \
-    -I $inputfile1 \
-    -I $inputfile2 \
-    -d $outputfolder \
-    -P $IDRCodePackage
+eval "$IDRScript $inputfilecommand -d $outputfolder -P $IDRCodePackage"
 
 
 # print end message
