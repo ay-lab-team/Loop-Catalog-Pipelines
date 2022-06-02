@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 #PBS -l nodes=1:ppn=4
-#PBS -l mem=60gb
+#PBS -l mem=100gb
 #PBS -l walltime=20:00:00
 #PBS -e results/fastqs/chipseq/logs/
 #PBS -o results/fastqs/chipseq/logs/
@@ -89,7 +89,7 @@ retries=8
 threads=4
 
 # check that this SRR ID hasn't already been downloaded before downloading
-if [ -z $(compgen -G "$outdir/$srr_id*") ]; then
+if [ -z "$(compgen -G "$outdir/$srr_id*")" ]; then
     $grabseqs sra -o $outdir -r $retries -t $threads $srr_id
 else
     echo "$srr_id already exists in $outdir."
@@ -108,8 +108,7 @@ if [ "$control_srr_ids" != "N/A" ]; then
         mkdir -p $control_outdir
         
         # check that this SRR ID hasn't already been downloaded, then download the control
-        if [ -z $(compgen -G "$control_outdir/$control_srr_id*") ]
-        then
+        if [ -z "$(compgen -G "$control_outdir/$control_srr_id*")" ]; then
             $grabseqs sra -o $control_outdir -r $retries -t $threads $control_srr_id
         else
             echo "$control_srr_id already exists in $control_outdir."

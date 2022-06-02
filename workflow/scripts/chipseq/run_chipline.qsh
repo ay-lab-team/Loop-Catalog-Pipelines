@@ -114,7 +114,6 @@ chipline_command="$CodeExec \
 -n $prefix \
 -g $genome \
 -d $outdir \
--w hg38 \
 -t 16 \
 -m 16G \
 -T 0 \

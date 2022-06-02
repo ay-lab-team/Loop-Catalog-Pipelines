@@ -2,7 +2,7 @@
 
 #PBS -l nodes=1:ppn=4
 #PBS -l mem=60gb
-#PBS -l walltime=10:00:00
+#PBS -l walltime=20:00:00
 #PBS -e results/fastqs/chipseq/logs/
 #PBS -o results/fastqs/chipseq/logs/
 #PBS -N run_fastqtobam_chipseq
@@ -50,6 +50,12 @@ organism=$(echo "$organism" | awk '{for (i=1;i<=NF;i++) $i=toupper(substr($i,1,1
 # note that this name is further modified within the for loop
 control_sample_name_temp="$name.$gse_id.$organism.input"
 control_sample_name_temp="${control_sample_name_temp// /_}"
+
+# check whether control files exist at all
+if [ -z "$(compgen -G "results/fastqs/chipseq/$control_sample_name_temp*")" ]; then
+    echo "This sample does not contain any control inputs."
+    exit 0
+fi
 
 # split the control SRR IDs with the separator ", "
 IFS=', ' read -r -a control_srr_ids <<< "${sample_info[7]}"

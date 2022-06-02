@@ -65,7 +65,7 @@ sample1=$( awk 'BEGIN{FS=OFS="."} NF--' <<< "${samples_to_merge[0]}" ) # remove 
 for sample in ${samples_to_merge[@]}; do
     if [[ $sample1 != $( awk 'BEGIN{FS=OFS="."} NF--' <<< "$sample" ) ]]; then
         echo "Input rows are not replicates!"
-        exit 1
+        exit 0
     fi
 done
 
