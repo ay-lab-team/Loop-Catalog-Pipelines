@@ -1,6 +1,6 @@
 #PBS -l nodes=1:ppn=1
-#PBS -l mem=20gb
-#PBS -l walltime=100:00:00
+#PBS -l mem=200gb
+#PBS -l walltime=200:00:00
 #PBS -e results/loops/logs/
 #PBS -o results/loops/logs/
 #PBS -N run_fithichip_loopcalling
@@ -28,7 +28,7 @@ IFS=$'\n\t'
 cd $PBS_O_WORKDIR
 
 # source tool paths
-source workflow/source_paths.sh
+source workflow/scripts/loops/fithichip_source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
 samplesheet="results/samplesheets/hicpro/2022.04.09.16.57.hicpro.samplesheet.without_header.tsv"
@@ -43,20 +43,22 @@ echo "sample_name: $sample_name"
 echo
 
 # make the output directories
-outdir_L5="results/loops/fithichip/$sample_name/L5/"
-outdir_S5="results/loops/fithichip/$sample_name/S5/"
-outdir_L10="results/loops/fithichip/$sample_name/L10/"
-outdir_S10="results/loops/fithichip/$sample_name/S10/"
-outdir_L25="results/loops/fithichip/$sample_name/L25/"
-outdir_S25="results/loops/fithichip/$sample_name/S25/"
+outdir_L5="/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/loops/fithichip/${sample_name}_2/L5/"
+outdir_S5="/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/loops/fithichip/${sample_name}_2/S5/"
+outdir_L10="/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/loops/fithichip/${sample_name}_2/L10/"
+outdir_S10="/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/loops/fithichip/${sample_name}_2/S10/"
+outdir_L25="/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/loops/fithichip/${sample_name}_2/L25/"
+outdir_S25="/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/loops/fithichip/${sample_name}_2/S25/"
 mkdir -p $outdir_L5 $outdir_S5 $outdir_L10 $outdir_S10 $outdir_L25 $outdir_S25
 
 # identify hicpro validpairs file if avaliable
+loop_tracker="results/samplesheets/loop_calling_tracker.tsv"
+sample_loop_info=( $(cat $loop_tracker | sed -n "/^${sample_name}/ {p;q}") ) 
+
 echo "# finding hicpro validpairs file"
-validpairs_file="results/hicpro/${sample_name}/hic_results/data/${sample_name}/${sample_name}.allValidPairs"
-if [ -f "$validpairs_file" ]; then
+if [ -f "${sample_loop_info[1]}" ]; then
     echo "validpairs file found and will be used to call loops"
-    pairs_file= $validpairs_file
+    pairs_file=${sample_loop_info[1]}
 else 
     echo "validpairs file not found"
     exit 2
@@ -64,23 +66,23 @@ fi
 
 # identify chipseq peaks file if avaliable, hichip peaks file otherwise
 echo "# finding peaks file"
-chipseq_file= # INSERT PATH TO CHIPSEQ FILE HERE
-if [ -f "$chipseq_file" ]; then
+#"${sample_loop_info[2]}""
+if [ -f "use/hichip/peaks" ]; then
     echo "chip-seq peaks found and will be used to call loops"
-    peaks_file= $chipseq_file
+    peaks_file= ${sample_loop_info[2]}
 else 
     echo "chip-seq peaks not found. hichip peaks will be used to call loops"
-    peaks_file="results/peaks/fithichip/$sample_name/MACS2_ExtSize/out_macs2_peaks.narrowPeak"
+    peaks_file=${sample_loop_info[3]}
 fi
 
 ####################################################################################################################
 
 # generate config file for L, 5kb
-configfile_L5="results/loops/fithichip/$sample_name/configfile_L5"
+configfile_L5="results/loops/fithichip/${sample_name}_2/configfile_L5"
 touch $configfile_L5
 cat <<EOT >> $configfile_L5
 # File containing the valid pairs from HiCPro pipeline 
-ValidPairs=\${pairs_file}
+ValidPairs=${pairs_file}
 
 # File containing the bin intervals (according to a specified bin size)
 # which is an output of HiC-pro pipeline
@@ -104,10 +106,10 @@ CircularGenome=0
 
 # File containing reference ChIP-seq / HiChIP peaks (in .bed format)
 # mandatory parameter
-PeakFile=\${peaks_file}
+PeakFile=${peaks_file}
 
 # Output base directory under which all results will be stored
-OutDir=\${outdir_L5}
+OutDir=${outdir_L5}
 
 #Interaction type - 1: peak to peak 2: peak to non peak 3: peak to all (default) 4: all to all 5: everything from 1 to 4.
 IntType=3
@@ -152,11 +154,11 @@ EOT
 #####################################################################################################################
 
 # generate config file for S, 5kb
-configfile_S5="results/loops/fithichip/$sample_name/configfile_S5"
+configfile_S5="results/loops/fithichip/${sample_name}_2/configfile_S5"
 touch $configfile_S5
 cat <<EOT >> $configfile_S5
 # File containing the valid pairs from HiCPro pipeline 
-ValidPairs=\${pairs_file}
+ValidPairs=${pairs_file}
 
 # File containing the bin intervals (according to a specified bin size)
 # which is an output of HiC-pro pipeline
@@ -180,10 +182,10 @@ CircularGenome=0
 
 # File containing reference ChIP-seq / HiChIP peaks (in .bed format)
 # mandatory parameter
-PeakFile=\${peaks_file}
+PeakFile=${peaks_file}
 
 # Output base directory under which all results will be stored
-OutDir=\${outdir_S5}
+OutDir=${outdir_S5}
 
 #Interaction type - 1: peak to peak 2: peak to non peak 3: peak to all (default) 4: all to all 5: everything from 1 to 4.
 IntType=3
@@ -228,11 +230,11 @@ EOT
 #####################################################################################################################
 
 # generate config file for L, 10kb
-configfile_L10="results/loops/fithichip/$sample_name/configfile_L10"
+configfile_L10="results/loops/fithichip/${sample_name}_2/configfile_L10"
 touch $configfile_L10
 cat <<EOT >> $configfile_L10
 # File containing the valid pairs from HiCPro pipeline 
-ValidPairs=\${pairs_file}
+ValidPairs=${pairs_file}
 
 # File containing the bin intervals (according to a specified bin size)
 # which is an output of HiC-pro pipeline
@@ -256,10 +258,10 @@ CircularGenome=0
 
 # File containing reference ChIP-seq / HiChIP peaks (in .bed format)
 # mandatory parameter
-PeakFile=\${peaks_file}
+PeakFile=${peaks_file}
 
 # Output base directory under which all results will be stored
-OutDir=\${outdir_L10}
+OutDir=${outdir_L10}
 
 #Interaction type - 1: peak to peak 2: peak to non peak 3: peak to all (default) 4: all to all 5: everything from 1 to 4.
 IntType=3
@@ -304,11 +306,11 @@ EOT
 #####################################################################################################################
 
 # generate config file for S, 10kb
-configfile_S10="results/loops/fithichip/$sample_name/configfile_S10"
+configfile_S10="results/loops/fithichip/${sample_name}_2/configfile_S10"
 touch $configfile_S10
 cat <<EOT >> $configfile_S10
 # File containing the valid pairs from HiCPro pipeline 
-ValidPairs=\${pairs_file}
+ValidPairs=${pairs_file}
 
 # File containing the bin intervals (according to a specified bin size)
 # which is an output of HiC-pro pipeline
@@ -332,10 +334,10 @@ CircularGenome=0
 
 # File containing reference ChIP-seq / HiChIP peaks (in .bed format)
 # mandatory parameter
-PeakFile=\${peaks_file}
+PeakFile=${peaks_file}
 
 # Output base directory under which all results will be stored
-OutDir=\${outdir_S10}
+OutDir=${outdir_S10}
 
 #Interaction type - 1: peak to peak 2: peak to non peak 3: peak to all (default) 4: all to all 5: everything from 1 to 4.
 IntType=3
@@ -380,11 +382,11 @@ EOT
 #####################################################################################################################
 
 # generate config file for L, 25kb
-configfile_L25="results/loops/fithichip/$sample_name/configfile_L25"
+configfile_L25="results/loops/fithichip/${sample_name}_2/configfile_L25"
 touch $configfile_L25
 cat <<EOT >> $configfile_L25
 # File containing the valid pairs from HiCPro pipeline 
-ValidPairs=\${pairs_file}
+ValidPairs=${pairs_file}
 
 # File containing the bin intervals (according to a specified bin size)
 # which is an output of HiC-pro pipeline
@@ -408,10 +410,10 @@ CircularGenome=0
 
 # File containing reference ChIP-seq / HiChIP peaks (in .bed format)
 # mandatory parameter
-PeakFile=\${peaks_file}
+PeakFile=${peaks_file}
 
 # Output base directory under which all results will be stored
-OutDir=\${outdir_L25}
+OutDir=${outdir_L25}
 
 #Interaction type - 1: peak to peak 2: peak to non peak 3: peak to all (default) 4: all to all 5: everything from 1 to 4.
 IntType=3
@@ -456,11 +458,11 @@ EOT
 #####################################################################################################################
 
 # generate config file for S, 25kb
-configfile_S25="results/loops/fithichip/$sample_name/configfile_S25"
+configfile_S25="results/loops/fithichip/${sample_name}_2/configfile_S25"
 touch $configfile_S25
 cat <<EOT >> $configfile_S25
 # File containing the valid pairs from HiCPro pipeline 
-ValidPairs=\${pairs_file}
+ValidPairs=${pairs_file}
 
 # File containing the bin intervals (according to a specified bin size)
 # which is an output of HiC-pro pipeline
@@ -484,10 +486,10 @@ CircularGenome=0
 
 # File containing reference ChIP-seq / HiChIP peaks (in .bed format)
 # mandatory parameter
-PeakFile=\${peaks_file}
+PeakFile=${peaks_file}
 
 # Output base directory under which all results will be stored
-OutDir=\${outdir_S25}
+OutDir=${outdir_S25}
 
 #Interaction type - 1: peak to peak 2: peak to non peak 3: peak to all (default) 4: all to all 5: everything from 1 to 4.
 IntType=3
@@ -532,15 +534,18 @@ EOT
 ###########################################################################################################################
 
 # run fithichip
+echo "running fithichip"
 $fithichip_call_loops -C $configfile_L5
 $fithichip_call_loops -C $configfile_S5
 $fithichip_call_loops -C $configfile_L10
 $fithichip_call_loops -C $configfile_S10
-$fithichip_call_loops -C $configfile_l25
+$fithichip_call_loops -C $configfile_L25
 $fithichip_call_loops -C $configfile_S25
 
 # print end message
+echo
 echo "Ended: fithichip loop calling"
+echo
 
 # print end time message
 end_time=$(date "+%Y.%m.%d.%H.%M")
