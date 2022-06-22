@@ -102,16 +102,19 @@ hichip-db-loop-calling/workflow/scripts/trackers/
 We have worked on making this pipeline very standardized meaning we collect samples from the GEO database, give them a standardized sample name for processing, correctly identifying the biological versus technical replicate distinction, process these samplesheets and finally process them with HiCPro followed by loop calling and peak calling. Below are the steps to run this pipeline:
 1) Update the online samplesheet located at: https://docs.google.com/spreadsheets/d/1myw--D1_jMa3UFEUPyLy5C3MnbfcJzLIIJEoCS_3X4k/edit?usp=sharing (some helper scripts have been generated help with this and will be explained at a later date). For samples you would like to process please update the "Start Processing" entry to 1. 
 2) Download the online samplesheet to your personal clone of this repository under `results/samplesheets/fastq` and name using the following format: YYYY.MM.DD.NN.SS.fastq.google-samplesheet.tsv. Note: always make sure to use two digits for month (MM), day (DD), minute (NN) and second (SS).
-3) Save this date into the tracker package under 
+3) Save this date into the tracker package under: `workflow/scripts/trackers/tracker/__init__.py`
 4) Convert this Google based samplesheet into a format(s) ready for our pipeline:
-  a) Convert from this Google Format into a SRR format by running `workflow/scripts/trackers/converter.google_to_fastq_samplesheet.ipynb`, 
-  b) Update the softlink for `Current-HiChIP-SRR-Samplesheet-Without-Header.tsv` within `results/samplesheets/fastq`:  by using: `ln -s -r -f YYYY.MM.DD.NN.SS.fastq.google-samplesheet.tsv Current-HiChIP-SRR-Samplesheet-Without-Header.tsv`,
-  c) Convert from the processing format into a HiCPro format by running `workflow/scripts/trackers/converter.fastq_to_hicpro_samplesheet.ipynb`,
-  d) Update the softlink for `current.hicpro.samplesheet.without_header.tsv` within `results/samplesheets/hicpro`: by using: `ln -s -r -f YYYY.MM.DD.NN.SS.hicpro.samplesheet.without_header.tsv Current-HiChIP-SRR-Samplesheet-Without-Header.tsv`, 
-5) Run the download tracker to find out what samples need to be downloaded: 
+5) 
+    - Convert from this Google Format into a SRR format by running `workflow/scripts/trackers/converter.google_to_fastq_samplesheet.ipynb`, 
+    - Update the softlink for `Current-HiChIP-SRR-Samplesheet-Without-Header.tsv` within `results/samplesheets/fastq`:  by using: `ln -s -r -f YYYY.MM.DD.NN.SS.fastq.google-samplesheet.tsv Current-HiChIP-SRR-Samplesheet-Without-Header.tsv`,
+    - Convert from the processing format into a HiCPro format by running `workflow/scripts/trackers/converter.fastq_to_hicpro_samplesheet.ipynb`,
+    - Update the softlink for `current.hicpro.samplesheet.without_header.tsv` within `results/samplesheets/hicpro`: by using: `ln -s -r -f YYYY.MM.DD.NN.SS.hicpro.samplesheet.without_header.tsv Current-HiChIP-SRR-Samplesheet-Without-Header.tsv`, 
+    
+5) Run the download tracker to find out what samples need to be downloaded: `workflow/scripts/trackers/tracker.download_srr_fastqs.ipynb`
 6) Start downloading data using the qsub command from the download tracker
-7) Run the split tracker to find out what samples need to be split: 
+7) Run the split tracker to find out what samples need to be split: `workflow/scripts/trackers/tracker.split_fastqs.ipynb`
 8) Start splitting data using the qsub command from the split tracker
-9) Run the HiCPro tracker to find out what samples need to be run: 
+9) Run the HiCPro tracker to find out what samples need to be run: `workflow/scripts/trackers/tracker.run_hicpro.ipynb`
 10) Start HiCPro using the qsub command from the HiCPro tracker (need to be a bit more careful with this one)
 
+Advice on running this pipeline. Samples will fail from time to time and you'll have to manually fix them. Try to save all of this fixing until you have completely run the pipeline at least once for hopefully a majority of the samples. Don't follow this advice strictly but it will help you not get lost in the tangle of mis-run samples.
