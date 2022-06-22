@@ -6,17 +6,29 @@
 #PBS -N run_hicpro
 #PBS -V
 
-# Usage:
+# Usage: (out of date)
 # Initially I wanted this script to work with a qsub array but 
 # there are some technical issues I haven't figured out yet. For now
 # we can use this script doing submitting each sample one by one:
 # job_ids="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 21 22 23 24 26 27 28 29 30 31 32 33 34 35 36 37 39 40 41 43 45 46 47 48 49 50 51 52 53 54 55"
 # for i in $job_ids; do bash workflow/scripts/hicpro/run_hicpro.qarray.sh $i; done
 
+# # run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
 # dummy pbs array environment values
-#PBS_ARRAYID=42 # Ramos sample (only 6 million reads)
-PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
-PBS_ARRAYID=$1
+# dummy value when not running with qsub
+echo
+if [[ -z ${PBS_ARRAYID+x} ]]
+then
+    echo "Running with bash, setting PBS_ARRAYID=\$1=$1"
+    PBS_ARRAYID=$1
+    PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
+else
+    echo "Running with qsub, PBS_ARRAYID=$PBS_ARRAYID"
+fi
+echo
 
 # print start message
 echo "Started: run_hicpro"

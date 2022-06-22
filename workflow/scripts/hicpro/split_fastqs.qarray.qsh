@@ -1,14 +1,27 @@
 #PBS -l nodes=1:ppn=4
-#PBS -l mem=20gb
+#PBS -l mem=48gb
 #PBS -l walltime=200:00:00
 #PBS -e results/fastqs/parallel/logs/
 #PBS -o results/fastqs/parallel/logs/
 #PBS -N split_fastqs
 #PBS -V
 
+# # run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
 # dummy pbs array environment values
-PBS_ARRAYID=$1
-PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
+# dummy value when not running with qsub
+echo
+if [[ -z ${PBS_ARRAYID+x} ]]
+then
+    echo "Running with bash, setting PBS_ARRAYID=\$1=$1"
+    PBS_ARRAYID=$1
+    PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
+else
+    echo "Running with qsub, PBS_ARRAYID=$PBS_ARRAYID"
+fi
+echo
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
@@ -53,7 +66,7 @@ echo "# running split_reads"
 for fq in $fastqfolder/*.fastq.gz;
 do
     echo "Splitting: $fq"
-    #$hicpro_python $split_reads --results_folder $outdir --nreads 50000000 $fq
+    $hicpro_python $split_reads --results_folder $outdir --nreads 50000000 $fq
 done
 
 # softlink files with R1/R2 designation rather than 1/2 only (found bugs with this method)

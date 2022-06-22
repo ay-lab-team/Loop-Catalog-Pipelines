@@ -1,21 +1,34 @@
 #PBS -l nodes=1:ppn=4
-#PBS -l mem=60gb
+#PBS -l mem=80gb
 #PBS -l walltime=200:00:00
 #PBS -e results/fastqs/raw/logs/
 #PBS -o results/fastqs/raw/logs/
 #PBS -N download_srr_fastqs
 #PBS -V
 
-# example run:
-# 1) qsub -t <index1>,<index2>,... workflow/scripts/download_srr_fastqs.sh
-# 2) qsub -t <index-range> workflow/scripts/download_srr_fastqs.sh
-# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/download_srr_fastqs.sh
-# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/download_srr_fastqs.sh
-# 5) qsub -t <any combination of index + ranges> workflow/scripts/download_srr_fastqs.sh
+# Usage: (out of date)
+# Initially I wanted this script to work with a qsub array but 
+# there are some technical issues I haven't figured out yet. For now
+# we can use this script doing submitting each sample one by one:
+# job_ids="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 21 22 23 24 26 27 28 29 30 31 32 33 34 35 36 37 39 40 41 43 45 46 47 48 49 50 51 52 53 54 55"
+# for i in $job_ids; do bash workflow/scripts/hicpro/run_hicpro.qarray.sh $i; done
+
+# # run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
 
 # dummy pbs array environment values
-#PBS_ARRAYID=1
-#PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
+# dummy value when not running with qsub
+echo
+if [[ -z ${PBS_ARRAYID+x} ]]
+then
+    echo "Running with bash, setting PBS_ARRAYID=\$1=$1"
+    PBS_ARRAYID=$1
+    PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
+else
+    echo "Running with qsub, PBS_ARRAYID=$PBS_ARRAYID"
+fi
+echo
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
@@ -57,7 +70,7 @@ mkdir -p $outdir
 echo "# running grabseqs"
 retries=8
 threads=4
-$grabseqs sra -o $outdir -r $retries -t $threads $srr_id
+$grabseqs sra -f -o $outdir -r $retries -t $threads $srr_id
 
 # print end message
 echo "Ended: download_srr_fastqs"

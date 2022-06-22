@@ -1,3 +1,4 @@
+#scratch_dir="/mnt/hpcscratch/$(whoami)/hichip-db-loop-calling"
 mamba="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/mambaforge/envs/hichip-db/bin/mamba"
 hicpro_python="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/mambaforge/envs/HiC-Pro_v3.1.0/bin/python"
 hicpro="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/HiC-Pro"
