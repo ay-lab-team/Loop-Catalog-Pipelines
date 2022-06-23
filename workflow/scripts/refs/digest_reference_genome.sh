@@ -9,13 +9,19 @@
 # example run:
 # 1) qsub -F "<name of RE (lowercase)> <restriction site>" digest_reference_genome.sh
 
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# make sure to work starting from the base directory for this project 
+cd $PBS_O_WORKDIR
+
 # path of files
-output="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/hg38/hg38_$1_digestion.bed"
+output="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/hg38/hg38_${1}_digestion.bed"
 ref_fasta="results/refs/reference_genomes/RefGenome/fasta/hg38/hg38.fa"
 
 # path of softwares 
-source config/config.sh
 source workflow/source_paths.sh
 
 # digest the genome
-$hicpro_python $hicpro_digest -r $2 -o $output $ref_fasta
+$hicpro_python $hicpro_digest -r ${@:2} -o $output $ref_fasta

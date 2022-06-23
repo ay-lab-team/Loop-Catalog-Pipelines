@@ -4,6 +4,7 @@ hicpro_python="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/mambaforge/envs/HiC-Pr
 hicpro="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/HiC-Pro"
 split_reads="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/utils/split_reads.py"
 hicpro2juicebox="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/utils/hicpro2juicebox.sh"
+hicpro_digest="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/hicpro/compiled_code/HiC-Pro_3.1.0/bin/utils/digest_genome.py"
 grabseqs="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/mambaforge/envs/hichip-db/bin/grabseqs"
 fithichip_python="/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/python3.9"
 fithichip_r="/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/R"
