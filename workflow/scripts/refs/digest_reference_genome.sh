@@ -10,7 +10,7 @@
 # 1) qsub -F "<name of RE (lowercase)> <restriction site>" digest_reference_genome.sh
 
 # path of files
-output="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/hg38/hg38_$1_digestion.bed"
+output="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/hg38/hg38_${1}_digestion.bed"
 ref_fasta="results/refs/reference_genomes/RefGenome/fasta/hg38/hg38.fa"
 
 # path of softwares 
