@@ -7,7 +7,7 @@
 #PBS -V
 
 # example run:
-# 1) qsub -F "<genome> <name of RE (lowercase, if multiple separate with dashes)> <restriction site(s)>" digest_reference_genome.sh
+# 1) qsub -F "<reference genome> <name of RE (lowercase, if multiple separate with dashes)> <restriction site(s)>" workflow/scripts/refs/digest_reference_genome.sh
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
