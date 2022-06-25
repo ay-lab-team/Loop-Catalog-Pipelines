@@ -31,9 +31,14 @@ echo "genome: $1"
 echo "start diesgtion for: $2"
 echo
 
-# path of files
+# output file
 output="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/${1}/${1}_${2}_digestion.bed"
+
+# reference genome file
+# use for human
 ref_fasta="results/refs/reference_genomes/RefGenome/fasta/${1}/${1}.fa"
+# Use for mouse mm10:
+#ref_fasta="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/fasta/mm10/GRCm38.P6.primary_assembly.genome.fa"
 
 # digest the genome
 $hicpro_python $hicpro_digest -r ${@:3} -o $output $ref_fasta
