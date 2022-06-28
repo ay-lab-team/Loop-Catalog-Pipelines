@@ -10,3 +10,5 @@ fasterq*
 results/samplesheets/fastq/*
 !results/samplesheets/hicpro/
 results/samplesheets/hicpro/*
+!results/samplesheets/post-hicpro/
+results/samplesheets/post-hicpro/*
