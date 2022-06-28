@@ -1,6 +1,6 @@
 #PBS -l nodes=1:ppn=4
 #PBS -l mem=80gb
-#PBS -l walltime=50:00:00
+#PBS -l walltime=10:00:00
 #PBS -e results/fastqs/raw/logs/
 #PBS -o results/fastqs/raw/logs/
 #PBS -N ebi_urls_download_srr_fastqs
