@@ -1,0 +1,81 @@
+#PBS -l nodes=1:ppn=4
+#PBS -l mem=80gb
+#PBS -l walltime=200:00:00
+#PBS -e results/fastqs/raw/logs/
+#PBS -o results/fastqs/raw/logs/
+#PBS -N backup_download_srr_fastqs
+#PBS -V
+
+# This script uses a list of EBI download links generated from the SRA Explorer (https://sra-explorer.info/)
+# to download fastq files. See below for usage and important notes. 
+
+### USAGE
+# qsub -t <indicies from current samplesheet to run>%4 workflow/scripts/fastqs/backup_download_srr_fastqs.sh
+
+### NOTE
+# make sure that you have softed linked the current list of EBI download links from SRA Explorer to current-ebi-download-urls.txt
+
+# # run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: backup_download_srr_fastqs"
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# make sure to work starting from the base directory for this project 
+cd $PBS_O_WORKDIR
+
+# source tool paths
+source workflow/source_paths.sh
+
+# extract the sample information using the PBS ARRAYID
+IFS=$'\t'
+samplesheet="results/samplesheets/fastq/Current-HiChIP-SRR-Samplesheet-Without-Header.tsv"
+sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
+sample_name="${sample_info[0]}"
+srr_id="${sample_info[3]}"
+
+# extract the two download links for current SRR
+unset IFS
+ebi_urls="results/samplesheets/fastq/current-ebi-download-urls.txt"
+download_links=( $(grep ${srr_id} ${ebi_urls}) )
+download_link_1=${download_links[0]}
+download_link_2=${download_links[1]}
+
+download_link_1=${download_link_1%$'\r'}
+download_link_2=${download_link_2%$'\r'}
+
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "sample_name: $sample_name"
+echo "srr_id: $srr_id"
+echo
+
+# make the output directory 
+outdir="results/fastqs/raw/$sample_name/"
+mkdir -p $outdir
+
+# run curl command
+echo "# running curl command 1 to download fastq files"
+echo
+curl -L $download_link_1 -o "${outdir}/${srr_id}_1.fastq.gz"
+echo "# running curl command 2 to download fastq files"
+echo
+curl -L $download_link_2 -o "${outdir}/${srr_id}_2.fastq.gz"
+
+# print end message
+echo "Ended: download_srr_fastqs"
+
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"
