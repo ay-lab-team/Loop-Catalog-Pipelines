@@ -6,14 +6,21 @@
 #PBS -N backup_download_srr_fastqs
 #PBS -V
 
-# This script uses a list of EBI download links generated from the SRA Explorer (https://sra-explorer.info/)
-# to download fastq files. See below for usage and important notes. 
+#########################################################################################
+
+# This script uses a list of EBI download links generated from the SRA Explorer
+# (https://sra-explorer.info/) to download fastq files. See below for usage and
+# important notes. 
 
 ### USAGE
-# qsub -t <indicies from current samplesheet to run>%4 workflow/scripts/fastqs/backup_download_srr_fastqs.sh
+# qsub -t <indicies from current samplesheet to run>%4 workflow/scripts/fastqs/
+# backup_download_srr_fastqs.sh
 
 ### NOTE
-# make sure that you have softed linked the current list of EBI download links from SRA Explorer to current-ebi-download-urls.txt
+# make sure that you have softed linked the current list of EBI download links from
+# SRA Explorer to current-ebi-download-urls.txt
+
+########################################################################################
 
 # # run bash in strict mode
 set -euo pipefail
@@ -46,10 +53,9 @@ srr_id="${sample_info[3]}"
 # extract the two download links for current SRR
 unset IFS
 ebi_urls="results/samplesheets/fastq/current-ebi-download-urls.txt"
-download_links=( $(grep ${srr_id} ${ebi_urls}) )
-download_link_1=${download_links[0]}
-download_link_2=${download_links[1]}
-
+download_link_1=$(grep "${srr_id}_1" ${ebi_urls})
+download_link_2=$(grep "${srr_id}_2" ${ebi_urls})
+# remove extra "\r" that would make url invalid
 download_link_1=${download_link_1%$'\r'}
 download_link_2=${download_link_2%$'\r'}
 
@@ -59,6 +65,8 @@ echo "Processing"
 echo "----------"
 echo "sample_name: $sample_name"
 echo "srr_id: $srr_id"
+echo "download link R1: $download_link_1"
+echo "download link R2: $download_link_2"
 echo
 
 # make the output directory 
@@ -66,15 +74,14 @@ outdir="results/fastqs/raw/$sample_name/"
 mkdir -p $outdir
 
 # run curl command
-echo "# running curl command 1 to download fastq files"
-echo
+echo "# running curl command to download R1 fastq file"
 curl -L $download_link_1 -o "${outdir}/${srr_id}_1.fastq.gz"
-echo "# running curl command 2 to download fastq files"
-echo
+echo "# running curl command to download R2 fastq file"
 curl -L $download_link_2 -o "${outdir}/${srr_id}_2.fastq.gz"
 
 # print end message
-echo "Ended: download_srr_fastqs"
+echo
+echo "Ended: backup_download_srr_fastqs"
 
 # print end time message
 end_time=$(date "+%Y.%m.%d.%H.%M")
