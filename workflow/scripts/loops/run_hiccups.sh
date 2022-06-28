@@ -31,7 +31,7 @@ cd $PBS_O_WORKDIR
 source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/hicpro/2022.04.09.16.57.hicpro.samplesheet.without_header.tsv"
+samplesheet="results/samplesheets/post-hicpro/current-post-hicpro-without-header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 
