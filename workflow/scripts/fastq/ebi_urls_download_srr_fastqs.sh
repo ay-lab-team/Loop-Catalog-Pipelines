@@ -1,9 +1,9 @@
 #PBS -l nodes=1:ppn=4
 #PBS -l mem=80gb
-#PBS -l walltime=200:00:00
+#PBS -l walltime=50:00:00
 #PBS -e results/fastqs/raw/logs/
 #PBS -o results/fastqs/raw/logs/
-#PBS -N backup_download_srr_fastqs
+#PBS -N ebi_urls_download_srr_fastqs
 #PBS -V
 
 #########################################################################################
@@ -13,8 +13,15 @@
 # important notes. 
 
 ### USAGE
-# qsub -t <indicies from current samplesheet to run>%4 workflow/scripts/fastqs/
-# backup_download_srr_fastqs.sh
+# 1) go to the SRA Explorer (https://sra-explorer.info/)
+# 2) search for the SRRs you want to download, select them, add to your collection
+# 3) once all desired samples are added to your collection, click the "x saved datasets"
+#    button in the upper right corner
+# 4) download the Raw FastQ Download URLs file
+# 5) move this file to results/samplesheets/fastq/ and softlink to the "current-ebi-download-urls.txt" file
+#    (you may have to create this file if this is your first time using this script):
+#    ln -s -r -f <downloaded url list current-ebi-download-urls.txt
+# 6) qsub -t <indicies from fastq samplesheet>%4 workflow/scripts/fastqs/ebi_urls_download_srr_fastqs.sh
 
 ### NOTE
 # make sure that you have softed linked the current list of EBI download links from
@@ -31,7 +38,7 @@ start_time=$(date "+%Y.%m.%d.%H.%M")
 echo "Start time: $start_time"
 
 # print start message
-echo "Started: backup_download_srr_fastqs"
+echo "Started: ebi_urls_download_srr_fastqs"
 
 # run bash in strict mode
 set -euo pipefail
@@ -81,7 +88,7 @@ curl -L $download_link_2 -o "${outdir}/${srr_id}_2.fastq.gz"
 
 # print end message
 echo
-echo "Ended: backup_download_srr_fastqs"
+echo "Ended: ebi_urls_download_srr_fastqs"
 
 # print end time message
 end_time=$(date "+%Y.%m.%d.%H.%M")
