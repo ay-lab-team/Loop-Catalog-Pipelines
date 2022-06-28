@@ -2,7 +2,7 @@
 
 #PBS -l nodes=1:ppn=4
 #PBS -l mem=100gb
-#PBS -l walltime=20:00:00
+#PBS -l walltime=100:00:00
 #PBS -e results/fastqs/chipseq/logs/
 #PBS -o results/fastqs/chipseq/logs/
 #PBS -N run_download_srr_fastqs_chipseq
