@@ -6,7 +6,10 @@
 results/*
 !results/samplesheets/
 fasterq*
+!fasterq_download_srr_fastqs.sh
 !results/samplesheets/fastq/
 results/samplesheets/fastq/*
 !results/samplesheets/hicpro/
 results/samplesheets/hicpro/*
+!results/samplesheets/post-hicpro/
+results/samplesheets/post-hicpro/*

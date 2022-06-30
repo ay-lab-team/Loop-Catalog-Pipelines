@@ -36,7 +36,7 @@ PAIR2_EXT = _R2
 
 MIN_MAPQ = 30
 
-BOWTIE2_IDX_PATH = /mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/hg38
+BOWTIE2_IDX_PATH = /mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/mm10
 BOWTIE2_GLOBAL_OPTIONS = --very-sensitive -L 30 --score-min L,-0.6,-0.2 --end-to-end --reorder
 BOWTIE2_LOCAL_OPTIONS =  --very-sensitive -L 20 --score-min L,-0.6,-0.2 --end-to-end --reorder
 
@@ -44,8 +44,8 @@ BOWTIE2_LOCAL_OPTIONS =  --very-sensitive -L 20 --score-min L,-0.6,-0.2 --end-to
 ## Annotation files
 #######################################################################
 
-REFERENCE_GENOME = hg38
-GENOME_SIZE = /mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes
+REFERENCE_GENOME = mm10
+GENOME_SIZE = /mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/mm10.chrom.sizes
 
 #######################################################################
 ## Allele specific analysis
@@ -64,8 +64,8 @@ REPORT_CAPTURE_REPORTER = 1
 ## Digestion Hi-C
 #######################################################################
 
-GENOME_FRAGMENT = /mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/hg38/hg38_nlaiii_digestion.bed
-LIGATION_SITE = CATGCATG
+GENOME_FRAGMENT = /mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/mm10/mm10_bglii_digestion.bed
+LIGATION_SITE = AGATCGATCT
 MIN_FRAG_SIZE = 
 MAX_FRAG_SIZE =
 MIN_INSERT_SIZE =
