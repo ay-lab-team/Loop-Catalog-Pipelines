@@ -2,7 +2,7 @@
 
 #PBS -l nodes=1:ppn=16
 #PBS -l mem=100GB
-#PBS -l walltime=40:00:00
+#PBS -l walltime=200:00:00
 #PBS -o results/peaks/chipline/logs/
 #PBS -e results/peaks/chipline/logs/
 #PBS -N run_chipline
@@ -65,6 +65,13 @@ IFS=$'\t'
 samplesheet="results/samplesheets/fastq/chipseq_tracker.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 
+# perform a check to make sure the number of reads is greater than 10000
+num_reads=${sample_info[12]}
+if [ "$num_reads" -le "10000" ]; then
+  echo "Sample only has $num_reads reads. Not enough to call peaks!"
+  exit 1
+fi
+
 # construct the name of the sample using the naming scheme:
 # {sample_name}.{gse_id}.{organism}.{target of antibody}.b{biological_rep}
 name="${sample_info[0]}"
@@ -98,11 +105,14 @@ then
 fi
 
 # create an array of control bam files
+# if the bam files exist, then create a control bam command
 controlbams=("results/fastqs/chipseq/$control_sample_name"*/*.bam)
 control_bam_command=""
-for controlbam in ${controlbams[@]}; do
-    control_bam_command="$control_bam_command -c $(realpath $controlbam)"
-done
+if [ -f ${controlbams[0]} ]; then
+    for controlbam in ${controlbams[@]}; do
+        control_bam_command="$control_bam_command -c $(realpath $controlbam)"
+    done
+fi
 
 prefix=$sample_name
 outdir=$(realpath "results/peaks/chipline/$prefix")
@@ -123,29 +133,25 @@ chipline_command="$CodeExec \
 -O 1"
 
 # run the pipeline
-if [ ${#fastqs[@]} -eq 2 ] # check how many fastq files are in the folder (single-end or paired-end reads)
-then
-    
-    if [ -f $controlbam ] # check if the control bam file exists
-    then
+if [ ${#fastqs[@]} -eq 2 ]; then # check how many fastq files are in the folder (single-end or paired-end reads)
+    if [ -f ${controlbams[0]} ]; then # check if the control bam file exists
         echo "Running peak calling on paired-end reads, with a specified control input"
         eval "$chipline_command -r $inpfile2 $control_bam_command"
-    
     else
         echo "Running peak calling on paired-end reads, with no specified control input"
         eval "$chipline_command -r $inpfile2"
     fi
-else
-
-    if [ -f $controlbam ]
-    then
+elif [ ${#fastqs[@]} -eq 1 ]; then
+    if [ -f ${controlbams[0]} ]; then
         echo "Running peak calling on single-ended reads, with a specified control input"
         eval "$chipline_command $control_bam_command"
-    
     else
         echo "Running peak calling on single-ended reads, with no specified control input"
         eval "$chipline_command"
     fi
+else
+    echo "No fastq files for this sample exist!"
+    exit 1
 fi
 
 

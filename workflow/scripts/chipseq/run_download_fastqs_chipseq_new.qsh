@@ -5,17 +5,17 @@
 #PBS -l walltime=100:00:00
 #PBS -e results/fastqs/chipseq/logs/
 #PBS -o results/fastqs/chipseq/logs/
-#PBS -N run_download_srr_fastqs_chipseq
+#PBS -N run_download_srr_fastqs_chipseq_new
 #PBS -m ae
 #PBS -j oe
 #PBS -V
 
 # example run:
-# 1) qsub -t <index1>,<index2>,... workflow/scripts/chipseq/run_download_fastqs_chipseq.qsh
-# 2) qsub -t <index-range> workflow/scripts/chipseq/run_download_fastqs_chipseq.qsh
-# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/chipseq/run_download_fastqs_chipseq.qsh
-# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/chipseq/run_download_fastqs_chipseq.qsh
-# 5) qsub -t <any combination of index + ranges> workflow/scripts/chipseq/run_download_fastqs_chipseq.qsh
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/chipseq/run_download_fastqs_chipseq_new.qsh
+# 2) qsub -t <index-range> workflow/scripts/chipseq/run_download_fastqs_chipseq_new.qsh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/chipseq/run_download_fastqs_chipseq_new.qsh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/chipseq/run_download_fastqs_chipseq_new.qsh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/chipseq/run_download_fastqs_chipseq_new.qsh
 
 
 # print start time message
@@ -23,7 +23,7 @@ start_time=$(date "+%Y.%m.%d.%H.%M")
 echo "Start time: $start_time"
 
 # print start message
-echo "Started: run_download_fastqs_chipseq"
+echo "Started: run_download_fastqs_chipseq_new"
 
 # run bash in strict mode
 set -euo pipefail
@@ -35,9 +35,7 @@ cd $PBS_O_WORKDIR
 # source tool paths
 source workflow/source_paths.sh
 
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/data/software/sra_tools/sratoolkit.3.0.0-centos_linux64/bin:$PATH # sra-tools
-PATH=/mnt/BioApps/pigz/latest/bin/:$PATH # pigz
-PATH=/usr/bin/:$PATH # wget
+PATH=~/nrao/software/ncbi_sra_tools/sratoolkit.3.0.0-centos_linux64/bin/:$PATH # fastq-dump
 
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
@@ -90,7 +88,7 @@ threads=4
 
 # check that this SRR ID hasn't already been downloaded before downloading
 if [ -z "$(compgen -G "$outdir/$srr_id*")" ]; then
-    $grabseqs sra -o $outdir -r $retries -t $threads $srr_id
+    fastq-dump --gzip --split-files --outdir $outdir $srr_id
 else
     echo "$srr_id already exists in $outdir."
 fi
@@ -109,7 +107,7 @@ if [ "$control_srr_ids" != "N/A" ]; then
         
         # check that this SRR ID hasn't already been downloaded, then download the control
         if [ -z "$(compgen -G "$control_outdir/$control_srr_id*")" ]; then
-            $grabseqs sra -o $control_outdir -r $retries -t $threads $control_srr_id
+            fastq-dump --gzip --split-files --outdir $control_outdir $control_srr_id
         else
             echo "$control_srr_id already exists in $control_outdir."
         fi
@@ -120,7 +118,7 @@ if [ "$control_srr_ids" != "N/A" ]; then
 fi
 
 # print end message
-echo "Ended: run_download_fastqs_chipseq"
+echo "Ended: run_download_fastqs_chipseq_new"
 
 # print end time message
 end_time=$(date "+%Y.%m.%d.%H.%M")
