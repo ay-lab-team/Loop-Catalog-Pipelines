@@ -61,17 +61,23 @@ echo "# finding peaks file"
 if [ -f "use/hichip/peaks" ]; then
     echo "chip-seq peaks found and will be used to call loops"
     peaks_file= ${sample_loop_info[2]}
+
+    # make the output directory
+    outdir_S10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_chipseq.peaks/S10/"
+    mkdir -p $outdir_S10
+
 elif [ -f "${sample_loop_info[3]}" ]; then
     echo "chip-seq peaks not found. hichip peaks will be used to call loops"
     peaks_file=${sample_loop_info[3]}
+
+    # make the output directory
+    outdir_S10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_hichip.peaks/S10/"
+    mkdir -p $outdir_S10
+
 else 
     echo "no chip-seq peaks or hichip peaks file found"
     exit 2
 fi
-
-# make the output directory
-outdir_S10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}/S10/"
-mkdir -p $outdir_S10
 
 ####################################################################################################################
 
