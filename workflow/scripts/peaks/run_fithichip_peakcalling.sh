@@ -48,27 +48,39 @@ cat_outdir="results/peaks/fithichip/$sample_name/cat_pairs/"
 mkdir -p $cat_outdir
 
 # concatenate pairs files
-echo "Concatenating pairs files"
+echo "# Concatenating pairs files"
 pairs_folder="results/hicpro/$sample_name/hic_results/data/$sample_name"
 cat $pairs_folder/*'.DEPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.DEPairs"
 cat $pairs_folder/*'.SCPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.SCPairs"
 cat $pairs_folder/*'.REPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.REPairs"
 cat $pairs_folder/*'.validPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.validPairs"
 cat $pairs_folder/*'.allValidPairs' >> "$cat_outdir/$sample_name.allValidPairs"
+echo "# Concatenation done"
+echo
 
 # reference genome
 refGenomeStr="hs"
+echo "Using genome: $refGenomeStr"
 
 # get read length by counting length of line 2 of one fastq file
-fastq_file=$(echo results/fastqs/raw/$sample_name/* | awk '{print $1}')
+fastq_file=$(echo results/fastqs/raw/$sample_name/SRR*.fastq.gz | awk '{print $1}')
 ReadLength=$(zcat $fastq_file | sed -n "2p" | awk '{print length}')
+echo "Using read length: $ReadLength"
 
 # run fithichip peak calling
-echo "running fithichip peak calling"
+echo
+echo "# running fithichip peak calling"
 $fithichip_peakinferhichip -H $cat_outdir -D $outdir -R $refGenomeStr -L $ReadLength
 
 # print end message
-echo "Ended: fithichip peak calling"
+echo
+echo "# Ended: fithichip peak calling"
+
+# remove cat_pairs dir
+echo
+echo "# removing catpairs dir"
+echo
+rm -r $cat_outdir
 
 # print end time message
 end_time=$(date "+%Y.%m.%d.%H.%M")
