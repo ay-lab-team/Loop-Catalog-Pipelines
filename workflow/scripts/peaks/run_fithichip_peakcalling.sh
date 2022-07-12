@@ -26,6 +26,7 @@ IFS=$'\n\t'
 
 # make sure to work starting from the github base directory for this script 
 cd $PBS_O_WORKDIR
+work_dir=$PBS_O_WORKDIR
 
 # source tool paths
 source workflow/source_paths.sh
@@ -50,11 +51,29 @@ mkdir -p $cat_outdir
 # concatenate pairs files
 echo "# Concatenating pairs files"
 pairs_folder="results/hicpro/$sample_name/hic_results/data/$sample_name"
-cat $pairs_folder/*'.DEPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.DEPairs"
-cat $pairs_folder/*'.SCPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.SCPairs"
-cat $pairs_folder/*'.REPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.REPairs"
-cat $pairs_folder/*'.validPairs' >> "$cat_outdir/all_$sample_name.bwt2pairs.validPairs"
-cat $pairs_folder/*'.allValidPairs' >> "$cat_outdir/$sample_name.allValidPairs"
+cd $pairs_folder
+
+if [ $(find -name "*.DEPairs" | wc -l) -ne 0 ]; then
+    cat *'.DEPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.DEPairs"
+fi
+
+if [ $(find -name "*.SCPairs" | wc -l) -ne 0 ]; then
+    cat *'.SCPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.SCPairs"
+fi
+
+if [ $(find -name "*.REPairs" | wc -l) -ne 0 ]; then
+    cat *'.REPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.REPairs"
+fi
+
+if [ $(find -name "*.validPairs" | wc -l) -ne 0 ]; then
+    cat *'.validPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.validPairs"
+fi
+
+if [ $(find -name "*.allValidPairs" | wc -l) -ne 0 ]; then
+    cat *'.allValidPairs' >> "${work_dir}/${cat_outdir}rawdata_allValidPairs"
+fi
+
+cd $work_dir
 echo "# Concatenation done"
 echo
 

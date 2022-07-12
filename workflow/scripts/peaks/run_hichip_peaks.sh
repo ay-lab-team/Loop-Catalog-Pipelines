@@ -1,32 +1,70 @@
-#!/bin/bash -ex
-#PBS -l nodes=1:ppn=4
-#PBS -l mem=200GB
-#PBS -l walltime=12:00:00
-#PBS -m ae
-#PBS -j eo
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=200gb
+#PBS -l walltime=50:00:00
+#PBS -e results/peaks/logs/
+#PBS -o results/peaks/logs/
+#PBS -N run_hichip_peaks
 #PBS -V
 
-# Usage:
-# ./workflow/scripts/run_hichip_peaks.sh <HiCPro output for this sample> <sample name> <restriction fragment file>
+# example run:
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/peaks/run_hichip_peaks.sh
+# 2) qsub -t <index-range> workflow/scripts/peaks/run_hichip_peaks.sh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/peaks/run_hichip_peaks.sh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/peaks/run_hichip_peaks.sh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/peaks/run_hichip_peaks.sh
 
-source ~/.bashrc
-hostname
-TMPDIR=/scratch
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: hichip-peaks"
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# make sure to work starting from the github base directory for this script 
 cd $PBS_O_WORKDIR
+work_dir=$PBS_O_WORKDIR
 
-source activate hichip-peaks
+# source tool paths
+source workflow/source_paths.sh
 
-# input directory containing HiC-pro output
-HiCProDir=$1
+# extract the sample information using the PBS ARRAYID
+IFS=$'\t'
+samplesheet="results/samplesheets/post-hicpro/current-post-hicpro-without-header.tsv"
+sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
+sample_name="${sample_info[0]}"
+re=$(echo ${sample_info[5]} | tr '[:upper:]' '[:lower:]')
+IFS=$'\n\t'
 
-# sample name
-sample_name=$2
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "sample_name: $sample_name"
+echo "re: $re"
+echo
 
-# output directory to contain the results
-baseoutdir="results/peaks/hichip-peaks/$sample_name"
-mkdir -p $baseoutdir
+# make the output directory 
+outdir="results/peaks/hichip-peaks/$sample_name/"
+mkdir -p $outdir
 
-tempdir=$baseoutdir'/tempDir'
-mkdir -p $tempdir
+# get other parameters
+hicpro_dir="results/hicpro/$sample_name/hic_results/data/$sample_name"
+resfrag="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/hg38/hg38_${re}_digestion.bed"
+chrsizes="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes"
 
-peak_call -i $HiCProDir -o $baseoutdir -r $3 -p 'hichip_peaks_out_' -f 0.01 -a '/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes' -t $tempdir -w 4 -k -d
+# run hichip-peak calling
+echo
+echo "# running hichip-peaks"
+$peak_call -i $hicpro_dir -o $outdir -r $resfrag -p 'out_' -f 0.01 -a $chrsizes --worker_threads 4 --keep_diff
+
+# print end message
+echo
+echo "# Ended: hichip-peaks"
+
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"
