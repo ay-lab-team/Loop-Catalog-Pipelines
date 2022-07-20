@@ -1,6 +1,6 @@
 #PBS -l nodes=1:ppn=1
-#PBS -l mem=40gb
-#PBS -l walltime=100:00:00
+#PBS -l mem=200gb
+#PBS -l walltime=200:00:00
 #PBS -e results/loops/logs/
 #PBS -o results/loops/logs/
 #PBS -N run_hiccups
@@ -42,27 +42,67 @@ echo "----------"
 echo "sample_name: $sample_name"
 echo
 
-# make the output directory 
-outdir="results/loops/hiccups/threshold_200_10kb_loops/$sample_name/"
-hic_outdir="results/loops/hiccups/threshold_200_10kb_loops/$sample_name/hic_input/"
-mkdir -p $hic_outdir
+# chr1 or whole genome? (1 indicates chr1 only, 0 indicates whole genome)
+chr1=0
 
-# run hicpro2juicebox.sh
-echo "# running hicpro2juicebox.sh to create .hic input file"
-valid_pairs="results/hicpro/$sample_name/hic_results/data/$sample_name/$sample_name.allValidPairs"
-$hicpro2juicebox -i $valid_pairs -g hg38 -j $juicertools -t $hic_outdir -o $hic_outdir
+# determine how to run hiccups
+if [ $chr1 -eq 1 ]; then
 
-# print end message
-echo "Ended: hicpro2juicebox"
+    echo "Chr1 Only Selected"
+    echo
 
-# run hiccups
-echo "# running hiccups"
-inpdir="results/loops/hiccups/threshold_200_10kb_loops/$sample_name/hic_input/$sample_name.allValidPairs.hic"
-java -Xmx40g -jar $juicertools hiccups --cpu --ignore-sparsity -r 5000,10000,25000 $inpdir $outdir
+    # make the output directory 
+    outdir="results/loops/hiccups_chr1/$sample_name/"
+    hic_outdir="results/loops/hiccups_chr1/$sample_name/hic_input/"
+    mkdir -p $hic_outdir
 
-# print end message
-echo "Ended: hiccups"
+    # run hicpro2juicebox.sh
+    echo "# running hicpro2juicebox.sh to create .hic input file"
+    valid_pairs="results/hicpro/$sample_name/hic_results/data/$sample_name/${sample_name}.allValidPairs"
+    $hicpro2juicebox -i $valid_pairs -g hg38 -j $juicertools -t $hic_outdir -o $hic_outdir
+    mv results/loops/hiccups_chr1/$sample_name/hic_input/$sample_name.allValidPairs.hic results/loops/hiccups_chr1/$sample_name/hic_input/input.hic
 
-# print end time message
-end_time=$(date "+%Y.%m.%d.%H.%M")
-echo "End time: $end_time"
+    # print end message
+    echo "Ended: hicpro2juicebox"
+    echo
+
+    # run hiccups
+    echo "# running hiccups"
+    cd $outdir
+    inpdir="hic_input/input.hic"
+    java -Xmx40g -jar $juicertools hiccups --cpu --ignore-sparsity -c chr1 -r 5000,10000,25000 $inpdir .
+
+    # print end message
+    echo "Ended: hiccups"
+    echo
+
+    # print end time message
+    end_time=$(date "+%Y.%m.%d.%H.%M")
+    echo "End time: $end_time"
+fi
+
+if [ $chr1 -eq 0 ]; then
+
+    echo "Whole Genome Selected"
+    echo
+
+    # make the output directory 
+    outdir="results/loops/hiccups/$sample_name/"
+    hic_outdir="results/loops/hiccups/$sample_name/hic_input/"
+    mkdir -p $hic_outdir
+
+    # run hiccups
+    echo "# running hiccups, using input file from chr1 dir"
+    ln -s -r -f results/loops/hiccups_chr1/${sample_name}/hic_input/*.hic $hic_outdir
+    cd $outdir
+    inpdir="hic_input/*.hic"
+    java -Xmx40g -jar $juicertools hiccups --cpu --ignore-sparsity -r 5000,10000,25000 $inpdir .
+
+    # print end message
+    echo "Ended: hiccups"
+    echo
+
+    # print end time message
+    end_time=$(date "+%Y.%m.%d.%H.%M")
+    echo "End time: $end_time"
+fi
