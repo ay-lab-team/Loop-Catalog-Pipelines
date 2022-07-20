@@ -43,40 +43,76 @@ echo "sample_name: $sample_name"
 echo
 
 # identify hicpro validpairs file if avaliable
-loop_tracker="results/samplesheets/loop_calling_tracker.tsv"
-sample_loop_info=( $(cat $loop_tracker | sed -n "/^${sample_name}/ {p;q}") ) 
+file_samplesheet="results/samplesheets/post-hicpro/peaks_files.samplesheet.without_header.tsv"
+unset IFS
+sample_info=( $(grep "${sample_name}" ${file_samplesheet}) )
 
 echo "# finding hicpro validpairs file"
-if [ -f "${sample_loop_info[1]}" ]; then
+if [ -f "${sample_info[1]}" ]; then
     echo "validpairs file found and will be used to call loops"
-    pairs_file=${sample_loop_info[1]}
+    pairs_file=${sample_info[1]}
 else 
     echo "validpairs file not found"
     exit 2
 fi
 
-# identify chipseq peaks file if avaliable, hichip peaks file otherwise
+# identify peaks file depending on the peak mode selected
+# peak mode
+# 1 -> HiChIP-Peaks peaks
+# 2 -> FitHiChIP peaks
+# 3 -> ChIP-Seq peaks
+peak_mode=3
+echo 
+echo "1: HiChIP-Peaks peaks"
+echo "2: FitHiChIP peaks"
+echo "3: ChIP-Seq peaks"
+echo "Selected Peak Mode: $peak_mode"
+echo
 echo "# finding peaks file"
-#"${sample_loop_info[2]}""
-if [ -f "use/hichip/peaks" ]; then
-    echo "chip-seq peaks found and will be used to call loops"
-    peaks_file= ${sample_loop_info[2]}
 
-    # make the output directory
-    outdir_S10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_chipseq.peaks/S10/"
-    mkdir -p $outdir_S10
+# HiChIP-Peaks peaks
+if [ $peak_mode -eq 1 ]; then
+    if [ -f "${sample_info[2]}" ]; then
+        echo "hichip-peaks peaks found and will be used to call loops"
+        peaks_file=${sample_info[2]}
 
-elif [ -f "${sample_loop_info[3]}" ]; then
-    echo "chip-seq peaks not found. hichip peaks will be used to call loops"
-    peaks_file=${sample_loop_info[3]}
+        # make the output directory
+        outdir_S10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_hichip-peaks.peaks/S10/"
+        mkdir -p $outdir_S10
+    else
+        echo "no valid hichip-peaks peaks file found"
+        exit 2
+    fi
+fi
 
-    # make the output directory
-    outdir_S10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_hichip.peaks/S10/"
-    mkdir -p $outdir_S10
+# FitHiChIP peaks
+if [ $peak_mode -eq 2 ]; then
+    if [ -f "${sample_info[3]}" ]; then
+        echo "fithichip peaks found and will be used to call loops"
+        peaks_file=${sample_info[3]}
 
-else 
-    echo "no chip-seq peaks or hichip peaks file found"
-    exit 2
+        # make the output directory
+        outdir_S10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_fithichip.peaks/S10/"
+        mkdir -p $outdir_S10
+    else
+        echo "no valid fithichip peaks file found"
+        exit 2
+    fi
+fi
+
+# Chip-Seq Peaks
+if [ $peak_mode -eq 3 ]; then
+    if [ -f "${sample_info[4]}" ]; then
+        echo "chip-seq peaks found and will be used to call loops"
+        peaks_file=${sample_info[4]}
+
+        # make the output directory
+        outdir_S10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_chipseq.peaks/S10/"
+        mkdir -p $outdir_S10
+    else
+        echo "no valid chip-seq peaks file found"
+        exit 2
+    fi
 fi
 
 ####################################################################################################################
