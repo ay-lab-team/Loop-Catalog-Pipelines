@@ -44,8 +44,8 @@ echo "sample_name: $sample_name"
 echo
 
 # make the output directory 
-outdir="results/peaks/fithichip/$sample_name/"
-cat_outdir="results/peaks/fithichip/$sample_name/cat_pairs/"
+outdir="results/peaks/fithichip/${sample_name}/"
+cat_outdir="results/peaks/fithichip/${sample_name}/cat_pairs/"
 mkdir -p $cat_outdir
 
 # concatenate pairs files
@@ -65,10 +65,6 @@ if [ $(find -name "*.REPairs" | wc -l) -ne 0 ]; then
     cat *'.REPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.REPairs"
 fi
 
-if [ $(find -name "*.validPairs" | wc -l) -ne 0 ]; then
-    cat *'.validPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.validPairs"
-fi
-
 if [ $(find -name "*.allValidPairs" | wc -l) -ne 0 ]; then
     cat *'.allValidPairs' >> "${work_dir}/${cat_outdir}rawdata_allValidPairs"
 fi
@@ -81,15 +77,19 @@ echo
 refGenomeStr="hs"
 echo "Using genome: $refGenomeStr"
 
-# get read length by counting length of line 2 of one fastq file
-fastq_file=$(echo results/fastqs/raw/$sample_name/SRR*.fastq.gz | awk '{print $1}')
-ReadLength=$(zcat $fastq_file | sed -n "2p" | awk '{print length}')
-echo "Using read length: $ReadLength"
+# get read length from samplesheet
+file_samplesheet="results/samplesheets/post-hicpro/readlength.samplesheet.without_header.tsv"
+unset IFS
+sample_info=( $(grep "${sample_name}" ${file_samplesheet}) )
+ReadLengthR1=${sample_info[1]}
+ReadLengthR2=${sample_info[2]}
+echo "Using read length R1: $ReadLengthR1"
+echo "Using read length R2: $ReadLengthR2"
 
 # run fithichip peak calling
 echo
 echo "# running fithichip peak calling"
-$fithichip_peakinferhichip -H $cat_outdir -D $outdir -R $refGenomeStr -L $ReadLength
+$fithichip_peakinferhichip -H $cat_outdir -D $outdir -R $refGenomeStr -L $ReadLengthR1 -G $ReadLengthR2
 
 # print end message
 echo
