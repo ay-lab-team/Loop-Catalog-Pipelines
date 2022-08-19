@@ -1,6 +1,6 @@
 #PBS -l nodes=1:ppn=1
-#PBS -l mem=200gb
-#PBS -l walltime=200:00:00
+#PBS -l mem=100gb
+#PBS -l walltime=80:00:00
 #PBS -e results/loops/logs/
 #PBS -o results/loops/logs/
 #PBS -N run_fithichip_loopcalling_S5
@@ -34,12 +34,14 @@ source workflow/scripts/loops/fithichip_source_paths.sh
 samplesheet="results/samplesheets/post-hicpro/current-post-hicpro-without-header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
+org="${sample_info[2]}"
 
 # printing sample information
 echo
 echo "Processing"
 echo "----------"
 echo "sample_name: $sample_name"
+echo "org: $org"
 echo
 
 # identify hicpro validpairs file if avaliable
@@ -61,7 +63,7 @@ fi
 # 1 -> HiChIP-Peaks peaks
 # 2 -> FitHiChIP peaks
 # 3 -> ChIP-Seq peaks
-peak_mode=3
+peak_mode=2
 echo 
 echo "1: HiChIP-Peaks peaks"
 echo "2: FitHiChIP peaks"
@@ -113,6 +115,20 @@ if [ $peak_mode -eq 3 ]; then
         echo "no valid chip-seq peaks file found"
         exit 2
     fi
+fi
+
+## determine correct chrsize file
+if [[ "$org" == "Homo_Sapiens" ]];
+then
+    ChrSizeFile="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes"
+    echo "chrsizes: $ChrSizeFile"
+elif [[ "$org" == "Mus_Musculus" ]];
+then
+    ChrSizeFile="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/mm10.chrom.sizes"
+    echo "chrsizes: $ChrSizeFile"
+else
+    echo "org not found"
+    exit
 fi
 
 ####################################################################################################################
@@ -182,7 +198,7 @@ MergeInt=1
 QVALUE=0.01
 
 # File containing chromomosome size values corresponding to the reference genome.
-ChrSizeFile=/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes
+ChrSizeFile=${ChrSizeFile}
 
 # prefix string of all the output files (Default = 'FitHiChIP').
 PREFIX=FitHiChIP-S5

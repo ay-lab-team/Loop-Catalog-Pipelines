@@ -1,24 +1,24 @@
 #PBS -l nodes=1:ppn=1
-#PBS -l mem=100gb
-#PBS -l walltime=80:00:00
+#PBS -l mem=200gb
+#PBS -l walltime=100:00:00
 #PBS -e results/loops/logs/
 #PBS -o results/loops/logs/
-#PBS -N run_fithichip_loopcalling_S10
+#PBS -N run_fithichip_loopcalling_S5
 #PBS -V
 
 # example run:
-# 1) qsub -t <index1>,<index2>,... workflow/scripts/run_fithichip_loopcalling_S10.sh
-# 2) qsub -t <index-range> workflow/scripts/run_fithichip_loopcalling_S10.sh
-# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/run_fithichip_loopcalling_S10.sh
-# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/run_fithichip_loopcalling_S10.sh
-# 5) qsub -t <any combination of index + ranges> workflow/scripts/run_fithichip_loopcalling_S10.sh
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/run_fithichip_loopcalling_S5.sh
+# 2) qsub -t <index-range> workflow/scripts/run_fithichip_loopcalling_S5.sh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/run_fithichip_loopcalling_S5.sh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/run_fithichip_loopcalling_S5.sh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/run_fithichip_loopcalling_S5.sh
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
 echo "Start time: $start_time"
 
 # print start message
-echo "Started: run_fithichip_loopcalling_S10"
+echo "Started: run_fithichip_loopcalling_S5"
 
 # run bash in strict mode
 set -euo pipefail
@@ -61,7 +61,7 @@ fi
 # 1 -> HiChIP-Peaks peaks
 # 2 -> FitHiChIP peaks
 # 3 -> ChIP-Seq peaks
-peak_mode=2
+peak_mode=3
 echo 
 echo "1: HiChIP-Peaks peaks"
 echo "2: FitHiChIP peaks"
@@ -77,8 +77,8 @@ if [ $peak_mode -eq 1 ]; then
         peaks_file=${sample_info[2]}
 
         # make the output directory
-        outdir_S10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_hichip-peaks.peaks/S10/"
-        mkdir -p $outdir_S10
+        outdir_S5="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_hichip-peaks.peaks/S5/"
+        mkdir -p $outdir_S5
     else
         echo "no valid hichip-peaks peaks file found"
         exit 2
@@ -92,8 +92,8 @@ if [ $peak_mode -eq 2 ]; then
         peaks_file=${sample_info[3]}
 
         # make the output directory
-        outdir_S10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_fithichip.peaks/S10/"
-        mkdir -p $outdir_S10
+        outdir_S5="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_fithichip.peaks/S5/"
+        mkdir -p $outdir_S5
     else
         echo "no valid fithichip peaks file found"
         exit 2
@@ -107,8 +107,8 @@ if [ $peak_mode -eq 3 ]; then
         peaks_file=${sample_info[4]}
 
         # make the output directory
-        outdir_S10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_chipseq.peaks/S10/"
-        mkdir -p $outdir_S10
+        outdir_S5="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_chipseq.peaks/S5/"
+        mkdir -p $outdir_S5
     else
         echo "no valid chip-seq peaks file found"
         exit 2
@@ -132,9 +132,9 @@ fi
 ####################################################################################################################
 
 # generate config file for L, 5kb
-configfile_S10="${outdir_S10}configfile_S10"
-touch $configfile_S10
-cat <<EOT >> $configfile_S10
+configfile_S5="${outdir_S5}configfile_S5"
+touch $configfile_S5
+cat <<EOT >> $configfile_S5
 # File containing the valid pairs from HiCPro pipeline 
 ValidPairs=${pairs_file}
 
@@ -163,13 +163,13 @@ CircularGenome=0
 PeakFile=${peaks_file}
 
 # Output base directory under which all results will be stored
-OutDir=${outdir_S10}
+OutDir=${outdir_S5}
 
 #Interaction type - 1: peak to peak 2: peak to non peak 3: peak to all (default) 4: all to all 5: everything from 1 to 4.
 IntType=3
 
 # Size of the bins [default = 5000], in bases, for detecting the interactions.
-BINSIZE=10000
+BINSIZE=5000
 
 # Lower distance threshold of interaction between two segments
 # (default = 20000 or 20 Kb)
@@ -199,7 +199,7 @@ QVALUE=0.01
 ChrSizeFile=${ChrSizeFile}
 
 # prefix string of all the output files (Default = 'FitHiChIP').
-PREFIX=FitHiChIP-S10
+PREFIX=FitHiChIP-S5
 
 # Binary variable 1/0: if 1, overwrites any existing output file. otherwise (0), does not overwrite any output file.
 OverWrite=1
@@ -211,11 +211,11 @@ EOT
 echo
 echo "running fithichip"
 echo
-$fithichip_call_loops -C $configfile_S10
+$fithichip_call_loops -C $configfile_S5
 
 # print end message
 echo
-echo "Ended: fithichip loop calling for S10"
+echo "Ended: fithichip loop calling for S5"
 echo
 
 # print end time message
