@@ -35,6 +35,7 @@ source workflow/source_paths.sh
 samplesheet="results/samplesheets/post-hicpro/current-post-hicpro-without-header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
+org="${sample_info[2]}"
 
 # printing sample information
 echo
@@ -74,7 +75,16 @@ echo "# Concatenation done"
 echo
 
 # reference genome
-refGenomeStr="hs"
+if [[ "$org" == "Homo_Sapiens" ]];
+then
+    refGenomeStr="hs"
+elif [[ "$org" == "Mus_Musculus" ]];
+then
+    refGenomeStr="mm"
+else
+    echo "valid org not found"
+    exit
+fi
 echo "Using genome: $refGenomeStr"
 
 # get read length from samplesheet

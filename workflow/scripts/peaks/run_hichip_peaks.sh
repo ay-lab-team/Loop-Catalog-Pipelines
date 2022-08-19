@@ -37,6 +37,7 @@ samplesheet="results/samplesheets/post-hicpro/current-post-hicpro-without-header
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 re=$(echo ${sample_info[5]} | tr '[:upper:]' '[:lower:]')
+org="${sample_info[2]}"
 IFS=$'\n\t'
 
 # printing sample information
@@ -45,6 +46,7 @@ echo "Processing"
 echo "----------"
 echo "sample_name: $sample_name"
 echo "re: $re"
+echo "org: $org"
 echo
 
 # make the output directory 
@@ -53,8 +55,19 @@ mkdir -p $outdir
 
 # get other parameters
 hicpro_dir="results/hicpro/$sample_name/hic_results/data/$sample_name"
-resfrag="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/hg38/hg38_${re}_digestion.bed"
-chrsizes="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes"
+
+if [[ "$org" == "Homo_Sapiens" ]];
+then
+    resfrag="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/hg38/hg38_${re}_digestion.bed"
+    chrsizes="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes"
+elif [[ "$org" == "Mus_Musculus" ]];
+then
+    resfrag="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/mm10/mm10_${re}_digestion.bed"
+    chrsizes="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/mm10.chrom.sizes"
+else
+    echo "valid org not found"
+    exit
+fi
 
 # run hichip-peak calling
 echo
