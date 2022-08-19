@@ -24,7 +24,7 @@ if [[ -z ${PBS_ARRAYID+x} ]]
 then
     echo "Running with bash, setting PBS_ARRAYID=\$1=$1"
     PBS_ARRAYID=$1
-    PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
+    PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling"
 else
     echo "Running with qsub, PBS_ARRAYID=$PBS_ARRAYID"
 fi
@@ -49,6 +49,7 @@ samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_head
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 geo_id="${sample_info[1]}"
+org="${sample_info[2]}"
 re=$(echo ${sample_info[5]} | tr '[:upper:]' '[:lower:]')
 IFS=$'\n\t'
 
@@ -57,7 +58,16 @@ IFS=$'\n\t'
 #1) genome sizes = "results/refs/reference_genomes/RefGenome/chrsize/hg38.chrom.sizes"
 #2) digestion file = ""
 #3) bowtie2_indexes = "results/refs/reference_genomes/RefGenome/bowtie2_index/hg38/hg38"
-config="config/hicpro/configfile.hg38.human.${re}.txt"
+if [[ "$org" == "Homo_Sapiens" ]];
+then
+    config="config/hicpro/configfile.hg38.human.${re}.txt"
+elif [[ "$org" == "Mus_Musculus" ]];
+then
+    config="config/hicpro/configfile.mm10.mouse.${re}.txt"
+else
+    echo "config not found"
+    exit
+fi
 
 # printing run/sample information
 echo
@@ -66,6 +76,7 @@ echo "----------"
 echo "sample_name: $sample_name"
 echo "geo_id: $geo_id"
 echo "re: $re"
+echo "org: $org"
 echo "config: $config"
 echo
 
