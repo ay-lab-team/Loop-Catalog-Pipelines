@@ -26,7 +26,7 @@ Erythroid_0hr	Perreault et al., 2020	GSE142004	GSM4217566	SRR10690968	ChIP-exo_0
 Erythroid_1hr	Perreault et al., 2020	GSE142004	GSM4217567	SRR10690969	ChIP-exo_1hr_YY1	N/A	N/A	N/A	erythroid	Processed file is merged from two biological replicates	Mus musculus	158824840	1	YY1	MboI	1	1	1	1	
 Erythroid_1hr	Perreault et al., 2020	GSE142004	GSM4217567	SRR10690970	ChIP-exo_1hr_YY1	N/A	N/A	N/A	erythroid	Processed file is merged from two biological replicates	Mus musculus	158824840	2	YY1	MboI	1	1	1	1	
 																				
-mESC_RYBP_KO	Wei et al., 2022	GSE147919	GSM4448898	SRR11465556	ChIP-seq_RYBP	GSM4448899	SRR11465557	ChIP-seq_Input	mouse embryonic stem cells	N/A	Mus musculus	63161940	1	RYBP	MboI	0	0	0	0	
+mESC_WT	Wei et al., 2022	GSE147919	GSM4448898	SRR11465556	ChIP-seq_RYBP	GSM4448899	SRR11465557	ChIP-seq_Input	mouse embryonic stem cells	N/A	Mus musculus	63161940	1	RYBP	MboI	0	0	0	0	
 																				
 BMDM_24hIL4	Hoeksema et al., 2021	GSE159629	GSM4836423	SRR12844353	hichip_C57_BMDM_24hIL4_rep1	GSM4836077	SRR12844355	ChIP_input_C57_BMDM_basal	hichip_C57_BMDM_24hIL4	N/A	Mus musculus	191030280	1	H3K4me3	MboI	1	1	1	1	
 BMDM_24hIL4	Hoeksema et al., 2021	GSE159629	GSM4836424	SRR12844354	hichip_C57_BMDM_24hIL4_rep2	GSM4836077	SRR12844355	ChIP_input_C57_BMDM_basal	hichip_C57_BMDM_24hIL4	N/A	Mus musculus	233260738	2	H3K4me3	MboI	1	1	1	1	
