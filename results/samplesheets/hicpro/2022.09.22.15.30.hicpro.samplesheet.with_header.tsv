@@ -1,0 +1,3 @@
+std_sample_name	gse_id	organism	bio_rep	antibody_target	restriction_enzyme	sample_name
+mESC_WT.GSE147919.Mus_Musculus.RYBP.b1	GSE147919	Mus_Musculus	1	RYBP	MboI	mESC_WT
+mESC_WT.GSE147919.Mus_Musculus.RYBP.b2	GSE147919	Mus_Musculus	2	RYBP	MboI	mESC_WT
