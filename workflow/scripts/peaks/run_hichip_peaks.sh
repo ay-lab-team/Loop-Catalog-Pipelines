@@ -33,7 +33,7 @@ source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
-samplesheet="results/samplesheets/post-hicpro/current-post-hicpro-without-header.tsv"
+samplesheet="results/samplesheets/hicpro/current.mouse.hicpro.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 re=$(echo ${sample_info[5]} | tr '[:upper:]' '[:lower:]')

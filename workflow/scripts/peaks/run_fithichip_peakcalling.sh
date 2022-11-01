@@ -32,7 +32,7 @@ work_dir=$PBS_O_WORKDIR
 source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/post-hicpro/current-post-hicpro-without-header.tsv"
+samplesheet="results/samplesheets/hicpro/current.mouse.hicpro.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 org="${sample_info[2]}"
@@ -88,7 +88,7 @@ fi
 echo "Using genome: $refGenomeStr"
 
 # get read length from samplesheet
-file_samplesheet="results/samplesheets/post-hicpro/readlength.samplesheet.without_header.tsv"
+file_samplesheet="results/samplesheets/post-hicpro/readlength.mouse.samplesheet.without_header.tsv"
 unset IFS
 sample_info=( $(grep "${sample_name}" ${file_samplesheet}) )
 ReadLengthR1=${sample_info[1]}

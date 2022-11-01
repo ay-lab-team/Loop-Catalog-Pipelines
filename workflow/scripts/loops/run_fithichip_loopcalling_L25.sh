@@ -31,19 +31,21 @@ cd $PBS_O_WORKDIR
 source workflow/scripts/loops/fithichip_source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/post-hicpro/current-post-hicpro-without-header.tsv"
+samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
+org="${sample_info[2]}"
 
 # printing sample information
 echo
 echo "Processing"
 echo "----------"
 echo "sample_name: $sample_name"
+echo "org: $org"
 echo
 
 # identify hicpro validpairs file if avaliable
-file_samplesheet="results/samplesheets/post-hicpro/peaks_files.samplesheet.without_header.tsv"
+file_samplesheet="results/samplesheets/post-hicpro/human.peaks_files.samplesheet.without_header.tsv"
 unset IFS
 sample_info=( $(grep "${sample_name}" ${file_samplesheet}) )
 
