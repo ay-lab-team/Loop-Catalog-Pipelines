@@ -21,7 +21,7 @@ JOB_NAME =
 JOB_MEM = 80gb
 JOB_WALLTIME = 200:00:00
 JOB_QUEUE = default
-JOB_MAIL = jreyna@lji.org
+JOB_MAIL = kfetter@lji.org
 
 #########################################################################
 ## Data
