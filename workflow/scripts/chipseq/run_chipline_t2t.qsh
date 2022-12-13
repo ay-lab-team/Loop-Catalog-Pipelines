@@ -1,0 +1,167 @@
+#!/bin/bash -ex
+
+#PBS -l nodes=1:ppn=16
+#PBS -l mem=100GB
+#PBS -l walltime=200:00:00
+#PBS -o results/peaks/chipline/logs/
+#PBS -e results/peaks/chipline/logs/
+#PBS -N run_chipline
+#PBS -m ae
+#PBS -j oe
+#PBS -V
+
+# example run:
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/chipseq/run_chipline.qsh
+# 2) qsub -t <index-range> workflow/scripts/chipseq/run_chipline.qsh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/chipseq/run_chipline.qsh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/chipseq/run_chipline.qsh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/chipseq/run_chipline.qsh
+
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: run_chipline"
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# make sure to work starting from the base directory for this project 
+cd $PBS_O_WORKDIR
+
+# set paths to softwares
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/bowtie2/bowtie2-2.4.5:$PATH # bowtie2
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/samtools/samtools-1.15.1:$PATH # samtools
+PATH=/share/apps/picard-tools/picard-tools-2.7.1/:$PATH # picard
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/phantompeakqualtools/:$PATH # phantompeakqualtools
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software:$PATH # Utilities "bedGraphToBigWig", "bedSort", "bigBedToBed", "hubCheck", "fetchChromSizes"
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/deeptools/bin/:$PATH # deeptools
+PATH=/share/apps/python/python-2.7.13/bin/:$PATH # macs2
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/homer/bin/:$PATH # HOMER
+PATH=/share/apps/R/3.6.1/bin/:$PATH # R
+
+#=================
+# main executable script of the ChIP seq pipeline
+#=================
+# developed by - Sourya Bhattacharyya
+# modified by - Nikhil Rao
+# Vijay-AY lab
+# La Jolla Institute for Allergy and Immunology
+#=================
+
+CodeDir="/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/ChIPLine/"
+CodeExec="$CodeDir/bin/pipeline.sh"
+
+# extract the sample information using the PBS ARRAYID
+IFS=$'\t'
+samplesheet="results/samplesheets/fastq/chipseq_tracker.tsv"
+sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
+
+# perform a check to make sure the number of reads is greater than 10000
+num_reads=${sample_info[12]}
+if [ "$num_reads" -le "10000" ]; then
+  echo "Sample only has $num_reads reads. Not enough to call peaks!"
+  exit 1
+fi
+
+# construct the name of the sample using the naming scheme:
+# {sample_name}.{gse_id}.{organism}.{target of antibody}.b{biological_rep}
+name="${sample_info[0]}"
+gse_id="${sample_info[2]}"
+
+organism="${sample_info[11]}"
+organism=$(echo "$organism" | awk '{print tolower($0)}') # convert string to lowercase
+organism=$(echo "$organism" | awk '{for (i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)} 1') # Capitalize each word
+
+target_of_antibody="${sample_info[14]}"
+biological_rep="${sample_info[13]}"
+
+# create sample name and replace spaces with underscores
+sample_name="$name.$gse_id.$organism.$target_of_antibody.b$biological_rep"
+sample_name="${sample_name// /_}"
+
+# construct the control file name
+# note that the target of antibody name has been replaced with "input" and there is no replicate number
+control_sample_name="$name.$gse_id.$organism.input"
+control_sample_name="${control_sample_name// /_}"
+
+# directory with input fastqs
+dirdata="results/fastqs/chipseq/$sample_name"
+
+# set the genome index
+if [ "$organism" = "Homo Sapiens" ]; then
+    echo "Using human genome"
+    genome="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/index/chm13"
+elif [ "$organism" = "Mus Musculus" ]; then
+    echo "Using mouse genome"
+    genome="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/mm10/mm10"
+fi
+
+# set variables for input fastqs
+fastqs=($dirdata/*.fastq.gz)
+inpfile1=$(realpath ${fastqs[0]})
+if [[ ${#fastqs[@]} -eq 2 ]]
+then
+    inpfile2=$(realpath ${fastqs[1]})
+fi
+
+# create an array of control bam files aligned to T2T genome
+# if the bam files exist, then create a control bam command
+controlbams=("results/fastqs/chipseq/$control_sample_name"*/*_t2t.bam)
+control_bam_command=""
+if [ -f ${controlbams[0]} ]; then
+    for controlbam in ${controlbams[@]}; do
+        control_bam_command="$control_bam_command -c $(realpath $controlbam)"
+    done
+fi
+
+prefix=$sample_name
+outdir=$(realpath "results/peaks/chipline_t2t/$prefix")
+configfile=$(realpath "config/chipline/configfile.txt")
+
+chipline_command="$CodeExec \
+-f $inpfile1 \
+-C $configfile \
+-n $prefix \
+-g $genome \
+-d $outdir \
+-t 16 \
+-m 16G \
+-T 0 \
+-q 30 \
+-D 1 \
+-p hs \
+-O 1"
+
+# run the pipeline
+if [ ${#fastqs[@]} -eq 2 ]; then # check how many fastq files are in the folder (single-end or paired-end reads)
+    if [ -f ${controlbams[0]} ]; then # check if the control bam file exists
+        echo "Running peak calling on paired-end reads, with a specified control input"
+        eval "$chipline_command -r $inpfile2 $control_bam_command"
+    else
+        echo "Running peak calling on paired-end reads, with no specified control input"
+        eval "$chipline_command -r $inpfile2"
+    fi
+elif [ ${#fastqs[@]} -eq 1 ]; then
+    if [ -f ${controlbams[0]} ]; then
+        echo "Running peak calling on single-ended reads, with a specified control input"
+        eval "$chipline_command $control_bam_command"
+    else
+        echo "Running peak calling on single-ended reads, with no specified control input"
+        eval "$chipline_command"
+    fi
+else
+    echo "No fastq files for this sample exist!"
+    exit 1
+fi
+
+
+
+# print end message
+echo "Ended: run_chipline"
+
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"

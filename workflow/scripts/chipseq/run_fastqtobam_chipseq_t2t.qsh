@@ -1,0 +1,136 @@
+#!/bin/bash -ex
+
+#PBS -l nodes=1:ppn=4
+#PBS -l mem=100gb
+#PBS -l walltime=200:00:00
+#PBS -e results/fastqs/chipseq/logs/
+#PBS -o results/fastqs/chipseq/logs/
+#PBS -N run_fastqtobam_chipseq
+#PBS -m ae
+#PBS -j oe
+#PBS -V
+
+# example run:
+# 1) qsub -t <index1>,<index2>,... workflow/scripts/chipseq/run_fastqtobam_chipseq.qsh
+# 2) qsub -t <index-range> workflow/scripts/chipseq/run_fastqtobam_chipseq.qsh
+# 3) qsub -t <index1>,<index2>,<index-range1> workflow/scripts/chipseq/run_fastqtobam_chipseq.qsh
+# 4) qsub -t <index-range1>,<index-range2>,... workflow/scripts/chipseq/run_fastqtobam_chipseq.qsh
+# 5) qsub -t <any combination of index + ranges> workflow/scripts/chipseq/run_fastqtobam_chipseq.qsh
+
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: run_fastqtobam_chipseq"
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# make sure to work starting from the base directory for this project 
+cd $PBS_O_WORKDIR
+
+PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/bowtie2/bowtie2-2.4.5:$PATH # bowtie2
+
+
+# extract the sample information using the PBS ARRAYID
+IFS=$'\t'
+samplesheet="results/samplesheets/fastq/chipseq_tracker.tsv"
+sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
+
+# begin to construct the name of the control directory
+name="${sample_info[0]}"
+gse_id="${sample_info[2]}"
+
+organism="${sample_info[11]}"
+organism=$(echo "$organism" | awk '{print tolower($0)}') # convert string to lowercase
+organism=$(echo "$organism" | awk '{for (i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)} 1') # Capitalize each word
+
+# note that this name is further modified within the for loop
+control_sample_name_temp="$name.$gse_id.$organism.input"
+control_sample_name_temp="${control_sample_name_temp// /_}"
+
+# check whether control files exist at all
+if [ -z "$(compgen -G "results/fastqs/chipseq/$control_sample_name_temp*")" ]; then
+    echo "This sample does not contain any control inputs."
+    exit 0
+fi
+
+# split the control SRR IDs according to the separator ", "
+IFS=', ' read -r -a control_srr_ids <<< "${sample_info[7]}"
+
+# set the genome index
+if [ "$organism" = "Homo Sapiens" ]; then
+    echo "Using human genome"
+    bowtie2_index="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/index/chm13"
+elif [ "$organism" = "Mus Musculus" ]; then
+    echo "Using mouse genome"
+    bowtie2_index="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/mm10/mm10"
+fi
+
+count=1
+for control_srr_id in ${control_srr_ids[@]}; do
+    control_sample_name="$control_sample_name_temp.b$count" # finish contructing the control directory name
+    
+    samples_dir="results/fastqs/chipseq/$control_sample_name"
+    control_outdir="results/fastqs/chipseq/$control_sample_name"
+    mkdir -p $control_outdir
+
+    # create an array of the fastq files to be aligned
+    fastqs=($samples_dir/$control_srr_id*.fastq.gz)
+
+    # check whether the corresponding fastq files have been downloaded
+    if [ ! -f ${fastqs[0]} ]; then
+        echo "The fastq file(s) for $control_srr_id not downloaded in $samples_dir"
+        exit 1
+    
+    # check whether the bam files were already downloaded
+    elif [ -f "$control_outdir/$control_srr_id.bam" ]; then
+        echo "The file $control_outdir/$control_srr_id.bam already exists"
+    
+    # download the fastq files, since all checks have been passed
+    elif [ ${#fastqs[@]} -eq 1 ]; then
+        echo "Aligning the single-ended fastq file ${fastqs[0]}"
+        bowtie2 \
+            -x $bowtie2_index \
+            -U "${fastqs[0]}" \
+            | samtools view -bS - > "$control_outdir/${control_srr_id}_t2t.bam"
+    
+    elif [ ${#fastqs[@]} -eq 2 ]; then
+        echo "Aligning the paired-ended fastq files ${fastqs[0]} and ${fastqs[1]}"
+        bowtie2 \
+            -x $bowtie2_index \
+            -1 "${fastqs[0]}" \
+            -2 "${fastqs[1]}" \
+            | samtools view -bS - > "$control_outdir/${control_srr_id}_t2t.bam"
+    
+    else
+        # Consider that there are more than two fastq files, in which case you select the paired end reads for alignment.
+        fastq1=$samples_dir/$control_srr_id*_1.fastq.gz
+        fastq2=$samples_dir/$control_srr_id*_2.fastq.gz
+        
+        if [ ! -f $fastq1 ] || [ ! -f $fastq2 ]; then
+            echo "Correctly named paired fastq files do not exist in $samples_dir"
+            exit 1
+        fi
+        
+        echo "Aligning the paired-ended fastq files in $samples_dir"
+        bowtie2 \
+            -x $bowtie2_index \
+            -1 $fastq1 \
+            -2 $fastq2 \
+            | samtools view -bS - > "$control_outdir/${control_srr_id}_t2t.bam"
+    
+    fi
+
+    count=$((count + 1))
+done
+
+
+# print end message
+echo "Ended: run_fastqtobam_chipseq"
+
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"

@@ -9,7 +9,7 @@ BC1	Wang et al., 2020	GSE136090	GSM4040949	SRR10008161	BC1_ChIP_seq	GSM4040950	S
 BC1	Wang et al., 2020	GSE136090	GSM4040949	SRR10008162	BC1_ChIP_seq	GSM4040950	SRR10008163	BC1_ChIP_seq_Input	B lymphoma cells	2 replicates	Homo sapiens	11,450,703	2	H3K27ac	MboI	1	1	1	1	
 JSC	Wang et al., 2020	GSE136090	GSM4040951	SRR10008164	JSC_ChIP_seq	GSM4040952	SRR10008166	JSC_ChIP_seq_Input	B lymphoma cells	2 replicates	Homo sapiens	13,101,230	1	H3K27ac	MboI	1	1	1	1	
 JSC	Wang et al., 2020	GSE136090	GSM4040951	SRR10008165	JSC_ChIP_seq	GSM4040952	SRR10008166	JSC_ChIP_seq_Input	B lymphoma cells	2 replicates	Homo sapiens	9,173,204	2	H3K27ac	MboI	1	1	1	1	
-HAVIC	Chignon et al., 2022	GSE154512	GSM4672358	SRR12231658	ChIP-seq H3K27ac in human aortic valve interstitial cells	GSM4672359	SRR12231659	ChIP-seq H3K27ac in human aortic valve interstitial cells (input)	Human aortic valve interstitial cells from non-mineralized aortic valves	N/A	Homo sapiens	56,980,102	1	H3K27ac	MboI	1	1	1	1	deleted to avoid duplicates (GSE154513 refers to the same study)
+HAVIC	Chignon et al., 2022	GSE154512	GSM4672358	SRR12231658	ChIP-seq H3K27ac in human aortic valve interstitial cells	GSM4672359	SRR12231659	ChIP-seq H3K27ac in human aortic valve interstitial cells (input)	Human aortic valve interstitial cells from non-mineralized aortic valves	N/A	Homo sapiens	56,980,102	1	H3K27ac	MboI	-1	-1	-1	-1	deleted to avoid duplicates (GSE154513 refers to the same study)
 lgs301283	Pelikan et al., 2018	GSE116193	GSM3212820	SRR7417409	lgs301283_H3K27ac ChIP-seq	GSM3212870	SRR7417459	lgs301283_Input Chromatin ChIP-seq control	H3K27ac ChIP-seq	H3K27ac ChIP-Seq experiment	Homo sapiens	186,275,286	1	H3K27ac	MboI	1	1	1	1	
 lgs101645	Pelikan et al., 2018	GSE116193	GSM3212825	SRR7417414	lgs101645_H3K27ac ChIP-seq	GSM3212875	SRR7417464	lgs101645_Input Chromatin ChIP-seq control	H3K27ac ChIP-seq	H3K27ac ChIP-Seq experiment	Homo sapiens	142,818,628	1	H3K27ac	MboI	1	1	1	1	
 lgs102580	Pelikan et al., 2018	GSE116193	GSM3212826	SRR7417415	lgs102580_H3K27ac ChIP-seq	GSM3212876	SRR7417465	lgs102580_Input Chromatin ChIP-seq control	H3K27ac ChIP-seq	H3K27ac ChIP-Seq experiment	Homo sapiens	184,922,026	1	H3K27ac	MboI	1	1	1	1	
@@ -48,7 +48,7 @@ Nalm6	Tian et al., 2019	GSE115492	GSM3210231	SRR7408221	H3K27ac ChIP-seq	GSM3210
 STAG2-WT	Adane et al., 2021	GSE116495	GSM5049898	SRR13577555	SMC1A on A673 STAG2 WT [BA_A673_STAG2WT_SMC1A]	GSM5049902	SRR13577559	Input on A673 STAG2 WT [BA_A673_STAG2WT_Input]	A673 clones with STAG2 wild type	N/A	Homo sapiens	118318418	1	SMC1A	MboI	1	1	1	1	
 STAG2-KO	Adane et al., 2021	GSE116495	GSM5049899	SRR13577556	SMC1A on A673 STAG2 KO [BA_A673_STAG2KO_SMC1A]	GSM5049903	SRR13577560	Input on A673 STAG2 KO [BA_A673_STAG2KO_Input]	A673 clones with STAG2 knocked-out	N/A	Homo sapiens	189215394	1	SMC1A	MboI	1	1	1	1	
 MB157-WT	Petrovic et al., 2019	GSE116869	GSM3263163	SRR7505559	MB157_untreated_SMC1a_ChIPseq_rep1	GSM3263167	SRR7505563	MB157_ChIPseq_input	MB157 cell line	N/A	Homo sapiens	188442910	1	SMC1A	MboI	1	1	1	1	
-MB157-WT	Petrovic et al., 2019	GSE116869	GSM3263164	SRR7505560	MB157_untreated_SMC1a_ChIPseq_rep2	GSM3263167	SRR7505563	MB157_ChIPseq_input	MB157 cell line	N/A	Homo sapiens	26	2	SMC1A	MboI	1	1	0	0	too few reads, unable to perform peak calling
+MB157-WT	Petrovic et al., 2019	GSE116869	GSM3263164	SRR7505560	MB157_untreated_SMC1a_ChIPseq_rep2	GSM3263167	SRR7505563	MB157_ChIPseq_input	MB157 cell line	N/A	Homo sapiens	26	2	SMC1A	MboI	1	1	-1	-1	too few reads, unable to perform peak calling
 DEX	Wang et al., 2021	GSE117888	GSM3314497	SRR7624201	H3K27ac-CTL-ChIP-seq	GSM3314499	SRR7624203	input	human podocyte	DNA	Homo sapiens	77534828	1	H3K27ac	NlaIII	1	1	1	1	
 CTL	Wang et al., 2021	GSE117888	GSM3314498	SRR7624202	H3K27ac-DEX-ChIP-seq	GSM3314499	SRR7624203	input	human podocyte	DNA	Homo sapiens	75006510	1	H3K27ac	NlaIII	1	1	1	1	
 HUDEP-2-WT	Cheng et al., 2021	GSE131054	GSM3762815	SRR9044497	HUDEP2_Day3_H3K27ac_ChIP_rep1	GSM3762820	SRR9044502	HUDEP2_Day3_input_ChIP	HUDEP2_Day3_H3K27ac_ChIP	1440317_H3K27ac_H2-D3_R1_R1_trim_50bp_n	Homo sapiens	121485884	1	H3K27ac	MboI	1	1	1	1	
@@ -184,3 +184,9 @@ hCM-Ctrl	Feng et al., 2022	GSE165303	GSM5029886	SRR13506154	hCM-Ctrl_ChIP_H3K27a
 hCM-Ctrl	Feng et al., 2022	GSE165303	GSM5029887	SRR13506155	hCM-Ctrl_ChIP_H3k27ac_rep2	N/A	N/A	N/A	iPSC-derived cardiomyocyte	N/A	Homo sapiens	67280938	2	H3K27ac	Arima	1	1	1	1	
 hCM-HAND1OE	Feng et al., 2022	GSE165303	GSM5029888	SRR13506156	hCM-HAND1OE_H3K27ac_ChIP_rep1	N/A	N/A	N/A	iPSC-derived cardiomyocyte	N/A	Homo sapiens	63004598	1	H3K27ac	Arima	1	1	1	1	
 hCM-HAND1OE	Feng et al., 2022	GSE165303	GSM5029889	SRR13506157	hCM-HAND1OE_H3K27ac_ChIP_rep2	N/A	N/A	N/A	iPSC-derived cardiomyocyte	N/A	Homo sapiens	69324714	2	H3K27ac	Arima	1	1	1	1	
+CD4N_merged_donors_hg38	Chandra et al., 2021	phs001703v3p1	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A	Homo sapiens	N/A	1	H3K27ac	MboI	1	1	0	0	
+CD8N_merged_donors_hg38	Chandra et al., 2021	phs001703v3p1	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A	Homo sapiens	N/A	1	H3K27ac	MboI	1	1	0	0	
+Mono_merged_donors_hg38	Chandra et al., 2021	phs001703v3p1	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A	Homo sapiens	N/A	1	H3K27ac	MboI	1	1	0	0	
+NB_merged_donors_hg38	Chandra et al., 2021	phs001703v3p1	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A	Homo sapiens	N/A	1	H3K27ac	MboI	1	1	0	0	
+NK_merged_donors_hg38	Chandra et al., 2021	phs001703v3p1	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A	Homo sapiens	N/A	1	H3K27ac	MboI	1	1	0	0	
+NCM_merged_donors_hg38	Schmiedel et al., 2021	phs001703v4p1	N/A	N/A	N/A	N/A	N/A	N/A	N/A	N/A	Homo sapiens	N/A	1	H3K27ac	MboI	1	1	0	0	
