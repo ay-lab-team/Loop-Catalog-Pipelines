@@ -32,14 +32,14 @@ IFS=$'\n\t'
 cd $PBS_O_WORKDIR
 
 # set paths to softwares
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/bowtie2/bowtie2-2.4.5:$PATH # bowtie2
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/samtools/samtools-1.15.1:$PATH # samtools
+PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/bowtie2/bowtie2-2.4.5:$PATH # bowtie2
+PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/samtools/samtools-1.15.1:$PATH # samtools
 PATH=/share/apps/picard-tools/picard-tools-2.7.1/:$PATH # picard
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/phantompeakqualtools/:$PATH # phantompeakqualtools
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software:$PATH # Utilities "bedGraphToBigWig", "bedSort", "bigBedToBed", "hubCheck", "fetchChromSizes"
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/deeptools/bin/:$PATH # deeptools
+PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/phantompeakqualtools/:$PATH # phantompeakqualtools
+PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software:$PATH # Utilities "bedGraphToBigWig", "bedSort", "bigBedToBed", "hubCheck", "fetchChromSizes"
+PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/deeptools/bin/:$PATH # deeptools
 PATH=/share/apps/python/python-2.7.13/bin/:$PATH # macs2
-PATH=/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/homer/bin/:$PATH # HOMER
+PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/homer/bin/:$PATH # HOMER
 PATH=/share/apps/R/3.6.1/bin/:$PATH # R
 
 #=================
@@ -51,7 +51,7 @@ PATH=/share/apps/R/3.6.1/bin/:$PATH # R
 # La Jolla Institute for Allergy and Immunology
 #=================
 
-CodeDir="/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/ChIPLine/"
+CodeDir="/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/ChIPLine/"
 CodeExec="$CodeDir/bin/pipeline.sh"
 
 # extract the sample information using the PBS ARRAYID

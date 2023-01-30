@@ -22,7 +22,7 @@ start_time=$(date "+%Y.%m.%d.%H.%M")
 echo "Start time: $start_time"
 
 # print start message
-echo "Started: run_fastqtobam_chipseq"
+echo "Started: run_fastqtobam_chipseq_t2t"
 
 # run bash in strict mode
 set -euo pipefail
@@ -86,8 +86,8 @@ for control_srr_id in ${control_srr_ids[@]}; do
         exit 1
     
     # check whether the bam files were already downloaded
-    elif [ -f "$control_outdir/$control_srr_id.bam" ]; then
-        echo "The file $control_outdir/$control_srr_id.bam already exists"
+    elif [ -f "$control_outdir/${control_srr_id}_t2t.bam" ]; then
+        echo "The file $control_outdir/${control_srr_id}_t2t.bam already exists"
     
     # download the fastq files, since all checks have been passed
     elif [ ${#fastqs[@]} -eq 1 ]; then
@@ -129,7 +129,7 @@ done
 
 
 # print end message
-echo "Ended: run_fastqtobam_chipseq"
+echo "Ended: run_fastqtobam_chipseq_t2t"
 
 # print end time message
 end_time=$(date "+%Y.%m.%d.%H.%M")
