@@ -99,7 +99,7 @@ echo "Using read length R2: $ReadLengthR2"
 # run fithichip peak calling
 echo
 echo "# running fithichip peak calling"
-$fithichip_peakinferhichip -H $cat_outdir -D $outdir -R $refGenomeStr -L $ReadLengthR1 -G $ReadLengthR2
+$fithichip_peakinferhichip_t2t -H $cat_outdir -D $outdir -R $refGenomeStr -L $ReadLengthR1 -G $ReadLengthR2
 
 # print end message
 echo

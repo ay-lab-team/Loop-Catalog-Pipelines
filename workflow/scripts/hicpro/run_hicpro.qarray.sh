@@ -60,7 +60,7 @@ IFS=$'\n\t'
 #3) bowtie2_indexes = "results/refs/reference_genomes/RefGenome/bowtie2_index/hg38/hg38"
 if [[ "$org" == "Homo_Sapiens" ]];
 then
-    config="config/hicpro/configfile.hg38.human.${re}.txt"
+    config="config/hicpro/configfile.chm13.human.${re}.txt"
 elif [[ "$org" == "Mus_Musculus" ]];
 then
     config="config/hicpro/configfile.mm10.mouse.${re}.txt"
@@ -82,9 +82,9 @@ echo
 
 # make the output directory 
 fastq_dir="results/fastqs/parallel/${sample_name}/"
-data_dir="results/tmp/hicpro/${sample_name}/"
-sample_dir="results/tmp/hicpro/${sample_name}/${sample_name}"
-final_dir="results/hicpro/${sample_name}/"
+data_dir="ref_genome/results/tmp/hicpro/${sample_name}/"
+sample_dir="ref_genome/results/tmp/hicpro/${sample_name}/${sample_name}"
+final_dir="ref_genome/results/hicpro/${sample_name}/"
 mkdir -p $sample_dir
 
 # softlink fastqs to a temporary directory
