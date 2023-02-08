@@ -31,10 +31,12 @@ cd $PBS_O_WORKDIR
 source workflow/scripts/loops/fithichip_source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_header.tsv"
+samplesheet="results/samplesheets/hicpro/current.mouse.hicpro.samplesheet.without_header.tsv"
+#samplesheet="results/samplesheets/post-hicpro/human_011023_0434.peaks_files.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 org="${sample_info[2]}"
+#org="Homo_Sapiens"
 
 # printing sample information
 echo
@@ -45,7 +47,9 @@ echo "org: $org"
 echo
 
 # identify hicpro validpairs file if avaliable
-file_samplesheet="results/samplesheets/post-hicpro/human.peaks_files.samplesheet.without_header.tsv"
+file_samplesheet="results/samplesheets/post-hicpro/mouse.peaks_files.samplesheet.without_header.tsv"
+#file_samplesheet="results/samplesheets/post-hicpro/human_011023_0434.peaks_files.samplesheet.without_header.tsv"
+
 unset IFS
 sample_info=( $(grep "${sample_name}" ${file_samplesheet}) )
 
@@ -110,6 +114,7 @@ if [ $peak_mode -eq 3 ]; then
 
         # make the output directory
         outdir_L10="${PBS_O_WORKDIR}/results/loops/fithichip/${sample_name}_chipseq.peaks/L10/"
+        #outdir_L10="${PBS_O_WORKDIR}/results/pieqtl_ncm_rep_combined_donorwise/fithichip/${sample_name}/L10/"
         mkdir -p $outdir_L10
     else
         echo "no valid chip-seq peaks file found"

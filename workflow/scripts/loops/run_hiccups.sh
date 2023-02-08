@@ -1,6 +1,6 @@
 #PBS -l nodes=1:ppn=1
-#PBS -l mem=200gb
-#PBS -l walltime=200:00:00
+#PBS -l mem=50gb
+#PBS -l walltime=100:00:00
 #PBS -e results/loops/logs/
 #PBS -o results/loops/logs/
 #PBS -N run_hiccups
@@ -31,7 +31,7 @@ cd $PBS_O_WORKDIR
 source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/hicpro/2022.08.17.15.48.hicpro.samplesheet.without_header.tsv"
+samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 
@@ -52,15 +52,15 @@ if [ $chr1 -eq 1 ]; then
     echo
 
     # make the output directory 
-    outdir="results/loops/hiccups_chr1/$sample_name/"
-    hic_outdir="results/loops/hiccups_chr1/$sample_name/hic_input/"
-    mkdir -p $hic_outdir
+    outdir="results/loops/hiccups/chr1/$sample_name/"
+    #hic_outdir="results/loops/hiccups/chr1/$sample_name/"
+    mkdir -p $outdir
 
     # run hicpro2juicebox.sh
     echo "# running hicpro2juicebox.sh to create .hic input file"
     valid_pairs="results/hicpro/$sample_name/hic_results/data/$sample_name/${sample_name}.allValidPairs"
-    $hicpro2juicebox -i $valid_pairs -g hg38 -j $juicertools -t $hic_outdir -o $hic_outdir
-    mv results/loops/hiccups_chr1/$sample_name/hic_input/$sample_name.allValidPairs.hic results/loops/hiccups_chr1/$sample_name/hic_input/input.hic
+    $hicpro2juicebox -i $valid_pairs -g hg38 -j $juicertools -t $outdir -o $outdir
+    mv results/loops/hiccups/chr1/$sample_name/$sample_name.allValidPairs.hic results/loops/hiccups/chr1/$sample_name/$sample_name.hic
 
     # print end message
     echo "Ended: hicpro2juicebox"
@@ -69,8 +69,10 @@ if [ $chr1 -eq 1 ]; then
     # run hiccups
     echo "# running hiccups"
     cd $outdir
-    inpdir="hic_input/input.hic"
-    java -Xmx40g -jar $juicertools hiccups --cpu --ignore-sparsity -c chr1 -r 5000,10000,25000 $inpdir .
+    inpdir="$sample_name.hic"
+    #inpdir_new=$( echo $inpdir | sed 's/+//g' )
+    #mv $inpdir $inpdir_new
+    java -Xmx50g -jar $juicertools hiccups --cpu --ignore-sparsity -c chr1 -r 5000,10000,25000 -k VC $inpdir .
 
     # print end message
     echo "Ended: hiccups"
@@ -87,16 +89,18 @@ if [ $chr1 -eq 0 ]; then
     echo
 
     # make the output directory 
-    outdir="results/loops/hiccups/$sample_name/"
-    hic_outdir="results/loops/hiccups/$sample_name/hic_input/"
-    mkdir -p $hic_outdir
+    outdir="results/loops/hiccups/whole_genome/$sample_name/"
+    #hic_outdir="results/loops/hiccups/whole_genome/$sample_name/"
+    mkdir -p $outdir
 
     # run hiccups
     echo "# running hiccups, using input file from chr1 dir"
-    ln -s -r -f results/loops/hiccups_chr1/${sample_name}/hic_input/*.hic $hic_outdir
+    ln -s -r -f results/loops/hiccups/chr1/${sample_name}/${sample_name}.hic $outdir
     cd $outdir
-    inpdir="hic_input/*.hic"
-    java -Xmx40g -jar $juicertools hiccups --cpu --ignore-sparsity -r 5000,10000,25000 $inpdir .
+    inpdir="*.hic"
+    #inpdir_new=$( echo $inpdir | sed 's/+//g' )
+    #mv $inpdir $inpdir_new
+    java -Xmx50g -jar $juicertools hiccups --cpu --ignore-sparsity -r 5000,10000,25000 -k VC $inpdir .
 
     # print end message
     echo "Ended: hiccups"
