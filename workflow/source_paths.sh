@@ -13,6 +13,7 @@ fithichip_python="/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/mambaforge/envs/hi
 fithichip_r="/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/R"
 fithichip_r_library="/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/lib/R/library"
 fithichip_peakinferhichip="/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/fithichip/FitHiChIP/Imp_Scripts/PeakInferHiChIP.sh"
+fithichip_peakinferhichip_t2t="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/workflow/scripts/peaks/PeakInferHiChIP_macs3.sh"
 hichip_peaks_python=""
 peak_call="/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/peak_call"
 hichipper_python=""
