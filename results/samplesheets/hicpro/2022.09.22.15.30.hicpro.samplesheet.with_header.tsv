@@ -1,3 +1,1 @@
-std_sample_name	gse_id	organism	bio_rep	antibody_target	restriction_enzyme	sample_name
-mESC_WT.GSE147919.Mus_Musculus.RYBP.b1	GSE147919	Mus_Musculus	1	RYBP	MboI	mESC_WT
-mESC_WT.GSE147919.Mus_Musculus.RYBP.b2	GSE147919	Mus_Musculus	2	RYBP	MboI	mESC_WT
+/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/samplesheets/hicpro/2022.09.22.15.30.hicpro.samplesheet.with_header.tsv
