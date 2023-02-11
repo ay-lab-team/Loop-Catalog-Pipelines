@@ -23,7 +23,6 @@ if [ -z "${PBS_ARRAYID+x}" ]
 then
   PBS_ARRAYID=$1
   PBS_O_WORKDIR="."
-
 fi
 
 # make sure to work starting from the github base directory for this script 
@@ -34,7 +33,9 @@ source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
 #samplesheet="results/samplesheets/post-hicpro/current-post-hicpro-without-header.tsv"
-samplesheet="results/samplesheets/post-hicpro/human.peaks_files.samplesheet.without_header.tsv"
+#samplesheet="results/samplesheets/post-hicpro/human.peaks_files.samplesheet.without_header.tsv"
+#samplesheet="results/samplesheets/post-hicpro/mouse.peaks_files.samplesheet.without_header.tsv"
+samplesheet="results/samplesheets/post-hicpro/human_t2t.peaks_files.samplesheet.without_header.tsv"
 
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
@@ -47,25 +48,24 @@ echo "sample_name: $sample_name"
 echo
 
 # identify all peaks files for one sample, then bgzip and tabix
-file_samplesheet="results/samplesheets/post-hicpro/human.peaks_files.samplesheet.without_header.tsv"
-unset IFS
-sample_info=( $(grep "${sample_name}" ${file_samplesheet}) )
 
 # determining the reference genome
-if [[ "$file_samplesheet" == *human.peaks_files.samplesheet.without_header.tsv ]]; then
+if [[ "$samplesheet" == *human.peaks_files.samplesheet.without_header.tsv ]]; then
     ref="hg38"
     genome_sizes="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes"
     
-elif [[ "$file_samplesheet" == "*human_t2t.peaks_files.samplesheet.without_header.tsv" ]]; then
-    ref="t2t-chm13-v2.0"
+elif [[ "$samplesheet" == *mouse.peaks_files.samplesheet.without_header.tsv ]]; then
+    ref="mm10"
     genome_sizes="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/mm10.chrom.sizes"
 
-elif [[ "$file_samplesheet" == "*mouse.peaks_files.samplesheet.without_header.tsv" ]]; then
-    ref="mm10"
+elif [[ "$samplesheet" == *human_t2t.peaks_files.samplesheet.without_header.tsv ]]; then
+    ref="t2t-chm13-v2.0"
     genome_sizes="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/chrsize/chm13.chrom.sizes"
 else
     echo "This run will fail because the samplesheet path is not expected. Check conditions above."
 fi
+echo "ref: $ref"
+echo "genome_sizes: $genome_sizes"
 
 # function to convert from the input file to bigBed
 function convert_to_bigBed() {
@@ -76,70 +76,74 @@ function convert_to_bigBed() {
         output=$3
         
         # do the conversion
-        /mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/ucsc_genome_browser/bedToBigBed \
-            $input \
-            $genome_sizes \
-            $output
+        $bedToBigBed $input $genome_sizes $output
 }
 
-echo "ref: $ref"
-echo "genome_sizes $genome_sizes"
+# wrapper function that completes all the conversion steps
+function convert_to_bigBed_runner(){
 
-# HiChIP-Peaks peaks
-if [ -f "${sample_info[2]}" ]; then
+        # define the positional arguments
+        sample_name=$1
+        peak_type=$2
+        peaks_file=$3
+        genome_sizes=$4   
+        
+        # skip if merged (currently these are being debugged)
+        if [[ "$peaks_file" == *merged_chipline* ]] && [[ "$peak_type" == "chipseq" ]]; then
+            echo -e "\033[0;91m***** ${peak_type} peaks skipped *****\033[0m"
+            echo "Currently skipped merged peaks due to chromosome size issues"
+            return
+        fi
+        
+        # convert the samples to bigBed
+        if [ -f "$peaks_file" ]; then
+        
+            echo -e "\033[0;92m***** ${peak_type} peaks found *****\033[0m"
 
-    echo "hichip-peaks peaks found"
-    peaks_file=${sample_info[2]}
+            echo "peaks_file: $peaks_file"
+            
+            # create a sorted intermediate file
+            echo -e "\n# create a sorted intermediate file"
 
-    # create a sorted intermediate file (DEBUG: Requires additional parsing)
-    interm_file="results/visualizations/washu/hichip-peaks_peaks/${sample_name}.hichip-peaks.peaks.txt"
-    cat $peaks_file | sort -k1,1 -k2,2n | cut -f 1,2,3 > $interm_file
+            interm_file="results/visualizations/washu/${peak_type}_peaks/${sample_name}.${peak_type}.peaks.txt"
+            cat $peaks_file | grep ^chr | sort -k1,1 -k2,2n | cut -f 1,2,3 > $interm_file
 
-    echo "interm_file: $interm_file"
-    
-    # convert to bigBed
-    outfile="results/visualizations/washu/hichip-peaks_peaks/${sample_name}.hichip-peaks.peaks.bed.bb"
-    convert_to_bigBed $interm_file $genome_sizes $outfile
-    
-    echo "outfile: $outfile"
+            echo "interm_file: $interm_file"
 
- 
-else
-    echo "${sample_name} does not have an associated hichip-peaks peaks file"
-fi
+            # convert to bigBed
+            echo -e "\n# convert to bigBed"
+            outfile="results/visualizations/washu/${peak_type}_peaks/${sample_name}.${peak_type}.peaks.bed.bb"
+            convert_to_bigBed $interm_file $genome_sizes $outfile
 
+            echo "outfile: $outfile"
+            
+            # remove the interm file
+            rm $interm_file
+            
+        else
+            echo -e "\033[0;91m***** ${peak_type} peaks NOT found *****\033[0m"
+            echo "${sample_name} does not have an associated ${peak_type} peaks file"
+        fi
+}
 
-exit
+echo 
 
-############################ Working above; below is deprecated ##################################
+# Convert HiChIP-Peaks peaks
+hp_peaks_file=${sample_info[2]}
+convert_to_bigBed_runner $sample_name "hichip-peaks" $hp_peaks_file $genome_sizes
 
+echo 
+  
+# Convert FitHiChIP peaks
+fp_peaks_file=${sample_info[3]}
+convert_to_bigBed_runner $sample_name "fithichip" $fp_peaks_file $genome_sizes
 
+echo 
 
-# FitHiChIP peaks
-if [ -f "${sample_info[3]}" ]; then
-    echo "fithichip peaks found"
-    peaks_file=${sample_info[3]}
-    outfile="results/visualizations/washu/fithichip_peaks/${sample_name}.fithichip.peaks.txt"
-    
-    cat $peaks_file | sort -k1,1 -k2,2n > $outfile
-    bgzip $outfile
-    tabix -f -p bed $outfile'.gz'
-else
-    echo "${sample_name} does not have an associated fithichip peaks file"
-fi
+# Convert Chip-Seq Peaks
+cp_peaks_file=${sample_info[4]}
+convert_to_bigBed_runner $sample_name "chipseq" $cp_peaks_file $genome_sizes
 
-# Chip-Seq Peaks
-if [ -f "${sample_info[4]}" ]; then
-    echo "chip-seq peaks found"
-    peaks_file=${sample_info[4]}
-    outfile="results/visualizations/washu/chipseq_peaks/${sample_name}.chipseq.peaks.txt"
-    
-    cat $peaks_file | sort -k1,1 -k2,2n > $outfile
-    bgzip $outfile
-    tabix -f -p bed $outfile'.gz'
-else
-    echo "${sample_name} does not have an associated chip-seq peaks file"
-fi
 
 # print end message
 echo "Ended: peaks_to_washu"
