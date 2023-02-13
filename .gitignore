@@ -22,3 +22,4 @@ results/samplesheets/hicpro/2022.10.20.09.39.hicpro.samplesheet.without_header.t
 results/samplesheets/post-hicpro/human.peaks_files.samplesheet.without_header.tsv
 tables/hicpro_metrics_website.xlsx
 tables/peaks.xlsx
+workflow/scripts/ucsc/
