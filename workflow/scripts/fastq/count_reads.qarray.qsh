@@ -5,7 +5,7 @@
 #PBS -o results/fastqs/raw/logs/
 #PBS -N count_reads
 #PBS -V
-#PBS -t 1-681
+#PBS -t 1-997
 
 # Usage: (out of date)
 # Initially I wanted this script to work with a qsub array but 
@@ -25,7 +25,7 @@ if [[ -z ${PBS_ARRAYID+x} ]]
 then
     echo "Running with bash, setting PBS_ARRAYID=\$1=$1"
     PBS_ARRAYID=$1
-    PBS_O_WORKDIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
+    PBS_O_WORKDIR="/mnt/bioadhoc-temp/Groups/vd-ay/hichip-db-loop-calling"
 else
     echo "Running with qsub, PBS_ARRAYID=$PBS_ARRAYID"
 fi
@@ -50,28 +50,29 @@ source workflow/source_paths.sh
 
 # extract the sample name + directory listing (no samplesheet) using the PBS ARRAYID
 IFS=$'\t'
-raw_dir="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/fastqs/raw/"
-samples=$(ls $raw_dir)
-sample_name=$(echo $samples | sed -n "${PBS_ARRAYID}p")
-echo "sample_name $sample_name"
-#samplesheet="results/samplesheets/fastq/Current-HiChIP-SRR-Samplesheet-Without-Header.tsv"
-#sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
-#sample_name="${sample_info[0]}"
-#srr_id="${sample_info[3]}"
+samplesheet='results/samplesheets/fastq/read_counts.tsv'
+sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
+sample_name="${sample_info[0]}"
+srr_file="${sample_info[1]}"
+srr_id=$(echo $srr_file | sed -e 's/_R1.fastq.gz//' -e 's/_1.fastq.gz//')
 
 # printing sample information
 echo
 echo "Processing"
 echo "----------"
 echo "sample_name: $sample_name"
+echo "srr_file: $srr_file"
+echo "srr_id: $srr_id"
 echo
 
 # make the output directory 
-outfn="results/fastqs/raw/${sample_name}/${sample_name}.num_reads.txt"
+outdir="results/fastqs/stats/${sample_name}/"
+mkdir -p $outdir
+outfn="results/fastqs/stats/${sample_name}/${sample_name}.${srr_id}.num_reads.txt"
 
 # get the file names
-sample_dir="${raw_dir}/${sample_name}/"
-readarray -t fns < <(find ${sample_dir}/ -name "*.fastq.gz")
+sample_dir="results/fastqs/raw/${sample_name}/"
+readarray -t fns < <(find ${sample_dir}/ -name "${srr_id}*.fastq.gz")
 
 # count the number of lines
 num_lines=0
@@ -81,7 +82,6 @@ do
     curr_lines=$(zcat $fn | wc -l)
     num_lines=$(expr $num_lines + $curr_lines)
     echo $curr_lines
-    i=$(expr $i + 1)
 done
 
 # determine the number of read by dividing by 4
