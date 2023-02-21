@@ -23,3 +23,4 @@ results/samplesheets/post-hicpro/human.peaks_files.samplesheet.without_header.ts
 tables/hicpro_metrics_website.xlsx
 tables/peaks.xlsx
 workflow/scripts/ucsc/
+tables/*
