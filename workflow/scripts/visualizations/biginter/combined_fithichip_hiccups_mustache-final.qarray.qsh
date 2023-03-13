@@ -1,0 +1,43 @@
+#PBS -l mem=1gb
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=00:50:00
+#PBS -o /mnt/BioHome/rignacio/rignacio/Scripts/Logs_BigToBigBed/job_output_file.txt 
+#PBS -e /mnt/BioHome/rignacio/rignacio/Scripts/Logs_BigToBigBed/job_error_file.txt
+#PBS -N combined_fithichip_hiccups_mustache
+#PBS -t 1-4%3
+# -d .
+
+# to run the code from bash use:
+# bash combined_fithichip_hiccups_mustache.qarray.qsh 3
+
+# to run the code from Qsub use:
+# qsub combined_fithichip_hiccups_mustache.qarray.qsh -t 3
+
+# allow this script to be run without qsub by assigning PBS_ARRAYID from
+# # the command line using $1
+if [ -z "${PBS_ARRAYID+x}" ]
+then
+  PBS_ARRAYID=$1
+  PBS_O_WORKDIR="."
+fi
+
+
+#PBS_ARRAYID=3
+#echo $PBS_ARRAYID=1
+fn=$(sed -n ${PBS_ARRAYID}p /mnt/BioHome/rignacio/rignacio/Scripts/subset_samplesheet.txt)
+
+#ref=$(echo $fn | cut -d "/" -f 7)
+#echo $ref
+
+
+/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10  /mnt/BioHome/rignacio/rignacio/Scripts/Combined_fithichip_hiccups_mustache_final.py --inputfile $fn --chromsize /mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes --autosql "/mnt/bioadhoc-temp/Groups/vd-ay/hichip-db-loop-calling/results/refs/ucsc/interact.autoSql.txt" --type fithichip
+
+
+
+
+
+
+#/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10 \
+#	workflow/scripts/visualizations/combined_fithichip_hiccups_mustache.py \
+#		--infile results/shortcuts/hg38/loops/hichip/chip-seq/macs2/loose/293T.GSE128106.Homo_Sapiens.YY1.b1.10000.interactions_FitHiC_Q0.01.bed
+#		--outfile test.out
