@@ -191,8 +191,6 @@ elif args.type == "fithichip":
 elif args.type == "mustache":
     entries = parse_mustache(args.input)
 
-exit()
-
 #############################################
 # convert the data intp ucsc format
 #############################################

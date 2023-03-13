@@ -3,15 +3,18 @@
 #PBS -l walltime=00:50:00
 #PBS -o outtest.txt 
 #PBS -e outerr.txt
-#PBS -N combined_fithichip_hiccups_mustache
+#PBS -N interactions_to_bigInteract
 # -t 1
 # -d .
 
+set -euo pipefail
+IFS=$'\n\t'
+
 # to run the code from bash use:
-# bash combined_fithichip_hiccups_mustache.qarray.qsh 3
+# bash interactions_to_bigInteract.qarray.qsh 3
 
 # to run the code from Qsub use:
-# qsub combined_fithichip_hiccups_mustache.qarray.qsh -t 3
+# qsub interactions_to_bigInteract.qarray.qsh -t 3
 
 # allow this script to be run without qsub by assigning PBS_ARRAYID from
 # # the command line using $1
@@ -21,28 +24,43 @@ then
   PBS_O_WORKDIR="."
 fi
 
-#PBS_ARRAYID=1
-#echo $PBS_ARRAYID=1
-#fn=$(sed -n ${PBS_ARRAYID}p /mnt/BioHome/rignacio/rignacio/Scripts/samplesheet.txt)
+# defining a named array for the chromsize files
+hg38_chromsize="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes"
+mm10_chromsize="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/mm10.chrom.sizes"
+t2t_chromsize="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/chrsize/chm13.chrom.sizes"
+declare -A chromsizes=(
+  ["hg38"]="$hg38_chromsize"
+  ["mm10"]="$mm10_chromsize"
+  ["t2t-chm13-v2.0"]="$t2t_chromsize"
+)
 
-ref=$(echo $fn | cut -d "/" -f 7)
-#echo -in $file
+# extracting the input file name
+input=$(sed -n ${PBS_ARRAYID}p workflow/scripts/visualizations/biginter/samplesheet.txt)
 
-#for v in PBS_ARRAYID; do
-echo "Hi! $ref"
-#echo "${#PBS_ARRAYID[@]}"
+# extract the genome from the input file name
+ref=$(echo $input | cut -d "/" -f 3)
+chromsize="${chromsizes[$ref]}"
+echo $ref
 
+# defining a list of input variables
+output=$(echo $input | sed 's/bed$/interaction.bb/')
+autosql="results/refs/ucsc/interact.autoSql.txt"
+type="fithichip"
 
+echo "input: $input"
+echo "output: $output"
+echo "chromsize: $chromsize"
+echo "autosql: $autosql"
+echo "type: $type"
 
-#ref=$(echo $fn | cut -d "/" -f 6)
-#echo "$ref"
-
-
-
-
-
-
-#/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10 \
-#	workflow/scripts/visualizations/combined_fithichip_hiccups_mustache.py \
-#		--infile results/shortcuts/hg38/loops/hichip/chip-seq/macs2/loose/293T.GSE128106.Homo_Sapiens.YY1.b1.10000.interactions_FitHiC_Q0.01.bed
-#		--outfile test.out
+# running the interact_to_bigbed.py script
+echo 'running the interact_to_bigbed.py script'
+cmd="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10 \
+  workflow/scripts/visualizations/biginter/interactions_to_bigInteract.py \
+    --input-file $input \
+		--output-file $output \
+    --chromsize $chromsize \
+    --autosql $autosql \
+    --type $type"
+echo "Running: $cmd"
+eval $cmd
