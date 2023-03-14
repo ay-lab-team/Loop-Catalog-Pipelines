@@ -1,8 +1,8 @@
-#PBS -l mem=1gb
+#PBS -l mem=4gb
 #PBS -l nodes=1:ppn=1
 #PBS -l walltime=00:50:00
-#PBS -o outtest.txt 
-#PBS -e outerr.txt
+#PBS -o results/shortcuts/logs/
+#PBS -e results/shortcuts/logs/
 #PBS -N interactions_to_bigInteract
 # -t 1
 # -d .
@@ -35,7 +35,15 @@ declare -A chromsizes=(
 )
 
 # extracting the input file name
-input=$(sed -n ${PBS_ARRAYID}p workflow/scripts/visualizations/biginter/samplesheet.txt)
+info=$(sed -n ${PBS_ARRAYID}p workflow/scripts/visualizations/biginter/samplesheet.fithichip.wc.txt)
+input=$(echo $info | cut -d " " -f 1)
+num_loops=$(echo $info | cut -d " " -f 2)
+
+if [[ $num_loops -eq 0 ]]
+then
+  echo "No loops found for $input"
+  exit 0
+fi
 
 # extract the genome from the input file name
 ref=$(echo $input | cut -d "/" -f 3)
