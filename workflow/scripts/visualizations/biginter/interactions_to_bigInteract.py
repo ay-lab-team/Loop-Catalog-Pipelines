@@ -90,16 +90,16 @@ def parse_fithichip(filename):
     bed = pd.read_csv(filename, delimiter='\t')
 
     # Get beginning of chromsome (Same Chromosome)
-    bed['schr'] = bed[bed['chr1']==bed['chr2']][['s1','s2']].min(axis=1)
+    bed['schr'] = bed[bed['chr1'] == bed['chr2']][['s1','s2']].min(axis=1)
 
     # Get end of chromosome (Same Chromosome)
-    bed['echr'] = bed[bed['chr1']==bed['chr2']][['e1','e2']].max(axis=1)
+    bed['echr'] = bed[bed['chr1'] == bed['chr2']][['e1','e2']].max(axis=1)
 
     # Get beginning of chromsome (Different Chromsome)
-    bed.loc[bed['chr1']!=bed['chr2'],'schr'] = bed[['s1']].max(axis=1)
+    bed.loc[bed['chr1'] != bed['chr2'], 'schr'] = bed[['s1']].max(axis=1)
 
     # Get end of chromosome (Different Chromsome)
-    bed.loc[bed['chr1']!=bed['chr2'],'echr'] = bed[['e1']].max(axis=1)
+    bed.loc[bed['chr1'] != bed['chr2'],'echr'] = bed[['e1']].max(axis=1)
 
     begin = bed['s1'].min()
     end = bed['e2'].max()
@@ -111,10 +111,13 @@ def parse_fithichip(filename):
         entry['chromStart'] = int(row['schr'])
         entry['chromEnd'] = str(row['echr'])
         entry['name'] = "."
+
         try:
-            entry['score'] = str(int(round(-math.log(row['Q-Value_Bias'],10),0)))
+            log10_score = int(round(-math.log(row['Q-Value_Bias'], 10),0))
+            entry['score'] = str(log10_score)
         except:
             entry['score'] = 0
+
         entry['value'] = str(0)
         entry['exp'] = "."
         entry['color'] = str(0)
@@ -133,6 +136,7 @@ def parse_fithichip(filename):
     return(entries)
 
 def parse_mustache(filename):
+
     tsv = pd.read_csv(filename, delimiter='\t')
 
     for item in ['BIN1_CHR','BIN2_CHROMOSOME','BIN1_START','BIN1_END','BIN2_START','BIN2_END']:
@@ -191,10 +195,17 @@ elif args.type == "fithichip":
 elif args.type == "mustache":
     entries = parse_mustache(args.input)
 
+if len(entries) == 0:
+    print('No data found')
+    exit()
+
+
+
+
 #############################################
-# convert the data intp ucsc format
+# convert the data into ucsc format
 #############################################
-print('convert the data intp ucsc format')
+print('convert the data into ucsc format')
 data_types_dict = {'chromStart':int,
                    'chromEnd':int,
                    'score': int,
@@ -204,6 +215,7 @@ data_types_dict = {'chromStart':int,
                    'sourceEnd':int,
                    'targetStart':int,
                    'targetEnd':int}
+
 ucscdata = pd.DataFrame(entries)
 ucscdata.fillna('', inplace=True)
 ucscdata = ucscdata.astype(data_types_dict)
