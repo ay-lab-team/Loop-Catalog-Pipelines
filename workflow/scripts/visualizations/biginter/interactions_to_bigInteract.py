@@ -51,7 +51,7 @@ def parse_hiccups(filename):
     entries = []
     for row in bed.to_dict('records'):
         entry = {}
-        if row['chr1'][0:3] == "chr":
+        if str(row['chr1'])[0:3] == "chr":
             entry['#chrom'] = str(row['chr1'])
         else:
             entry['#chrom'] = 'chr'+str(row['chr1'])
@@ -65,7 +65,7 @@ def parse_hiccups(filename):
         entry['value'] = str(0)
         entry['exp'] = "."
         entry['color'] = str(0)
-        if row['chr1'][0:3] == "chr":
+        if str(row['chr1'])[0:3] == "chr":
             entry['sourceChrom'] = str(row['chr1'])
         else:
             entry['sourceChrom'] = 'chr'+str(row['chr1'])
@@ -73,7 +73,7 @@ def parse_hiccups(filename):
         entry['sourceEnd'] = str(row['x2'])
         entry['sourceName'] = "."
         entry['sourceStrand'] = "."
-        if row['chr2'][0:3] == "chr":
+        if str(row['chr2'])[0:3] == "chr":
             entry['targetChrom'] = str(row['chr2'])
         else:
             entry['targetChrom'] = 'chr'+str(row['chr2'])
