@@ -1,10 +1,10 @@
 samplesheet="workflow/scripts/visualizations/biginter/samplesheet.txt"
 wc_output="workflow/scripts/visualizations/biginter/samplesheet.wc.txt"
-if [[ -f $output ]]; then
-  rm $wc_output
-else
-  touch $wc_output
-fi
+# if [[ -f $output ]]; then
+#   rm $wc_output
+# else
+#   touch $wc_output
+# fi
 
 # count the number of lines in each file
 # for fn in $(cat $samplesheet); do

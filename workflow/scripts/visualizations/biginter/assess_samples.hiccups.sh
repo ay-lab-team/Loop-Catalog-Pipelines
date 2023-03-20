@@ -1,5 +1,5 @@
-samplesheet="workflow/scripts/visualizations/biginter/samplesheet.hiccup.txt"
-wc_output="workflow/scripts/visualizations/biginter/samplesheet.hiccup.wc.txt"
+samplesheet="workflow/scripts/visualizations/biginter/samplesheet.hiccups.txt"
+wc_output="workflow/scripts/visualizations/biginter/samplesheet.hiccups.wc.txt"
 if [[ -f $output ]]; then
   rm $wc_output
 else
