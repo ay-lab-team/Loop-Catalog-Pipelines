@@ -24,8 +24,4 @@ tables/hicpro_metrics_website.xlsx
 tables/peaks.xlsx
 workflow/scripts/ucsc/
 tables/*
-workflow/scripts/visualizations/biginter/samplesheet.fithichip.wc.txt
-.gitignore
-workflow/scripts/visualizations/biginter/samplesheet.deprecated.txt
-workflow/scripts/visualizations/biginter/samplesheet.fithichip.txt
 workflow/scripts/visualizations/samplesheets/samplesheet.*.txt
