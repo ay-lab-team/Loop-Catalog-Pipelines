@@ -35,7 +35,7 @@ declare -A chromsizes=(
 )
 
 # extracting the input file name
-info=$(sed -n ${PBS_ARRAYID}p workflow/scripts/visualizations/biginter/samplesheet.hiccups.wc.txt)
+info=$(sed -n ${PBS_ARRAYID}p workflow/scripts/visualizations/biginter/samplesheets/samplesheet.hiccups.wc.txt)
 echo $info
 input=$(echo $info | cut -d " " -f 1)
 num_loops=$(echo $info | cut -d " " -f 2)
