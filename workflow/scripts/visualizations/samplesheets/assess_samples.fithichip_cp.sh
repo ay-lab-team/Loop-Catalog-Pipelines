@@ -1,5 +1,5 @@
 samplesheet="workflow/scripts/visualizations/biginter/samplesheet.fithichip_cp.txt"
-wc_output="workflow/scripts/visualizations/biginter/samplesheet.fithichip_cp.wc.txt"
+wc_output="workflow/scripts/visualizations/biginter/samplesheet.fithichip_cp.wc.txt.v2"
 if [[ -f $output ]]; then
   rm $wc_output
 else
