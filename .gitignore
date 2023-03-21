@@ -28,3 +28,4 @@ workflow/scripts/visualizations/biginter/samplesheet.fithichip.wc.txt
 .gitignore
 workflow/scripts/visualizations/biginter/samplesheet.deprecated.txt
 workflow/scripts/visualizations/biginter/samplesheet.fithichip.txt
+workflow/scripts/visualizations/samplesheets/samplesheet.*.txt
