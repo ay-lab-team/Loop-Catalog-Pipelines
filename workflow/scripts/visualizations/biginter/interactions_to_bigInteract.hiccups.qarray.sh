@@ -42,7 +42,7 @@ num_loops=$(echo $info | cut -d " " -f 2)
 
 echo "$info"
 
-if [[ $num_loops -eq 0 ]]
+if [[ $num_loops -lt 1]]
 then
   echo "No loops found for $input"
   exit 0

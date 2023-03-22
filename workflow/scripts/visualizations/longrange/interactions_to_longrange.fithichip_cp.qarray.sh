@@ -1,8 +1,8 @@
 #PBS -l mem=4gb
 #PBS -l nodes=1:ppn=1
 #PBS -l walltime=00:50:00
-#PBS -o results/shortcuts/logs/
-#PBS -e results/shortcuts/logs/
+#PBS -o results/shortcuts/logs/interactions_to_longrange/
+#PBS -e results/shortcuts/logs/interactions_to_longrange/
 #PBS -N interactions_to_longrange.fithichip_cp
 # -t 1
 # -d .
@@ -35,7 +35,7 @@ info=$(sed -n ${PBS_ARRAYID}p workflow/scripts/visualizations/samplesheets/sampl
 input=$(echo $info | cut -d " " -f 1)
 num_loops=$(echo $info | cut -d " " -f 2)
 
-if [[ $num_loops -eq 0 ]]
+if [[ $num_loops -lt 1]]
 then
   echo "No loops found for $input"
   exit 0
