@@ -47,7 +47,7 @@ echo "org: $org"
 echo
 
 # identify hicpro validpairs file if avaliable
-file_samplesheet="results/samplesheets/post-hicpro/mouse.peaks_files.samplesheet.without_header.tsv"
+file_samplesheet="results/samplesheets/post-hicpro/mouse_updated_0314.peaks_files.samplesheet.without_header.tsv"
 #file_samplesheet="results/samplesheets/post-hicpro/human_011023_0434.peaks_files.samplesheet.without_header.tsv"
 
 unset IFS
@@ -67,7 +67,7 @@ fi
 # 1 -> HiChIP-Peaks peaks
 # 2 -> FitHiChIP peaks
 # 3 -> ChIP-Seq peaks
-peak_mode=2
+peak_mode=3
 echo 
 echo "1: HiChIP-Peaks peaks"
 echo "2: FitHiChIP peaks"

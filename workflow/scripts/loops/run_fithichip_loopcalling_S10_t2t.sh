@@ -1,6 +1,6 @@
 #PBS -l nodes=1:ppn=1
-#PBS -l mem=100gb
-#PBS -l walltime=80:00:00
+#PBS -l mem=200gb
+#PBS -l walltime=200:00:00
 #PBS -e ref_genome/results/loops/logs/
 #PBS -o ref_genome/results/loops/logs/
 #PBS -N run_fithichip_loopcalling_S10_t2t
@@ -45,7 +45,7 @@ echo "org: $org"
 echo
 
 # identify hicpro validpairs file if avaliable
-file_samplesheet="results/samplesheets/post-hicpro/human_t2t.peaks_files.samplesheet.without_header.tsv"
+file_samplesheet="results/samplesheets/post-hicpro/human_t2t_updated_0314.peaks_files.samplesheet.without_header.tsv"
 unset IFS
 sample_info=( $(grep "${sample_name}" ${file_samplesheet}) )
 

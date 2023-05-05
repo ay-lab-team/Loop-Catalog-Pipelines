@@ -95,7 +95,8 @@ if [ $chr1 -eq 0 ]; then
 
     # run hiccups
     echo "# running hiccups, using input file from chr1 dir"
-    ln -s -r -f results/loops/hiccups/chr1/${sample_name}/${sample_name}.hic $outdir
+    #ln -s -r -f results/loops/hiccups/chr1/${sample_name}/${sample_name}.hic $outdir
+    ln -s -r -f results/loops/hiccups/chr1/${sample_name}/*.hic $outdir
     cd $outdir
     inpdir="*.hic"
     #inpdir_new=$( echo $inpdir | sed 's/+//g' )
