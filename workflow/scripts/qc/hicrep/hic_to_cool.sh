@@ -29,7 +29,7 @@ source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
-samplesheet="results/samplesheets/hicpro/current.mouse.hicpro.samplesheet.without_header.tsv"
+samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 
@@ -41,25 +41,25 @@ echo "sample_name: $sample_name"
 echo
 
 # make the output directory 
-outdir="results/qc/hicrep/${sample_name}/cool_input/"
+outdir="results/qc/hicrep/cool/${sample_name}/"
 mkdir -p $outdir
 
 # get hic file path
-hic_file="results/loops/hiccups_chr1/${sample_name}/hic_input/*.hic"
+hic_file="results/loops/hiccups/chr1/${sample_name}/${sample_name}.hic"
 
 # run hic2cool
 echo "# running hic2cool"
-hic2cool convert $hic_file ${outdir}/cool_allres.cool -r 0
-hic2cool convert $hic_file ${outdir}/cool_1000.cool -r 1000
-hic2cool convert $hic_file ${outdir}/cool_5000.cool -r 5000
-hic2cool convert $hic_file ${outdir}/cool_10000.cool -r 10000
-hic2cool convert $hic_file ${outdir}/cool_25000.cool -r 25000
-hic2cool convert $hic_file ${outdir}/cool_50000.cool -r 50000
-hic2cool convert $hic_file ${outdir}/cool_100000.cool -r 100000
-hic2cool convert $hic_file ${outdir}/cool_250000.cool -r 250000
-hic2cool convert $hic_file ${outdir}/cool_500000.cool -r 500000
-hic2cool convert $hic_file ${outdir}/cool_1000000.cool -r 1000000
-hic2cool convert $hic_file ${outdir}/cool_2500000.cool -r 2500000
+hic2cool convert $hic_file "${outdir}/allres.cool" -r 0
+hic2cool convert $hic_file "${outdir}/1000.cool" -r 1000
+hic2cool convert $hic_file "${outdir}/5000.cool" -r 5000
+hic2cool convert $hic_file "${outdir}/10000.cool" -r 10000
+hic2cool convert $hic_file "${outdir}/25000.cool" -r 25000
+hic2cool convert $hic_file "${outdir}/50000.cool" -r 50000
+hic2cool convert $hic_file "${outdir}/100000.cool" -r 100000
+hic2cool convert $hic_file "${outdir}/250000.cool" -r 250000
+hic2cool convert $hic_file "${outdir}/500000.cool" -r 500000
+hic2cool convert $hic_file "${outdir}/1000000.cool" -r 1000000
+hic2cool convert $hic_file "${outdir}/2500000.cool" -r 2500000
 
 # print end message
 echo

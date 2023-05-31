@@ -1,6 +1,6 @@
 #PBS -l nodes=1:ppn=1
-#PBS -l mem=100gb
-#PBS -l walltime=80:00:00
+#PBS -l mem=200gb
+#PBS -l walltime=200:00:00
 #PBS -e results/loops/logs/
 #PBS -o results/loops/logs/
 #PBS -N run_fithichip_loopcalling_L10
@@ -47,7 +47,7 @@ echo "org: $org"
 echo
 
 # identify hicpro validpairs file if avaliable
-file_samplesheet="results/samplesheets/post-hicpro/mouse.peaks_files.samplesheet.without_header.tsv"
+file_samplesheet="results/samplesheets/post-hicpro/mouse_updated_0314.peaks_files.samplesheet.without_header.tsv"
 #file_samplesheet="results/samplesheets/post-hicpro/human_011023_0434.peaks_files.samplesheet.without_header.tsv"
 
 unset IFS
@@ -67,7 +67,7 @@ fi
 # 1 -> HiChIP-Peaks peaks
 # 2 -> FitHiChIP peaks
 # 3 -> ChIP-Seq peaks
-peak_mode=2
+peak_mode=3
 echo 
 echo "1: HiChIP-Peaks peaks"
 echo "2: FitHiChIP peaks"
