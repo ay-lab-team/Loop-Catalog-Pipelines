@@ -35,7 +35,7 @@ info=$(sed -n ${PBS_ARRAYID}p workflow/scripts/visualizations/samplesheets/sampl
 input=$(echo $info | cut -d " " -f 1)
 num_loops=$(echo $info | cut -d " " -f 2)
 
-if [[ $num_loops -lt 1]]
+if [[ $num_loops -lt 1 ]]
 then
   echo "No loops found for $input"
   exit 0
