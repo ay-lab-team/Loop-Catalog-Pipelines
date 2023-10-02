@@ -1,14 +1,14 @@
 ############################# User Input #############################
 # receiving input data
-input_sample=$1
-output_sample=$2
+input_sample=$1 # input sample with INCORRECT name
+output_sample=$2 # output sample with CORRECT name
 input_sample_dir=$3 # absolute or relative
 output_sample_dir=$4 # absolute or relative
 
-# get the absolute path
+# get the absolute path for the input_sample_dir
 input_sample_dir=$(readlink -f $input_sample_dir)
 
-# make output dir if necessary then get the absolute path
+# make the output_sample_dir if necessary then get the absolute path
 mkdir -p $output_sample_dir
 output_sample_dir=$(readlink -f $output_sample_dir)
 
@@ -38,7 +38,7 @@ cd $input_sample_dir
 input_paths=$(find *)
 cd $curr_dir
 
-# cycle through samples and rename
+# cycle through samples, rename, and copy
 for input_path in $input_paths;
 do
     # get the full input path
