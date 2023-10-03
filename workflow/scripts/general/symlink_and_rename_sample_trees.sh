@@ -2,8 +2,8 @@
 # receiving input data
 input_sample=$1 # input sample with INCORRECT name
 output_sample=$2 # output sample with CORRECT name
-input_sample_dir=$3 # absolute or relative
-output_sample_dir=$4 # absolute or relative
+input_sample_dir=$3 # absolute or relative path with sample portion as well
+output_sample_dir=$4 # absolute or relative path with sample portion as well
 
 # get the absolute path for the input_sample_dir
 input_sample_dir=$(readlink -f $input_sample_dir)
@@ -12,21 +12,13 @@ input_sample_dir=$(readlink -f $input_sample_dir)
 mkdir -p $output_sample_dir
 output_sample_dir=$(readlink -f $output_sample_dir)
 
-############################# Examples Inputs #############################
-# example hicpro
-#rename_samples.sh T47D-T0.GSE179666.Homo_Sapiens.PR.b1 \
+############################# Example #############################
+# This example should give you a sense of how the script works using a 
+# hicpro dataset
+#bash workflow/scripts/general/symlink_and_rename_sample_trees.sh T47D-T0.GSE179666.Homo_Sapiens.PR.b1 \
 #                    T47D-T0.GSE179666.Homo_Sapiens.CORRECTNAME.b1 \
-#                    ../../hicpro/T47D-T0.GSE179666.Homo_Sapiens.PR.b1/ \
-#                    ../../hicpro/T47D-T0.GSE179666.Homo_Sapiens.PR.b1/
-#
-#rename_samples.sh T47D-T0.GSE179666.Homo_Sapiens.PR.b1 T47D-T0.GSE179666.Homo_Sapiens.CORRECTNAME.b1 \
-#                    ../../hicpro/T47D-T0.GSE179666.Homo_Sapiens.PR.b1/ ../test/hicpro/T47D-T0.GSE179666.Homo_Sapiens.PR.b1/
-
-# example fithichip
-#input_sample="T47D-T0.GSE179666.Homo_Sapiens.PR.b1_chipseq.peaks"
-#output_sample="T47D-T0.GSE179666.Homo_Sapiens.CORRECTNAME.b1_chipseq.peaks"
-#input_sample_dir="T47D-T0.GSE179666.Homo_Sapiens.PR.b1_chipseq.peaks/"
-#output_sample_dir="../test/"
+#                    results/hicpro/T47D-T0.GSE179666.Homo_Sapiens.PR.b1/ \
+#                    ./test/hicpro/T47D-T0.GSE179666.Homo_Sapiens.PR.b1/
 
 ############################# Main Code #############################
 
@@ -49,7 +41,7 @@ do
 	full_output_path=$(echo $input_path | sed "s/${input_sample}/${output_sample}/g")
 	full_output_path="${output_sample_dir}/${full_output_path}"
 
-    echo "Copying and renaming ${full_input_path} to ${full_output_path}"
+    echo "Copying and renaming: ${full_input_path} to ${full_output_path}"
 
     # if a dir then make a new dir
 	if [[ -d $full_input_path ]]; 
