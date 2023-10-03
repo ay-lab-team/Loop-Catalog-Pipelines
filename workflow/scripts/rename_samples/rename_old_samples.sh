@@ -63,9 +63,14 @@ function rename_dir {
         output_sample_dir=$(echo $format_res | cut -f 2 -d " ")
 
         # performing the renames
+        # only rename if the input dir exists and the output dir doesn't
         if [[ -d $input_sample_dir ]];
         then
-            bash workflow/scripts/general/symlink_and_rename_sample_trees.sh $input_sample $output_sample $input_sample_dir $output_sample_dir
+            if [[ ! -d $output_sample_dir ]];
+            then
+                bash workflow/scripts/general/symlink_and_rename_sample_trees.sh \
+                        $input_sample $output_sample $input_sample_dir $output_sample_dir
+            fi
         fi
 
     done 
@@ -76,7 +81,9 @@ function rename_dir {
 #rename_dir "loops/hiccups/whole_genome/"
 #rename_dir "qc/fastqc/"
 #rename_dir "loops/fithichip/" "_fithichip.peaks" # tricky
-rename_dir "loops/fithichip/" "_hichip-peaks.peaks" # tricky
+#rename_dir "loops/fithichip/" "_hichip-peaks.peaks" # tricky
+rename_dir "loops/fithichip/" "_chipseq.peaks" # tricky
+
 
 
 
