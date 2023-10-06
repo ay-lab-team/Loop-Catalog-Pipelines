@@ -27,10 +27,10 @@ output_sample_dir=$(readlink -f $output_sample_dir)
 # with "*" which can remove the initial part of the path
 curr_dir=$(pwd)
 cd $input_sample_dir
-input_paths=$(find *)
+input_paths=$(find * | grep $input_sample)
 cd $curr_dir
 
-# cycle through paths, rename, and copy
+# cycle through samples, rename, and copy
 for input_path in $input_paths;
 do
     # get the full input path
@@ -41,16 +41,7 @@ do
 	full_output_path=$(echo $input_path | sed "s/${input_sample}/${output_sample}/g")
 	full_output_path="${output_sample_dir}/${full_output_path}"
 
+    # copying via symlink
     echo "Copying and renaming: ${full_input_path} to ${full_output_path}"
-
-    # if a dir then make a new dir
-	if [[ -d $full_input_path ]]; 
-	then
-		mkdir -p $full_output_path
-
-    # if a file then softlink the original file 
-	elif [[ -f $full_input_path ]];
-    then
-		ln -s $full_input_path $full_output_path
-	fi
+    ln -s $full_input_path $full_output_path
 done

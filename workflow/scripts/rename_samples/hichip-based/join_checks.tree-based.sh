@@ -1,6 +1,6 @@
 # check the dir presence for archived and renames
-bash workflow/scripts/rename_samples/check_archived.sh
-bash workflow/scripts/rename_samples/check_renames.sh
+bash workflow/scripts/rename_samples/hichip-based/check_archived.sh
+bash workflow/scripts/rename_samples/hichip-based/check_renames.sh
 
 # join these results
 output_fn="results/misc/rename_samples/archive/check_samples.joined.txt"

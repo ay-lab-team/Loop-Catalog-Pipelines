@@ -1,5 +1,5 @@
 new_dir="results/misc/rename_samples/archive/"
-samplesheet="results/misc/rename_samples/problem_paths.txt"
+samplesheet="results/misc/rename_samples/rename-info/hichip-based/problem_paths.tree-based.txt"
 
 while read -r path; do
 
