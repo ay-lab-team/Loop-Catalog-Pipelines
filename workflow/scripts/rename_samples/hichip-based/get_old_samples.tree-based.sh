@@ -24,16 +24,8 @@ function find_dirs_and_softdirs() {
 #find_dirs_and_softdirs results/peaks/hichip-peaks/\* >> $cand_paths_fn
 #find_dirs_and_softdirs results/visualizations/washu/fithichip_loops_chipseq/\* > $cand_paths_fn
 #find_dirs_and_softdirs results/motif_analysis/meme/fimo/\* > $cand_paths_fn
-find_dirs_and_softdirs results/pieqtl_ncm_rep_combined_donorwise/fithichip/\* > $cand_paths_fn
-find_dirs_and_softdirs results/pieqtl_ncm_rep_combined_donorwise/validpairs/\* >> $cand_paths_fn
-
-#find_dirs_and_softdirs
-#\*
-#> $cand_paths_fn
-
-
-
-
+#find_dirs_and_softdirs results/pieqtl_ncm_rep_combined_donorwise/fithichip/\* > $cand_paths_fn
+#find_dirs_and_softdirs results/pieqtl_ncm_rep_combined_donorwise/validpairs/\* >> $cand_paths_fn
 
 #find_dirs_and_softdirs results/peaks/overlaps/no_slop_recall/\* > $cand_paths_fn (file-based)
 ## locate the final problematic paths
