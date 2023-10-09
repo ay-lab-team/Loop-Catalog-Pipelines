@@ -34,8 +34,10 @@ function fithichip_to_washu() {
         outdir="results/visualizations/washu/fithichip_loops_chipseq/${sample_name}/${combo}/"
         mkdir -p $outdir
         outfile="${outdir}/${sample_name}.fithichip.${combo}.loops.chipseq.peaks.txt"
+        
+        echo "Generating: $outfile"
 
-        awk 'BEGIN{OFS="\t"}; {score=-log($26)/log(10); if (NR > 1) {print $1, $2, $3, $4 ":" $5 "-" $6 ",score\n" $4, $5, $6, $1 ":" $2 "-" $3 ",score"}}' $filename | sort -k1,1 -k2,2n > $outfile
+        awk 'BEGIN{OFS="\t"}; {score=-log($26)/log(10); if (NR > 1) {print $1, $2, $3, $4 ":" $5 "-" $6 "," score "\n" $4, $5, $6, $1 ":" $2 "-" $3 "," score}}' $filename | sort -k1,1 -k2,2n > $outfile
 
         $bgzip -f $outfile
         $tabix -f -p bed "${outfile}.gz"
