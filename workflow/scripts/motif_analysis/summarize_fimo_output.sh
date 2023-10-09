@@ -15,22 +15,20 @@ cd $PBS_O_WORKDIR
 
 # source tool paths
 source workflow/source_paths.sh
-config="S10"
+config="S5"
 
 # extract the sample information using the PBS ARRAYID
 samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
-org="${sample_info[2]}"
-protein="${sample_info[4]}"
 
 base="results/motif_analysis/meme/fimo/${sample_name}"
 fasta="${base}/input_fasta.fa"
 fimo="${base}/fimo_out_jaspar/fimo.tsv"
-loops="results/loops/fithichip/${sample_name}_fithichip.peaks/S10/FitHiChIP_Peak2ALL_b10000_L20000_U2000000/P2PBckgr_1/Coverage_Bias/FitHiC_BiasCorr/FitHiChIP-S10.interactions_FitHiC_Q0.01.bed"
+loops="results/loops/fithichip/${sample_name}_chipseq.peaks/${config}/FitHiChIP_Peak2ALL_b5000_L20000_U2000000/P2PBckgr_1/Coverage_Bias/FitHiC_BiasCorr/FitHiChIP-S5.interactions_FitHiC_Q0.01.bed"
 #samples="results/motif_analysis/conserved_anchors/samples/*/S5/FitHiChIP_Peak2ALL_b5000_L20000_U2000000/P2PBckgr_1/Coverage_Bias/FitHiC_BiasCorr/FitHiChIP-S5.interactions_FitHiC_Q0.01.bed"
 
-outdir="${base}/summarize_results_050223"
+outdir="${base}/summarize_results"
 mkdir -p $outdir
 out="${outdir}/summary.txt"
 
@@ -49,7 +47,7 @@ bedtools pairtobed -a "$outdir/loops.txt" -b "$outdir/motifs.txt" >> "$outdir/lo
 sort -k1,1 -k2,2n "$outdir/loops_overlap_motifs.txt" > "$outdir/loops_overlap_motifs.sorted.txt"
 uniq "$outdir/loops_overlap_motifs.sorted.txt" > "$outdir/loops_overlap_motifs.sorted.uniq.txt"
 
-python workflow/scripts/motif_analysis/clean_up_fimo_summary.py 
+/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/python3 workflow/scripts/motif_analysis/clean_up_fimo_summary.py ${sample_name}
 
 # compile all chipseq peaks used as input into peaks.txt
 #awk -F'[>: -]' '{if (/^>/) {print $2"\t"$3"\t"$4"\t"$5}}' $fasta > $outdir/peaks.txt

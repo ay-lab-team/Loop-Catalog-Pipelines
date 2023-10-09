@@ -1,10 +1,12 @@
-#PBS -l nodes=1:ppn=1
-#PBS -l mem=20gb
-#PBS -l walltime=100:00:00
-#PBS -e results/motif_analysis/logs/
-#PBS -o results/motif_analysis/logs/
-#PBS -N run_sea
-#PBS -V
+#!/bin/sh
+#SBATCH --job-name=run_sea
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=10g
+#SBATCH --time=100:00:00
+#SBATCH --output=biorep_merged/results/motif_analysis/logs/job-%j.out
+#SBATCH --error=biorep_merged/results/motif_analysis/logs/job-%j.error
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
@@ -18,21 +20,21 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # make sure to work starting from the github base directory for this script 
-cd $PBS_O_WORKDIR
-work_dir=$PBS_O_WORKDIR
+cd $SLURM_SUBMIT_DIR
+work_dir=$SLURM_SUBMIT_DIR
 
 # source tool paths
 source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_header.tsv"
+#samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_header.tsv"
 #sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 #sample_name="${sample_info[0]}"
 #org="${sample_info[2]}"
 #protein="${sample_info[4]}"
 
-database="jaspar"
-#database="hocomoco"
+#database="jaspar"
+database="hocomoco"
 
 # printing sample information
 echo
@@ -45,8 +47,8 @@ echo
 
 # make the output directory 
 #outdir="results/motif_analysis/fimo/${sample_name}"
-base="results/motif_analysis/conserved_anchors/meme_out"
-outdir="results/motif_analysis/conserved_anchors/meme_out/sea/"
+base="biorep_merged/results/motif_analysis/meme/conserved_anchors_sea/${1}/sea_out"
+outdir="biorep_merged/results/motif_analysis/meme/conserved_anchors_sea/${1}/sea_out"
 mkdir -p $outdir
 
 if [ ! -f $base/input_fasta.fa ]; then

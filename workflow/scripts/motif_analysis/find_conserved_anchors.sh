@@ -1,8 +1,8 @@
 #PBS -l nodes=1:ppn=1
 #PBS -l mem=2gb
 #PBS -l walltime=0:30:00
-#PBS -e results/motif_analysis/logs/
-#PBS -o results/motif_analysis/logs/
+#PBS -e biorep_merged/results/motif_analysis/logs/
+#PBS -o biorep_merged/results/motif_analysis/logs/
 #PBS -N find_conserved_anchors
 #PBS -V
 
@@ -16,8 +16,8 @@ cd $PBS_O_WORKDIR
 # source tool paths
 source workflow/source_paths.sh
 
-base="results/motif_analysis/conserved_anchors"
-samples="results/motif_analysis/conserved_anchors/samples"
+base="biorep_merged/results/motif_analysis/meme/conserved_anchors_sea/combined"
+samples="biorep_merged/results/motif_analysis/meme/conserved_anchors_sea/combined/combined_samples"
 anchors="$base/anchors_raw.txt"
 anchors_sorted="$base/anchors.sorted.txt"
 anchors_uniq="$base/anchors.sorted.uniq.txt"

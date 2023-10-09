@@ -29,7 +29,7 @@ source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
-samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_header.tsv"
+samplesheet="results/samplesheets/hicpro/current.mouse.hicpro.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
 
@@ -45,6 +45,7 @@ outdir="results/qc/hicrep/cool/${sample_name}/"
 mkdir -p $outdir
 
 # get hic file path
+#sample=$( echo $sample_name | sed 's/+//g' )
 hic_file="results/loops/hiccups/chr1/${sample_name}/${sample_name}.hic"
 
 # run hic2cool

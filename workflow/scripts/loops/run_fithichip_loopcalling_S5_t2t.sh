@@ -1,8 +1,8 @@
 #PBS -l nodes=1:ppn=1
-#PBS -l mem=200gb
-#PBS -l walltime=200:00:00
-#PBS -e ref_genome/results/loops/logs/
-#PBS -o ref_genome/results/loops/logs/
+#PBS -l mem=100gb
+#PBS -l walltime=80:00:00
+#PBS -e ref_genome/biorep_merged/results/loops/logs/
+#PBS -o ref_genome/biorep_merged/results/loops/logs/
 #PBS -N run_fithichip_loopcalling_S5_t2t
 #PBS -V
 
@@ -31,10 +31,10 @@ cd $PBS_O_WORKDIR
 source workflow/scripts/loops/fithichip_source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/hicpro/current.hicpro.samplesheet.without_header.tsv"
+samplesheet="results/samplesheets/post-hicpro/human.biorep_merged.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
-org="${sample_info[2]}"
+org="${sample_info[1]}"
 
 # printing sample information
 echo
@@ -45,7 +45,7 @@ echo "org: $org"
 echo
 
 # identify hicpro validpairs file if avaliable
-file_samplesheet="results/samplesheets/post-hicpro/human_t2t_updated_0314.peaks_files.samplesheet.without_header.tsv"
+file_samplesheet="results/samplesheets/post-hicpro/human_t2t_biorep_merged.peaks_files.samplesheet.without_header.tsv"
 unset IFS
 sample_info=( $(grep "${sample_name}" ${file_samplesheet}) )
 
@@ -79,7 +79,7 @@ if [ $peak_mode -eq 1 ]; then
         peaks_file=${sample_info[2]}
 
         # make the output directory
-        outdir_S5="${PBS_O_WORKDIR}/ref_genome/results/loops/fithichip/${sample_name}_hichip-peaks.peaks/S5/"
+        outdir_S5="${PBS_O_WORKDIR}/ref_genome/biorep_merged/results/loops/fithichip/${sample_name}_hichip-peaks.peaks/S5/"
         mkdir -p $outdir_S5
     else
         echo "no valid hichip-peaks peaks file found"
@@ -94,7 +94,7 @@ if [ $peak_mode -eq 2 ]; then
         peaks_file=${sample_info[3]}
 
         # make the output directory
-        outdir_S5="${PBS_O_WORKDIR}/ref_genome/results/loops/fithichip/${sample_name}_fithichip.peaks/S5/"
+        outdir_S5="${PBS_O_WORKDIR}/ref_genome/biorep_merged/results/loops/fithichip/${sample_name}_fithichip.peaks/S5/"
         mkdir -p $outdir_S5
     else
         echo "no valid fithichip peaks file found"
@@ -109,7 +109,7 @@ if [ $peak_mode -eq 3 ]; then
         peaks_file=${sample_info[4]}
 
         # make the output directory
-        outdir_S5="${PBS_O_WORKDIR}/ref_genome/results/loops/fithichip/${sample_name}_chipseq.peaks/S5/"
+        outdir_S5="${PBS_O_WORKDIR}/ref_genome/biorep_merged/results/loops/fithichip/${sample_name}_chipseq.peaks/S5/"
         mkdir -p $outdir_S5
     else
         echo "no valid chip-seq peaks file found"

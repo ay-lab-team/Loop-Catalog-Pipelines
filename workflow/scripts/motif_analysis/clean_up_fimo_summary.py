@@ -1,11 +1,10 @@
 import os
 import sys
 import pandas as pd
-import argparse
 os.chdir('/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling')
 
-base = "results/motif_analysis/meme/fimo/" + sample + "/summarize_results_050223/"
-sample = "GM12878.GSE80820.Homo_Sapiens.SMC1A.b2"
+sample = sys.argv[1]
+base = "biorep_merged/results/motif_analysis/meme/fimo/" + sample + "/summarize_results/"
 f = base + "loops_overlap_motifs.sorted.uniq.txt"
 
 df = pd.read_csv(f, sep = "\t", header=None)
@@ -25,6 +24,7 @@ df_1['motif_ID_2'] = df_1.apply(lambda x: x["motif_ID"] if x["anchor"] == "2" el
 df_1['motif_name_2'] = df_1.apply(lambda x: x["motif_name"] if x["anchor"] == "2" else "", axis=1)
 
 df_1 = df_1.drop(columns=["motif_chr", "motif_start", "motif_end", "motif_ID", "motif_name", "anchor", "anchor_1", "anchor_2"])
+df_1 = df_1.groupby(["loop"]).agg({"chr1" : "first", "start1" : "first", "end1" : "first", "chr2" : "first", "start2" : "first", "end2" : "first", "motif_ID_1" : pd.Series.unique, "motif_name_1" : pd.Series.unique, "motif_ID_2" : pd.Series.unique, "motif_name_2" : pd.Series.unique})
 df_1 = df_1.sort_values(by=["chr1", "start1", "start2"])
 
 df_1['motif_ID_1'] = df_1.apply(lambda x: ",".join(x["motif_ID_1"]), axis=1)

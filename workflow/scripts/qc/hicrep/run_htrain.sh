@@ -1,5 +1,5 @@
 #PBS -l nodes=1:ppn=1
-#PBS -l mem=7gb
+#PBS -l mem=25gb
 #PBS -l walltime=5:00:00
 #PBS -e results/qc/hicrep/logs/
 #PBS -o results/qc/hicrep/logs/
@@ -11,6 +11,8 @@
 # This script uses the python implementation of HiC-Rep (https://github.com/cmdoret/hicreppy) 
 
 # qsub -t <indicies from hicpro samplesheet>%50 workflow/scripts/qc/hicrep/run_hicrep.sh
+
+# Note: To compare reproducibility between samples with the same resolution, the same smoothing parameter should be used
 
 ########################################################################################
 
@@ -37,7 +39,7 @@ source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
-samplesheet="results/samplesheets/post-hicpro/human_hicrep_04_27_23.samplesheet.without_header.tsv"
+samplesheet="results/samplesheets/post-hicpro/mouse_hicrep_04_27_23.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample="${sample_info[2]}"
 rep1="${sample_info[0]}"
@@ -65,10 +67,7 @@ cool2="results/qc/hicrep/cool/${rep2}/${res}000.cool"
 # determine optimal h-value
 echo "# running htrain"
 
-hicreppy htrain -r 5 -m 100000 -w chr1,chr10,chr17,chr19 ${cool1} ${cool2} > "results/qc/hicrep/tmp/${rep1}_${rep2}.txt"
-HVAL=$(<results/qc/hicrep/tmp/${rep1}_${rep2}.txt)
-
-echo "$sample   ${HVAL}" >> "results/qc/hicrep/human_hg38_htrain_samplesheet_050523.txt"
+hicreppy htrain -r 25 -m 100000 -w chr1,chr10,chr17,chr19 ${cool1} ${cool2} > "results/qc/hicrep/htrain/${sample}_${b1}_${b2}.txt"
 
 # print end message
 echo

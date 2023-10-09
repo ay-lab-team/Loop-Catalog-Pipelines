@@ -60,7 +60,7 @@ IFS=$'\n\t'
 #3) bowtie2_indexes = "results/refs/reference_genomes/RefGenome/bowtie2_index/hg38/hg38"
 if [[ "$org" == "Homo_Sapiens" ]];
 then
-    config="config/hicpro/configfile.chm13.human.${re}.txt"
+    config="config/hicpro/configfile.hg38.human.${re}.txt"
 elif [[ "$org" == "Mus_Musculus" ]];
 then
     config="config/hicpro/configfile.mm10.mouse.${re}.txt"

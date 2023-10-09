@@ -1,8 +1,8 @@
 #PBS -l nodes=1:ppn=1
 #PBS -l mem=20gb
 #PBS -l walltime=10:00:00
-#PBS -e results/peaks/logs/
-#PBS -o results/peaks/logs/
+#PBS -e biorep_merged/results/peaks/logs/
+#PBS -o biorep_merged/results/peaks/logs/
 #PBS -N run_fithichip_peakcalling
 #PBS -V
 
@@ -32,10 +32,10 @@ work_dir=$PBS_O_WORKDIR
 source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/hicpro/current.mouse.hicpro.samplesheet.without_header.tsv"
+samplesheet="results/samplesheets/post-hicpro/mouse.biorep_merged.samplesheet.without_header.tsv"
 sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
 sample_name="${sample_info[0]}"
-org="${sample_info[2]}"
+org="${sample_info[1]}"
 
 # printing sample information
 echo
@@ -44,35 +44,41 @@ echo "----------"
 echo "sample_name: $sample_name"
 echo
 
-# make the output directory 
-outdir="results/peaks/fithichip/${sample_name}/"
-cat_outdir="results/peaks/fithichip/${sample_name}/cat_pairs/"
-mkdir -p $cat_outdir
+# make the output directory
+outdir="biorep_merged/results/peaks/fithichip/${sample_name}"
+mkdir -p ${outdir}
+#cat_outdir="results/peaks/fithichip/${sample_name}/cat_pairs/"
+#mkdir -p $cat_outdir
+
+ln -s -r -f biorep_merged/results/hicpro/${sample_name}/*.allValidPairs biorep_merged/results/hicpro/${sample_name}/rawdata_allValidPairs
+#ln -s -r -f biorep_merged/results/hicpro/${sample_name}/*.DEPairs ${outdir}/
+#ln -s -r -f biorep_merged/results/hicpro/${sample_name}/*.SCPairs ${outdir}/
+#ln -s -r -f biorep_merged/results/hicpro/${sample_name}/*.REPairs ${outdir}/
 
 # concatenate pairs files
-echo "# Concatenating pairs files"
-pairs_folder="results/hicpro/$sample_name/hic_results/data/$sample_name"
-cd $pairs_folder
+# echo "# Concatenating pairs files"
+# pairs_folder="biorep_merged/results/hicpro/${sample_name}"
+# cd $pairs_folder
 
-if [ $(find -name "*.DEPairs" | wc -l) -ne 0 ]; then
-    cat *'.DEPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.DEPairs"
-fi
+# if [ $(find -name "*.DEPairs" | wc -l) -ne 0 ]; then
+#     cat *'.DEPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.DEPairs"
+# fi
 
-if [ $(find -name "*.SCPairs" | wc -l) -ne 0 ]; then
-    cat *'.SCPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.SCPairs"
-fi
+# if [ $(find -name "*.SCPairs" | wc -l) -ne 0 ]; then
+#     cat *'.SCPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.SCPairs"
+# fi
 
-if [ $(find -name "*.REPairs" | wc -l) -ne 0 ]; then
-    cat *'.REPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.REPairs"
-fi
+# if [ $(find -name "*.REPairs" | wc -l) -ne 0 ]; then
+#     cat *'.REPairs' >> "${work_dir}/${cat_outdir}all_${sample_name}.bwt2pairs.REPairs"
+# fi
 
-if [ $(find -name "*.allValidPairs" | wc -l) -ne 0 ]; then
-    cat *'.allValidPairs' >> "${work_dir}/${cat_outdir}rawdata_allValidPairs"
-fi
+# if [ $(find -name "*.allValidPairs" | wc -l) -ne 0 ]; then
+#     cat *'.allValidPairs' >> "${work_dir}/${cat_outdir}rawdata_allValidPairs"
+# fi
 
-cd $work_dir
-echo "# Concatenation done"
-echo
+# cd $work_dir
+# echo "# Concatenation done"
+# echo
 
 # reference genome
 if [[ "$org" == "Homo_Sapiens" ]];
@@ -88,9 +94,11 @@ fi
 echo "Using genome: $refGenomeStr"
 
 # get read length from samplesheet
-file_samplesheet="results/samplesheets/post-hicpro/readlength.mouse.samplesheet.without_header.tsv"
+file_samplesheet="results/samplesheets/post-hicpro/readlength.mouse.biorep_merged.samplesheet.without_header.tsv"
 unset IFS
 sample_info=( $(grep "${sample_name}" ${file_samplesheet}) )
+# use the readlength of the first biological rep
+#sample_info=( $(grep $(echo ${sample_name} | awk '{ print substr( $0, 1, length($0)-14 ) }') ${file_samplesheet}) )
 ReadLengthR1=${sample_info[1]}
 ReadLengthR2=${sample_info[2]}
 echo "Using read length R1: $ReadLengthR1"
@@ -99,17 +107,17 @@ echo "Using read length R2: $ReadLengthR2"
 # run fithichip peak calling
 echo
 echo "# running fithichip peak calling"
-$fithichip_peakinferhichip_t2t -H $cat_outdir -D $outdir -R $refGenomeStr -L $ReadLengthR1 -G $ReadLengthR2
+$fithichip_peakinferhichip -H biorep_merged/results/hicpro/${sample_name}/ -D $outdir -R $refGenomeStr -L $ReadLengthR1 -G $ReadLengthR2
 
 # print end message
 echo
 echo "# Ended: fithichip peak calling"
 
 # remove cat_pairs dir
-echo
-echo "# removing catpairs dir"
-echo
-rm -r $cat_outdir
+# echo
+# echo "# removing catpairs dir"
+# echo
+# rm -r $cat_outdir
 
 # print end time message
 end_time=$(date "+%Y.%m.%d.%H.%M")
