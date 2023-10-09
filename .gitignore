@@ -3,6 +3,7 @@
 *un~
 .snakemake
 results/
+results
 !results/samplesheets/
 fasterq*
 !fasterq_download_srr_fastqs.sh

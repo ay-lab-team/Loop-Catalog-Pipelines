@@ -1,1 +1,0 @@
-/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/samplesheets/fastq/current-ebi-download-urls.txt
