@@ -2,8 +2,7 @@
 *.ipynb_checkpoints/
 *un~
 .snakemake
-!results/
-results/*
+results/
 !results/samplesheets/
 fasterq*
 !fasterq_download_srr_fastqs.sh
