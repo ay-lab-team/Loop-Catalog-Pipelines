@@ -1,5 +1,5 @@
-# Running scripts for HP samples
-These instructions are give for fithichip samples but the cp and hiccups equivalents 
+# Running scripts for HP loops
+These instructions are writen for FH loops but the FC and HiCCUPs equivalents 
 are identical. 
 
 #### Main Steps
