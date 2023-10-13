@@ -16,7 +16,7 @@ bash assess_samples.fithichip_hp.sh
 
 Convert fithichip derived samples to longrange files via Qsub array jobs.
 ```
-qsub -t start:end -d . fithichip_to_washu.sh
+sbatch --array=start:end fithichip_to_washu.hp.sh
 ```
 
 #### The main script
