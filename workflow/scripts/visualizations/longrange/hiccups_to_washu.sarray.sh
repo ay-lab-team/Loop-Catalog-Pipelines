@@ -5,6 +5,7 @@
 #SBATCH --output=results/visualizations/logs/washu/hiccups_to_washu/hiccups_to_washu.job_%A.task_%a.out
 #SBATCH --error=results/visualizations/logs/washu/hiccups_to_washu/hiccups_to_washu.job_%A.task_%a.err
 #SBATCH --job-name=hiccups_to_washu
+#SBATCH --array 1
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
@@ -24,7 +25,7 @@ cd $SLURM_SUBMIT_DIR
 source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet= "results/samplesheets/post-hicpro/hiccups_to_wash.samplesheet.txt "
+samplesheet="results/samplesheets/post-hicpro/hiccups_to_washu.samplesheet.txt"
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 sample_name="${sample_info[0]}"
 
@@ -35,7 +36,7 @@ echo "----------"
 echo "sample_name: $sample_name"
 echo
 
-def convert(){
+function convert(){
     infile=$1
     prefix_file=$2
 
@@ -47,7 +48,7 @@ def convert(){
         awk -F['\t'] '{if (NR > 2) {print "chr"$1"\t"$2"\t"$3"\tchr"$4":"$5"-"$6",10\nchr"$4"\t"$5"\t"$6"\tchr"$1":"$2"-"$3",10"}}' $infile | sort -k1,1 -k2,2n > $prefix_file
 
         # compress and idnex
-        bgzip $prefix_file
+        bgzip -f $prefix_file
         tabix -f -p bed $prefix_file'.gz'
 
     else
@@ -56,16 +57,16 @@ def convert(){
 
 }
 
-resolutions=( "5000" "10000" "25000" )
+resolutions=( "5000" "10000" "25000" "merged" )
 for res in "${resolutions[@]}";
 do
 
     # get input file
-    if [[ $res == "merged"]];
+    if [[ $res == "merged" ]];
     then
-        infile="results/loops/hiccups/${sample_name}/merged_loops.bedpe"
+        infile="results/loops/hiccups/whole_genome/${sample_name}/merged_loops.bedpe"
     else
-        infile="results/loops/hiccups/${sample_name}/postprocessed_pixels_${res}.bedpe"
+        infile="results/loops/hiccups/whole_genome/${sample_name}/postprocessed_pixels_${res}.bedpe"
     fi
 
     # get output file
@@ -74,6 +75,7 @@ do
 
     # do the conversion
     echo
+    echo "Working on the conversion for ${res}:"
     echo "infile: ${infile}"
     echo "output_file: ${output_file}"
     echo
