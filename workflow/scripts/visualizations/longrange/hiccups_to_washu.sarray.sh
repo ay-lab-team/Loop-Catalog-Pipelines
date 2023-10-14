@@ -5,7 +5,7 @@
 #SBATCH --output=results/visualizations/logs/washu/hiccups_to_washu/hiccups_to_washu.job_%A.task_%a.out
 #SBATCH --error=results/visualizations/logs/washu/hiccups_to_washu/hiccups_to_washu.job_%A.task_%a.err
 #SBATCH --job-name=hiccups_to_washu
-#SBATCH --array 1
+#SBATCH --array 1-176
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
@@ -44,8 +44,21 @@ function convert(){
     if [ -s "${infile}" ]; then
         echo "loops file found"
 
-        # conversion
-        awk -F['\t'] '{if (NR > 2) {print "chr"$1"\t"$2"\t"$3"\tchr"$4":"$5"-"$6",10\nchr"$4"\t"$5"\t"$6"\tchr"$1":"$2"-"$3",10"}}' $infile | sort -k1,1 -k2,2n > $prefix_file
+        # conversion using fdrDonut (col-index = 18)
+        awk -F['\t'] 'BEGIN{FS=OFS="\t"} \
+                    { \
+                        if ($0 !~ /^#/) { \
+                            score=-log($18)/log(10); \
+
+                            # print the left anchor 
+                            left=$4 ":" $5 "-" $6 "," score; \
+                            print $1, $2, $3, left \
+
+                            # print the right anchor
+                            right=$1 ":" $2 "-" $3 "," score; \
+                            print $4, $5, $6, right \
+                        } \
+                    }' $infile | sort -k1,1 -k2,2n > $prefix_file
 
         # compress and idnex
         bgzip -f $prefix_file
