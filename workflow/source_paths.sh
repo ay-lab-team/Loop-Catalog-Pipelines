@@ -25,3 +25,5 @@ bgzip="/mnt/BioApps/tabix/tabix-0.2.6/bgzip"
 tabix="/mnt/BioApps/tabix/tabix-0.2.6/tabix"
 bedToBigBed="/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/ucsc_genome_browser/bedToBigBed"
 perl="/usr/bin/perl"
+
+project_dir="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/"

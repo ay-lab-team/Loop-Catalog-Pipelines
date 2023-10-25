@@ -16,7 +16,7 @@ function find_dirs_and_softdirs() {
 #find_dirs_and_softdirs results/fastqs/raw/\* > $cand_paths_fn
 #find_dirs_and_softdirs results/fastqs/parallel/\* >> $cand_paths_fn
 #find_dirs_and_softdirs results/fastqs/stats/\* >> $cand_paths_fn
-#find_dirs_and_softdirs results/hicpro/\* >> $cand_paths_fn
+find_dirs_and_softdirs results/hicpro/\* >> $cand_paths_fn
 #find_dirs_and_softdirs results/loops/fithichip/\* >> $cand_paths_fn
 #find_dirs_and_softdirs results/loops/hiccups/whole_genome/\* >> $cand_paths_fn
 #find_dirs_and_softdirs results/qc/fastqc/\* >> $cand_paths_fn

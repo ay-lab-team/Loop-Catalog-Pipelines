@@ -95,7 +95,7 @@ function rename_dir {
 #rename_dir "fastqs/raw/" "NaN" "tree"
 #rename_dir "fastqs/parallel/" "NaN" "tree"
 #rename_dir "fastqs/stats/" "NaN" "tree"
-#rename_dir "hicpro/" "NaN" "tree"
+rename_dir "hicpro/" "NaN" "tree"
 #rename_dir "loops/hiccups/whole_genome/" "NaN" "tree"
 #rename_dir "qc/fastqc/" "NaN" "tree"
 #rename_dir "peaks/fithichip/" "NaN" "tree"

@@ -26,7 +26,7 @@ source workflow/source_paths.sh
 source workflow/source_funcs.sh
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/post-hicpro/hiccups_to_washu.samplesheet.txt"
+samplesheet="results/samplesheets/post-hicpro/hiccups_to_washu.samplesheet.txt" # CHANGE THIS
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 sample_name="${sample_info[0]}"
 
@@ -74,8 +74,8 @@ function convert(){
 
 # converting hiccups files for 5000, 10000, 25000 and merged
 # also adding a softlink to the correct hub location
-hub_dir_tmpl="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/shortcuts/ref-replace/loops/hichip/hiccups/"
-resolutions=( "5000" "10000" "25000" "merged" )
+hub_dir_tmpl="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/shortcuts/ref-replace/loops/hichip/hiccups/" # CHANGE THIS
+resolutions=( "5000" "10000" "25000" )
 for res in "${resolutions[@]}";
 do
 
