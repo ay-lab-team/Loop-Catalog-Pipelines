@@ -25,3 +25,4 @@ tables/peaks.xlsx
 workflow/scripts/ucsc/
 tables/*
 workflow/scripts/visualizations/samplesheets/samplesheet.*.txt
+workflow/scripts/misc/add_tech_bio_rep/test.tsv
