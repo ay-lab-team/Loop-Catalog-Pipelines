@@ -52,6 +52,13 @@ function convert(){
                         if ($0 !~ /^#/) { \
                             score=-log($18)/log(10); \
 
+                            # calculate the score using donutFDR
+                            if ($18 > 0) {
+                                score=-log($18)/log(10); \
+                            } else {
+                                score=1000000; \
+                            }
+
                             # print the left anchor 
                             left="chr" $4 ":" $5 "-" $6 "," score; \
                             print "chr" $1, $2, $3, left \
@@ -108,8 +115,8 @@ do
     lc_index_link="${hub_dir}/${sample_name}.${res}.hiccups.longrange.bed.gz.tbi"
     if [[ -f $output_file ]];
     then
-        ln -frs $output_file $lc_lr_link
-        ln -frs $index_file $lc_index_link
+        ln -f $output_file $lc_lr_link
+        ln -f $index_file $lc_index_link
     fi
 
 done

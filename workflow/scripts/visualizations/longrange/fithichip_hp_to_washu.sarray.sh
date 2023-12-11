@@ -2,10 +2,10 @@
 #SBATCH --mem=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --output=results/visualizations/logs/washu/fithichip_hp_to_washu/fithichip_hp_to_washu.job_%A.task_%a.out
-#SBATCH --error=results/visualizations/logs/washu/fithichip_hp_to_washu/fithichip_hp_to_washu.job_%A.task_%a.err
+#SBATCH --output=results/visualizations/logs/washu/fithichip_hp_to_washu/fithichip_hp_to_washu.task_%a.job_%A.out
+#SBATCH --error=results/visualizations/logs/washu/fithichip_hp_to_washu/fithichip_hp_to_washu.task_%a.job_%A.err
 #SBATCH --job-name=fithichip_hp_to_washu
-#SBATCH --array 2
+#SBATCH --array 1-677
 
 # sbatch workflow/scripts/visualizations/longrange/fithichip_hp_to_washu.sarray.sh
 
@@ -14,14 +14,14 @@ start_time=$(date "+%Y.%m.%d.%H.%M")
 echo "Start time: $start_time"
 
 # print start message
-echo "Started: to_washu"
+echo "Started: fithichip_hp_to_washu"
 
 # run bash in strict mode
 set -euo pipefail
 IFS=$'\n\t'
 
 # make sure to work starting from the github base directory for this script 
-#cd $SLURM_SUBMIT_DIR
+cd $SLURM_SUBMIT_DIR
 
 # make useable from the command line as well
 if [[ ! -v "SLURM_ARRAY_TASK_ID" ]];
@@ -58,7 +58,13 @@ function convert(){
         awk -F['\t'] 'BEGIN{FS=OFS="\t"} \
                     { \
                         if ($0 !~ /^#/) { \
-                            score=-log($26)/log(10); \
+
+                            # calculate the score
+                            if ($26 > 0) {
+                                score=-log($26)/log(10); \
+                            } else {
+                                score=1000000; \
+                            }
 
                             # print the left anchor 
                             left=$4 ":" $5 "-" $6 "," score; \
@@ -90,7 +96,7 @@ resolutions_short=( "5" "10" "25")
 stringency="S"
 stringency_no="1"
 stringency_long="stringent"
-hub_dir_tmpl="${project_dir}/results/shortcuts/hg38/loops/hichip/hichip/fithichip-utility/${stringency_long}/"
+hub_dir_tmpl="${project_dir}/results/shortcuts/ref-replace/loops/hichip/hichip/fithichip-utility/${stringency_long}/"
 for i in "${!resolutions[@]}";
 do
 

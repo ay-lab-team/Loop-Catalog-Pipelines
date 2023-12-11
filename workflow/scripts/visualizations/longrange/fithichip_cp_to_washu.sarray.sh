@@ -2,31 +2,40 @@
 #SBATCH --mem=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --output=results/visualizations/logs/washu/hiccups_to_washu/hiccups_to_washu.job_%A.task_%a.out
-#SBATCH --error=results/visualizations/logs/washu/hiccups_to_washu/hiccups_to_washu.job_%A.task_%a.err
-#SBATCH --job-name=hiccups_to_washu
-#SBATCH --array 1-176
+#SBATCH --output=results/visualizations/logs/washu/fithichip_cp_to_washu/fithichip_cp_to_washu.task_%a.job_%A.out
+#SBATCH --error=results/visualizations/logs/washu/fithichip_cp_to_washu/fithichip_cp_to_washu.task_%a.job_%A.err
+#SBATCH --job-name=fithichip_cp_to_washu
+#SBATCH --array 1-274
+
+# sbatch workflow/scripts/visualizations/longrange/fithichip_cp_to_washu.sarray.sh
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
 echo "Start time: $start_time"
 
+# source tool paths
+source workflow/source_paths.sh
+source workflow/source_funcs.sh
+
 # print start message
-echo "Started: to_washu"
+echo "Started: fithichip_cp_to_washu"
 
 # run bash in strict mode
 set -euo pipefail
 IFS=$'\n\t'
 
+# make useable from the command line as well
+if [[ ! -v "SLURM_ARRAY_TASK_ID" ]];
+then 
+    SLURM_ARRAY_TASK_ID=$1
+    SLURM_SUBMIT_DIR="$project_dir"
+fi
+
 # make sure to work starting from the github base directory for this script 
 cd $SLURM_SUBMIT_DIR
 
-# source tool paths
-source workflow/source_paths.sh
-source workflow/source_funcs.sh
-
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/post-hicpro/hiccups_to_washu.samplesheet.txt" # CHANGE THIS
+samplesheet="results/samplesheets/post-hicpro/fithichip_cp_to_washu.samplesheet.txt"
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 sample_name="${sample_info[0]}"
 
@@ -37,7 +46,7 @@ echo "----------"
 echo "sample_name: $sample_name"
 echo
 
-# function to convert from hiccups to washu
+# function to convert from fithichip_cp to washu, has created specifically for this
 function convert(){
     infile=$1
     prefix_file=$2
@@ -50,17 +59,23 @@ function convert(){
         awk -F['\t'] 'BEGIN{FS=OFS="\t"} \
                     { \
                         if ($0 !~ /^#/) { \
-                            score=-log($18)/log(10); \
+
+                            # calculate the score
+                            if ($26 > 0) {
+                                score=-log($26)/log(10); \
+                            } else {
+                                score=1000000; \
+                            }
 
                             # print the left anchor 
-                            left="chr" $4 ":" $5 "-" $6 "," score; \
-                            print "chr" $1, $2, $3, left \
+                            left=$4 ":" $5 "-" $6 "," score; \
+                            print $1, $2, $3, left \
 
                             # print the right anchor
-                            right="chr" $1 ":" $2 "-" $3 "," score; \
-                            print "chr" $4, $5, $6, right \
+                            right=$1 ":" $2 "-" $3 "," score; \
+                            print $4, $5, $6, right \
                         } \
-                    }' $infile | sort -k1,1 -k2,2n > $prefix_file
+                    }' $infile | sed '1d' | sort -k1,1 -k2,2n > $prefix_file
 
         # compress and idnex
         bgzip -f $prefix_file
@@ -72,25 +87,30 @@ function convert(){
 
 }
 
-# converting hiccups files for 5000, 10000, 25000 and merged
+#####################################################################
+# Stringency = 'S'
+#####################################################################
+# converting fithichip_cp files for 5000, 10000, 25000
 # also adding a softlink to the correct hub location
-hub_dir_tmpl="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/shortcuts/ref-replace/loops/hichip/hiccups/" # CHANGE THIS
-resolutions=( "5000" "10000" "25000" )
-for res in "${resolutions[@]}";
+resolutions=( "5000" "10000" "25000")
+resolutions_short=( "5" "10" "25")
+stringency="S"
+stringency_no="1"
+stringency_long="stringent"
+hub_dir_tmpl="${project_dir}/results/shortcuts/ref-replace/loops/hichip/chip-seq/macs2/${stringency_long}/"
+for i in "${!resolutions[@]}";
 do
 
+    res="${resolutions[i]}"
+    res_short="${resolutions_short[i]}"
+
     # get input file
-    if [[ $res == "merged" ]];
-    then
-        infile="results/loops/hiccups/whole_genome/${sample_name}/merged_loops.bedpe"
-    else
-        infile="results/loops/hiccups/whole_genome/${sample_name}/postprocessed_pixels_${res}.bedpe"
-    fi
+    infile="results/loops/fithichip/${sample_name}_chipseq.peaks/${stringency}${res_short}/FitHiChIP_Peak2ALL_b${res}_L20000_U2000000/P2PBckgr_${stringency_no}/Coverage_Bias/FitHiC_BiasCorr/FitHiChIP-${stringency}${res_short}.interactions_FitHiC_Q0.01.bed"
 
     # get output file
-    prefix_file="results/visualizations/washu/hiccups_loops_all/${sample_name}.${res}.hiccups.longrange.bed"
-    output_file="results/visualizations/washu/hiccups_loops_all/${sample_name}.${res}.hiccups.longrange.bed.gz"
-    index_file="results/visualizations/washu/hiccups_loops_all/${sample_name}.${res}.hiccups.longrange.bed.gz.tbi"
+    prefix_file="results/visualizations/washu/fithichip_loops_chipseq/${sample_name}.${res}.${stringency_long}.fithichip_cp.longrange.bed"
+    output_file="results/visualizations/washu/fithichip_loops_chipseq/${sample_name}.${res}.${stringency_long}.fithichip_cp.longrange.bed.gz"
+    index_file="results/visualizations/washu/fithichip_loops_chipseq/${sample_name}.${res}.${stringency_long}.fithichip_cp.longrange.bed.gz.tbi"
 
     # do the conversion
     echo
@@ -98,18 +118,67 @@ do
     echo "infile: ${infile}"
     echo "output_file: ${output_file}"
     echo
+
     convert $infile $prefix_file
 
     # softlink longrange and index to the LC hub
     # only softlink if the output file was generated
     ref=$(get_ref_from_sample_name $sample_name)
     hub_dir=$( echo $hub_dir_tmpl | sed "s/ref-replace/${ref}/g")
-    lc_lr_link="${hub_dir}/${sample_name}.${res}.hiccups.longrange.bed.gz"
-    lc_index_link="${hub_dir}/${sample_name}.${res}.hiccups.longrange.bed.gz.tbi"
+    lc_lr_link="${hub_dir}/${sample_name}.${res}.fithichip_cp.longrange.bed.gz"
+    lc_index_link="${hub_dir}/${sample_name}.${res}.fithichip_cp.longrange.bed.gz.tbi"
     if [[ -f $output_file ]];
     then
-        ln -frs $output_file $lc_lr_link
-        ln -frs $index_file $lc_index_link
+        ln -f $output_file $lc_lr_link
+        ln -f $index_file $lc_index_link
+    fi
+
+done
+
+#####################################################################
+# Stringency = 'L'
+#####################################################################
+# converting fithichip_cp files for 5000, 10000, 25000
+# also adding a softlink to the correct hub location
+resolutions=( "5000" "10000" "25000")
+resolutions_short=( "5" "10" "25")
+stringency="L"
+stringency_no="0"
+stringency_long="loose"
+hub_dir_tmpl="${project_dir}/results/shortcuts/ref-replace/loops/hichip/chip-seq/macs2/${stringency_long}/"
+for i in "${!resolutions[@]}";
+do
+
+    res="${resolutions[i]}"
+    res_short="${resolutions_short[i]}"
+
+    # get input file
+    infile="results/loops/fithichip/${sample_name}_chipseq.peaks/${stringency}${res_short}/FitHiChIP_Peak2ALL_b${res}_L20000_U2000000/P2PBckgr_${stringency_no}/Coverage_Bias/FitHiC_BiasCorr/FitHiChIP-${stringency}${res_short}.interactions_FitHiC_Q0.01.bed"
+
+    # get output file
+    prefix_file="results/visualizations/washu/fithichip_loops_chipseq/${sample_name}.${res}.${stringency_long}.fithichip_cp.longrange.bed"
+    output_file="results/visualizations/washu/fithichip_loops_chipseq/${sample_name}.${res}.${stringency_long}.fithichip_cp.longrange.bed.gz"
+    index_file="results/visualizations/washu/fithichip_loops_chipseq/${sample_name}.${res}.${stringency_long}.fithichip_cp.longrange.bed.gz.tbi"
+
+    # do the conversion
+    echo
+    echo "Working on the conversion for ${res}:"
+    echo "infile: ${infile}"
+    echo "output_file: ${output_file}"
+    echo
+
+    convert $infile $prefix_file
+
+    # softlink longrange and index to the LC hub
+    # only softlink if the output file was generated
+    ref=$(get_ref_from_sample_name $sample_name)
+    hub_dir=$( echo $hub_dir_tmpl | sed "s/ref-replace/${ref}/g")
+    lc_lr_link="${hub_dir}/${sample_name}.${res}.fithichip_cp.longrange.bed.gz"
+    lc_index_link="${hub_dir}/${sample_name}.${res}.fithichip_cp.longrange.bed.gz.tbi"
+    if [[ -f $output_file ]];
+    then
+        ln -f $output_file $lc_lr_link
+        ln -f $index_file $lc_index_link
     fi
 
 done
