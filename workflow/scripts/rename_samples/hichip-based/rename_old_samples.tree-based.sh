@@ -95,13 +95,13 @@ function rename_dir {
 #rename_dir "fastqs/raw/" "NaN" "tree"
 #rename_dir "fastqs/parallel/" "NaN" "tree"
 #rename_dir "fastqs/stats/" "NaN" "tree"
-rename_dir "hicpro/" "NaN" "tree"
+#rename_dir "hicpro/" "NaN" "tree"
 #rename_dir "loops/hiccups/whole_genome/" "NaN" "tree"
 #rename_dir "qc/fastqc/" "NaN" "tree"
 #rename_dir "peaks/fithichip/" "NaN" "tree"
 #rename_dir "peaks/hichip-peaks/" "NaN" "tree"
 #rename_dir "loops/fithichip/" "_fithichip.peaks" "tree"
-#rename_dir "loops/fithichip/" "_hichip-peaks.peaks" "tree"
+rename_dir "loops/fithichip/" "_hichip-peaks.peaks" "tree"
 #rename_dir "loops/fithichip/" "_chipseq.peaks" "tree"
 #rename_dir visualizations/washu/fithichip_loops_chipseq/ NaN tree
 #rename_dir motif_analysis/meme/fimo/ NaN tree

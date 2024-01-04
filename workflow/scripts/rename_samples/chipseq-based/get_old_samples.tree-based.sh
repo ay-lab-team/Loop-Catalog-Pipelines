@@ -7,8 +7,8 @@ cand_paths_fn="${outdir}/candidate_paths.tree-based.txt"
 
 ## find across all dirs
 # can add more here
-#find /mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/peaks/chipline/* -maxdepth 1 > $cand_paths_fn
-find /mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/peaks/merged_chipline/* -maxdepth 1 > $cand_paths_fn
+find /mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/peaks/chipline/* -maxdepth 1 > $cand_paths_fn
+find /mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/peaks/merged_chipline/* -maxdepth 1 >> $cand_paths_fn
 
 ## locate the final problematic paths
 problem_samples_fn="${outdir}/copy_and_rename.samples.txt"

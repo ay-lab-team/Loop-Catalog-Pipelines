@@ -16,8 +16,8 @@ function find_dirs_and_softdirs() {
 #find_dirs_and_softdirs results/fastqs/raw/\* > $cand_paths_fn
 #find_dirs_and_softdirs results/fastqs/parallel/\* >> $cand_paths_fn
 #find_dirs_and_softdirs results/fastqs/stats/\* >> $cand_paths_fn
-find_dirs_and_softdirs results/hicpro/\* >> $cand_paths_fn
-#find_dirs_and_softdirs results/loops/fithichip/\* >> $cand_paths_fn
+#find_dirs_and_softdirs results/hicpro/\* >> $cand_paths_fn
+find_dirs_and_softdirs results/loops/fithichip/\* > $cand_paths_fn
 #find_dirs_and_softdirs results/loops/hiccups/whole_genome/\* >> $cand_paths_fn
 #find_dirs_and_softdirs results/qc/fastqc/\* >> $cand_paths_fn
 #find_dirs_and_softdirs results/peaks/fithichip/\* >> $cand_paths_fn
@@ -31,7 +31,25 @@ find_dirs_and_softdirs results/hicpro/\* >> $cand_paths_fn
 ## locate the final problematic paths
 problem_samples_fn="${outdir}/copy_and_rename.samples.txt"
 problem_paths_fn="${outdir}/problem_paths.tree-based.txt"
-grep -f $problem_samples_fn $cand_paths_fn > $problem_paths_fn
 
-echo "Check out the results with:"
-echo "vim -p ${cand_paths_fn} ${problem_paths_fn}"
+if [[ -e $problem_paths_fn ]];
+then
+    rm $problem_paths_fn
+fi
+
+for ss in $(grep -f $problem_samples_fn $cand_paths_fn);
+do
+   if [[ -e $ss ]];
+   then
+       echo $ss >> $problem_paths_fn
+   fi
+done
+
+read -p "yes to preview, no to skip: " preview
+if [[ $preview == "yes" ]];
+then
+    vim -p ${cand_paths_fn} ${problem_paths_fn}
+else
+    echo "Check out the results with:"
+    echo "vim -p ${cand_paths_fn} ${problem_paths_fn}"
+fi

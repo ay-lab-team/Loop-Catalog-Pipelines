@@ -70,6 +70,6 @@ function rename_dir {
 }
 
 # complete
-#rename_dir "peaks/chipline/" "NaN"
+rename_dir "peaks/chipline/" "NaN"
 rename_dir "peaks/merged_chipline/" "NaN"
  

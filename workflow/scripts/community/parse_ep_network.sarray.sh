@@ -49,20 +49,24 @@ run_cytoscape_conversion() {
     subcomm_file="${sample_dir}/${chrom}/${comm}/community.txt"
     cytoscape_json_file="${sample_dir}/${chrom}/${comm}/network.annotated.cytoscape.json"
 
-    echo
-    echo "Now Running:"
-    echo "network_file: ${network_file}"
-    echo "subcomm_file: ${subcomm_file}"
-    echo "cytoscape_json_file: ${cytoscape_json_file}"
-    echo
 
     if [[ -e "$network_file" ]] && [[ -e "$subcomm_file" ]];
     then
+        # message
+        echo
+        echo "Now Running:"
+        echo "network_file: ${network_file}"
+        echo "subcomm_file: ${subcomm_file}"
+        echo "cytoscape_json_file: ${cytoscape_json_file}"
+        echo
+
+        # run command
         cmd="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/python3 \
                 workflow/scripts/community/parse_ep_network.py \
                     --network-file $network_file \
                     --subcomm-file $subcomm_file \
                     --cytoscape-json-file ${sample_dir}/${chrom}/${comm}/network.annotated.cytoscape.json"
+        echo $cmd
         eval $cmd
     fi
 }
@@ -79,16 +83,9 @@ do
     # cycle through the comm dirs
     for comm in $(ls $sample_chrom_dir/ | grep "^comm");
     do
-        echo $comm
         run_cytoscape_conversion $sample_dir $chrom $comm
     done
-    break
 done
-
-
-
-
-
 
 # print end message
 echo
