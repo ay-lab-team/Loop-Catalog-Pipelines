@@ -5,8 +5,8 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=80g
 #SBATCH --time=100:00:00
-#SBATCH --output=biorep_merged/results/motif_analysis/logs/job-%j.out
-#SBATCH --error=biorep_merged/results/motif_analysis/logs/job-%j.error
+#SBATCH --output=results/biorep_merged/results/motif_analysis/logs/job-%j.out
+#SBATCH --error=results/biorep_merged/results/motif_analysis/logs/job-%j.error
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
@@ -45,8 +45,8 @@ echo
 
 # make the output directory 
 #outdir="results/motif_analysis/fimo/${sample_name}"
-base="biorep_merged/results/motif_analysis/meme/znf_chipseq_streme/${1}/"
-outdir="biorep_merged/results/motif_analysis/meme/znf_chipseq_streme/${1}/streme_out"
+base="results/biorep_merged/results/motif_analysis/meme/znf_chipseq_streme/${1}/"
+outdir="results/biorep_merged/results/motif_analysis/meme/znf_chipseq_streme/${1}/streme_out"
 mkdir -p $outdir
 
 if [ ! -f $base/input_fasta.fa ]; then
@@ -54,9 +54,11 @@ if [ ! -f $base/input_fasta.fa ]; then
     if [ $1 == "293T" ]; then
       infile="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/znf_data/chipseq_293T_krabopedia_hg38/ZNF460_pubM_vs_293T_TI_sampled_peaks.bed"
     else 
-      infile="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/znf_data/chipseq_hepg2_encode_hg38/ENCFF261NJZ.bed"
+      #infile="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/znf_data/chipseq_hepg2_encode_hg38/ENCFF261NJZ.bed"
+      infile="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/biorep_merged/results/motif_analysis/meme/znf_chipseq_streme/293T_HepG2_Intersect/znf460_293T_HepG2.intersect.bed"
     fi 
     genome="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/hg38/hg38.fa"
+    echo $infile
     bed2fasta -o $base/input_fasta.fa -both $infile $genome
 fi
 
