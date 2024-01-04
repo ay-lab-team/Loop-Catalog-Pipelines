@@ -18,9 +18,9 @@ SORT_RAM = 80000
 LOGFILE = logs/hicpro.log
 
 JOB_NAME = 
-JOB_MEM = 80gb
-JOB_WALLTIME = 200:00:00
-JOB_QUEUE = default
+JOB_MEM = 10gb
+JOB_WALLTIME = 80:00:00
+JOB_QUEUE = compute
 JOB_MAIL = kfetter@lji.org
 
 #########################################################################
