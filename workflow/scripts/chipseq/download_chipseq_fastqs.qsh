@@ -1,0 +1,73 @@
+#!/bin/bash -ex
+
+#SBATCH --job-name=download_chipseq_fastqs
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=10gb
+#SBATCH --time=100:00:00
+#SBATCH --output=results/fastqs/chipseq_v2/logs/download_chipseq_fastqs/download_chipseq_fastqs.%A.%a.out
+#SBATCH --error=results/fastqs/chipseq_v2/logs/download_chipseq_fastqs/download_chipseq_fastqs.%A.%a.err
+#SBATCH --mail-type=ALL
+
+# example run:
+# 1) sbatch --array=0-31 workflow/scripts/chipseq/download_chipseq_fastqs.qsh
+
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: run_download_chipseq_fastqs"
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+if [[ ! -v SLURM_ARRAY_TASK_ID ]];
+then
+    SLURM_ARRAY_TASK_ID=$1
+    SLURM_SUBMIT_DIR="."
+fi
+
+# make sure to work starting from the base directory for this project 
+cd $SLURM_SUBMIT_DIR
+
+# source tool paths
+source workflow/source_paths.sh
+
+# extract the sample information using the PBS ARRAYID
+IFS=$'\t'
+samplesheet="results/samplesheets/fastq/chipseq_srr_ids.batch2.txt"
+srr_id=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
+
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "srr_id: $srr_id"
+echo
+
+# make the output directory
+outdir="results/fastqs/chipseq_v2/srr/$srr_id/"
+mkdir -p $outdir
+
+# run grabseqs
+echo "# running grabseqs"
+retries=8
+threads=4
+
+# check that this SRR ID hasn't already been downloaded before downloading
+if [ -z "$(compgen -G "$outdir/$srr_id*")" ]; then
+    cmd="$fasterq_dump --split-files -t /mnt/hpcscratch/hichip-db-loop-calling/ --outdir $outdir $srr_id"
+    eval $cmd
+else
+    echo "$srr_id already exists in $outdir."
+fi
+
+# print end message
+echo "Ended: run_download_fastqs_chipseq_new"
+
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"
