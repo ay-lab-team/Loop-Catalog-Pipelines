@@ -36,16 +36,20 @@ cd $SLURM_SUBMIT_DIR
 # source tool paths
 source workflow/source_paths.sh
 
-# extract the sample information using the PBS ARRAYID
+# extract the sample information using the SLURM_ARRAY_TASK_ID
+# Generated using: hichip-db-loop-calling/workflow/scripts/chipseq/samplesheets/ChIP-seq-Tracker.Batch*.ipynb
 IFS=$'\t'
-samplesheet="results/samplesheets/fastq/chipseq_srr_ids.batch2.txt"
+samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.batch1.txt" # batch 1 - 1:235
+samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.batch2.txt" # batch 2 - 1:149
 srr_id=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
+IFS=$'\n'
 
 # printing sample information
 echo
 echo "Processing"
 echo "----------"
 echo "srr_id: $srr_id"
+echo "samplesheet: $samplesheet"
 echo
 
 # make the output directory
@@ -60,13 +64,23 @@ threads=4
 # check that this SRR ID hasn't already been downloaded before downloading
 if [ -z "$(compgen -G "$outdir/$srr_id*")" ]; then
     cmd="$fasterq_dump --split-files -t /mnt/hpcscratch/hichip-db-loop-calling/ --outdir $outdir $srr_id"
+    echo "Running: ${cmd}"
     eval $cmd
+
+    # also compressing
+    fns=( $(ls $outdir/*) )
+    for fn in "${fns[@]}";
+    do
+        cmd="$bgzip $fn"
+        echo "Compressing: $fn"
+        eval $cmd
+    done
 else
-    echo "$srr_id already exists in $outdir."
+    echo "Skipping: $srr_id already exists in $outdir."
 fi
 
 # print end message
-echo "Ended: run_download_fastqs_chipseq_new"
+echo "Ended: download_chipseq_fastqs"
 
 # print end time message
 end_time=$(date "+%Y.%m.%d.%H.%M")

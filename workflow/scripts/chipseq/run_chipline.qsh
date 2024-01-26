@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
-#SBATCH --mem=20gb
+#SBATCH --mem=100gb
 #SBATCH --time=100:00:00
 #SBATCH --output=results/peaks/chipline_v2/logs/run_chipline/run_chipline.%A.%a.out
 #SBATCH --error=results/peaks/chipline_v2/logs/run_chipline/run_chipline.%A.%a.err
@@ -33,14 +33,19 @@ cd $SLURM_SUBMIT_DIR
 # set paths to softwares
 PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/bowtie2/bowtie2-2.4.5:$PATH # bowtie2
 PATH=/share/apps/picard-tools/picard-tools-2.7.1/:$PATH # picard
-PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/phantompeakqualtools/:$PATH # phantompeakqualtools
+PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/phantompeakqualtools/:$PATH # phantompeakqualtools
 PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software:$PATH # Utilities "bedGraphToBigWig", "bedSort", "bigBedToBed", "hubCheck", "fetchChromSizes"
-PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/deeptools/bin/:$PATH # deeptools
 PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/lc-pipelines/bin/:$PATH # samtools + others
-#PATH=/share/apps/python/python-2.7.13/bin/:$PATH # macs2
 PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/macs2/bin:$PATH # macs2
 PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/homer/bin/:$PATH # HOMER
-PATH=/share/apps/R/3.6.1/bin/:$PATH # R
+PATH=/home/jreyna/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/chipline-R/bin/:$PATH # R, nikhil was able to successfully use 3.6.1
+# DEPRECATED, set by configuration instead PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/deeptools/bin/:$PATH # deeptools
+
+echo "which samtools?"
+which samtools
+
+#PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/chipline-python-v2/bin/:$PATH
+
 
 #=================
 # main executable script of the ChIP seq pipeline
@@ -52,7 +57,7 @@ PATH=/share/apps/R/3.6.1/bin/:$PATH # R
 # La Jolla Institute for Allergy and Immunology
 #=================
 
-CodeDir="/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/ChIPLine/"
+CodeDir="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/ChIPLine/"
 CodeExec="$CodeDir/bin/pipeline.sh"
 
 #########################################################################################
@@ -61,8 +66,8 @@ CodeExec="$CodeDir/bin/pipeline.sh"
 
 # extract the sample information
 IFS=$'\t'
-samplesheet="results/samplesheets/fastq/chipseq.chipline.batch2.txt"
-#samplesheet="results/samplesheets/fastq/chipseq.chipline.batch2.rerun_control_samples.txt"
+samplesheet="results/samplesheets/chipseq/chipseq.chipline.batch2.txt"
+samplesheet="results/samplesheets/chipseq/chipseq.chipline.batch1.txt"
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 
 sample_name="${sample_info[0]}"
@@ -75,14 +80,17 @@ if [ "$ref_genome" = "grch38" ]; then
     echo "Using GRCh38"
     bowtie2_index="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/hg38/hg38"
     macs2_genomesize="hs"
+    config="config/chipline/configfile.grch38.txt"
 elif [ "$ref_genome" = "mm10" ]; then
     echo "Using mm10"
     bowtie2_index="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/mm10/mm10"
     macs2_genomesize="mm"
+    config="config/chipline/configfile.mm10.txt"
 elif [ "$ref_genome" = "t2t" ]; then
     echo "Using T2T"
     bowtie2_index="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/index/chm13"
     macs2_genomesize="hs"
+    config="config/chipline/configfile.t2t.txt"
 fi
 
 ## perform a check to make sure the number of reads is greater than 10000
@@ -103,7 +111,7 @@ echo "# determine if single or paired data"
 main_srr_dir="results/fastqs/chipseq_v2/srr-geo-combos/$main_srr_combo/"
 
 # listing and splitting fastqs
-fastqs_str=$(ls ${main_srr_dir}/${main_srr_combo}*.fastq | tr '[:space:]' ' ')
+fastqs_str=$(ls ${main_srr_dir}/${main_srr_combo}*.fastq.gz | tr '[:space:]' ' ')
 IFS=" " read -a fastqs_array <<< "$fastqs_str"
 
 # checking the number of fastqs, either 1 (single-end) or 2 (paired-end)
@@ -138,11 +146,11 @@ fi
 # assign the read arguments
 if [ "${paired_flag}" == "True" ];
 then
-    r1_fastq=$(realpath "${main_srr_dir}/${main_srr_combo}_1.fastq")
-    r2_fastq=$(realpath "${main_srr_dir}/${main_srr_combo}_2.fastq")
+    r1_fastq=$(realpath "${main_srr_dir}/${main_srr_combo}_1.fastq.gz")
+    r2_fastq=$(realpath "${main_srr_dir}/${main_srr_combo}_2.fastq.gz")
     read_args="-f ${r1_fastq} -r ${r2_fastq}"
 else
-    fastq=$(realpath "${main_srr_dir}/${main_srr_combo}.fastq")
+    fastq=$(realpath "${main_srr_dir}/${main_srr_combo}.fastq.gz")
     read_args="-f ${fastq}"
 fi
 
@@ -158,13 +166,21 @@ fi
 # setup some additional info
 prefix=$sample_name
 outdir=$(realpath "results/peaks/chipline_v2/$prefix")
-configfile=$(realpath "config/chipline/configfile.txt")
+configfile=$(realpath "$config")
+
+# setup the command as a string
+overwrite=0 # no
+#overwrite=1 # yes
+
+debug=0 # no
+#debug=1 # yes
 
 # setup the command as a string
 chipline_command="$CodeExec ${read_args} -C $configfile \
                     -n $prefix -g $bowtie2_index -d $outdir -t 16 \
-                    -m 16G -T 0 -q 30 -D 1 -p ${macs2_genomesize} -O 1 ${control_bam_arg}"
+                    -m 16G -T 0 -q 30 -D ${debug} -p ${macs2_genomesize} -O $overwrite ${control_bam_arg}"
 
+# run the command
 echo "Running: $chipline_command"
 eval $chipline_command
 

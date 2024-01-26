@@ -43,7 +43,8 @@ echo "# setup metadata"
 
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
-samplesheet="results/samplesheets/fastq/chipseq_srr_ids_to_ref_genome.combos.batch2.txt"
+#samplesheet="results/samplesheets/chipseq/chipseq.srr_ids_to_ref_genome.combos.batch2.txt"
+samplesheet="results/samplesheets/chipseq/chipseq.srr_ids_to_ref_genome.combos.batch1.txt"
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 
 # begin to construct the name of the control directory
@@ -74,7 +75,7 @@ IFS="-" read -ra srr_combo_split <<< "$srr_combo"
 srr_combo_dir="results/fastqs/chipseq_v2/srr-geo-combos/$srr_combo/"
 
 # listing and spliting fastqs
-fastqs_str=$(ls ${srr_combo_dir}/${srr_combo}*.fastq | tr '[:space:]' ' ')
+fastqs_str=$(ls ${srr_combo_dir}/${srr_combo}*.fastq.gz | tr '[:space:]' ' ')
 IFS=" " read -a fastqs_array <<< "$fastqs_str"
 
 # checking the number of fastqs, either 1 (single-end) or 2 (paired-end)
@@ -107,14 +108,14 @@ if [ -f "${outdir}/${srr_combo}*.bam" ]; then
 
 # aligning single end samples
 elif [ ${#fastqs_array[@]} -eq 1 ]; then
-    fastq_path="${fastq_dir}/${srr_combo}.fastq"
+    fastq_path="${fastq_dir}/${srr_combo}.fastq.gz"
     bam_path="$outdir/${srr_combo}.bam"
     cmd="${bowtie2} -p 4 -x $bowtie2_index -U ${fastq_path} | $samtools view -bS - > $bam_path"
 
 # aligning paired-ended samples
 elif [ ${#fastqs_array[@]} -eq 2 ]; then
-    r1_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combo}/${srr_combo}_1.fastq"
-    r2_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combo}/${srr_combo}_2.fastq"
+    r1_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combo}/${srr_combo}_1.fastq.gz"
+    r2_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combo}/${srr_combo}_2.fastq.gz"
     bam_path="$outdir/${srr_combo}.bam"
     cmd="${bowtie2} -p 4 -x $bowtie2_index -1 "${r1_path}" -2 ${r2_path} | $samtools view -bS - > $bam_path"
 fi

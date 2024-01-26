@@ -38,7 +38,8 @@ source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
-samplesheet="results/samplesheets/fastq/chipseq_srr_ids.combos.batch2.txt"
+#samplesheet="results/samplesheets/chipseq/chipseq.srr_id.combos.batch2.txt"
+samplesheet="results/samplesheets/chipseq/chipseq.srr_id.combos.batch1.txt"
 srr_combos=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
 
 # printing sample information
@@ -53,14 +54,30 @@ outdir="results/fastqs/chipseq_v2/srr-geo-combos/$srr_combos/"
 mkdir -p $outdir
 
 ###############################################################################
-# check that this SRR COMBO hasn't already been created 
+# funtion to print the logging termination
 ###############################################################################
-#echo "# check that this SRR COMBO hasn't already been created"
-## else continue
-#if [ ! -z "$(compgen -G "$outdir/$srr_combos*")" ]; then
-#    echo "$srr_combos already exists in $outdir."
-#    exit
-#fi
+function logging_termination {
+    echo
+    echo "# Logging termination"
+
+    # print end message
+    echo "Ended: combine_srrs"
+
+    # print end time message
+    end_time=$(date "+%Y.%m.%d.%H.%M")
+    echo "End time: $end_time"
+}
+
+##############################################################################
+# check that this SRR COMBO hasn't already been created 
+##############################################################################
+echo "# check that this SRR COMBO hasn't already been created"
+# else continue
+if [ ! -z "$(compgen -G "$outdir/$srr_combos*")" ]; then
+    echo "Skipping: $srr_combos already exists in $outdir."
+    logging_termination
+    exit
+fi
 
 ###############################################################################
 # determine if a single srr or combo
@@ -85,6 +102,7 @@ then
     ln -s -f $source_srr_dir $target_srr_dir
     echo "This sample is a single SRR."
     echo "Softlinked the directory."
+    logging_termination
     exit
 else
     echo "This sample is a combination of SRRs."
@@ -98,7 +116,7 @@ echo "# determine if single or paired data"
 
 # listing and spliting fastqs
 first_srr_id=${srr_combos_split[0]}
-first_fastqs_str=$(ls ${srrdir}/${first_srr_id}/${first_srr_id}*.fastq | tr '[:space:]' ' ')
+first_fastqs_str=$(ls ${srrdir}/${first_srr_id}/${first_srr_id}*.fastq.gz | tr '[:space:]' ' ')
 IFS=" " read -a first_fastqs <<< "$first_fastqs_str"
 
 # checking the number of fastqs, either 1 (single-end) or 2 (paired-end)
@@ -121,42 +139,47 @@ echo "# organize files into concated formats"
 if [ "$paired_flag" == "True" ];
 then
     # instantiate the r1 and r2 concat files
-    r1_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combos}/${srr_combos}_1.fastq"
-    r2_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combos}/${srr_combos}_2.fastq"
-    mkdir -p results/fastqs/chipseq_v2/srr-geo-combos/${srr_combos}/
-    echo "" > $r1_path
-    echo "" > $r2_path
+    r1_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combos}/${srr_combos}_1.fastq.gz"
+    r2_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combos}/${srr_combos}_2.fastq.gz"
+
+    # ensure the files are not present
+    rm -f $r1_path 
+    rm -f $r2_path
 
     # perform the concatination
     for srr_id in ${srr_combos_split[@]};
     do
-        r1_fastq="$srrdir/${srr_id}/${srr_id}_1.fastq"
-        r2_fastq="$srrdir/${srr_id}/${srr_id}_2.fastq"
+        r1_fastq="$srrdir/${srr_id}/${srr_id}_1.fastq.gz"
+        r2_fastq="$srrdir/${srr_id}/${srr_id}_2.fastq.gz"
         cat $r1_fastq >> $r1_path
         cat $r2_fastq >> $r2_path
     done
 else
     # instantiate the concat file
-    fastq_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combos}/${srr_combos}.fastq"
-    echo "" > $fastq_path
+    fastq_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combos}/${srr_combos}.fastq.gz"
+
+    # ensure the files are not present
+    rm -f $fastq_path
 
     # perform the concatination
     for srr_id in ${srr_combos_split[@]};
     do
-        curr_fastq="$srrdir/${srr_id}/${srr_id}.fastq"
+        curr_fastq="$srrdir/${srr_id}/${srr_id}.fastq.gz"
         cat $curr_fastq >> $fastq_path
     done
 fi
 
-###############################################################################
-# logging termination
-###############################################################################
-echo
-echo "# Logging termination"
 
-# print end message
-echo "Ended: combine_srrs"
-
-# print end time message
-end_time=$(date "+%Y.%m.%d.%H.%M")
-echo "End time: $end_time"
+################################################################################
+## logging termination
+################################################################################
+logging_termination
+#echo
+#echo "# Logging termination"
+#
+## print end message
+#echo "Ended: combine_srrs"
+#
+## print end time message
+#end_time=$(date "+%Y.%m.%d.%H.%M")
+#echo "End time: $end_time"
