@@ -63,6 +63,15 @@ elif [ "$ref_genome" = "t2t" ]; then
     bowtie2_index="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/index/chm13"
 fi
 
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "srr_combo: $srr_combo"
+echo "samplesheet: $samplesheet"
+echo "ref_genome: $ref_genome"
+echo
+
 ###############################################################################
 # determine if single or paired data
 ###############################################################################

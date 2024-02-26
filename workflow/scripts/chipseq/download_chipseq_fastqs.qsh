@@ -39,8 +39,12 @@ source workflow/source_paths.sh
 # extract the sample information using the SLURM_ARRAY_TASK_ID
 # Generated using: hichip-db-loop-calling/workflow/scripts/chipseq/samplesheets/ChIP-seq-Tracker.Batch*.ipynb
 IFS=$'\t'
-samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.batch1.txt" # batch 1 - 1:235
-samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.batch2.txt" # batch 2 - 1:149
+# batch 1 - sbatch --array="1-149" workflow/scripts/chipseq/download_chipseq_fastqs.qsh
+samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.batch1.txt"
+
+# batch 2 - sbatch --array="2-149" workflow/scripts/chipseq/download_chipseq_fastqs.qsh
+#samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.batch2.txt"  
+
 srr_id=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
 IFS=$'\n'
 
@@ -56,13 +60,15 @@ echo
 outdir="results/fastqs/chipseq_v2/srr/$srr_id/"
 mkdir -p $outdir
 
-# run grabseqs
-echo "# running grabseqs"
+# run fasterq-dump 
+echo "# running fasterq-dump"
 retries=8
 threads=4
 
 # check that this SRR ID hasn't already been downloaded before downloading
-if [ -z "$(compgen -G "$outdir/$srr_id*")" ]; then
+# condition works by finding negative of empty directory
+if [ ! -n "$(find "$outdir" -maxdepth 1 -type f -print -quit)" ]; then
+
     cmd="$fasterq_dump --split-files -t /mnt/hpcscratch/hichip-db-loop-calling/ --outdir $outdir $srr_id"
     echo "Running: ${cmd}"
     eval $cmd

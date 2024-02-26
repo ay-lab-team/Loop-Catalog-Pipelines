@@ -47,6 +47,7 @@ echo
 echo "Processing"
 echo "----------"
 echo "srr_combos: $srr_combos"
+echo "samplesheet: $samplesheet"
 echo
 
 # make the output directory
@@ -79,6 +80,7 @@ if [ ! -z "$(compgen -G "$outdir/$srr_combos*")" ]; then
     exit
 fi
 
+
 ###############################################################################
 # determine if a single srr or combo
 ###############################################################################
@@ -94,7 +96,11 @@ IFS="-" read -ra srr_combos_split <<< "$srr_combos"
 srrdir="results/fastqs/chipseq_v2/srr/"
 if [[ ${#srr_combos_split[@]} -eq 1 ]];
 then
-    rmdir $outdir # removing due to initialized outdir for all other cases
+    # removing due to initialized outdir for all other cases
+    if [ -d $outdir ];
+    then
+        rmdir $outdir 
+    fi
     symdir="results/fastqs/chipseq_v2/srr-geo-combos/"
     source_srr_dir=$(readlink -f "$srrdir/$srr_combos")
     target_srr_dir=$(readlink -f "$symdir")
@@ -107,6 +113,7 @@ then
 else
     echo "This sample is a combination of SRRs."
 fi
+
 
 ###############################################################################
 # determine if single or paired data
@@ -136,6 +143,22 @@ fi
 echo
 echo "# organize files into concated formats"
 
+function correct_file {
+    srrdir=$1
+    srr_id=$2
+    test_fn="${srrdir}/${srr_id}/${srr_id}.fastq.gz"
+    test_1_fn="${srrdir}/${srr_id}/${srr_id}_1.fastq.gz"
+    if [[ -f "$test_fn" ]]
+    then
+        echo $test_fn
+    elif [[ -f "$test_1_fn" ]]
+    then
+        echo $test_1_fn
+    else
+        echo "PROBLEM: Check path of ${srr_id}"
+    fi
+}
+
 if [ "$paired_flag" == "True" ];
 then
     # instantiate the r1 and r2 concat files
@@ -164,7 +187,7 @@ else
     # perform the concatination
     for srr_id in ${srr_combos_split[@]};
     do
-        curr_fastq="$srrdir/${srr_id}/${srr_id}.fastq.gz"
+        curr_fastq=$(correct_file "$srrdir" "$srr_id")
         cat $curr_fastq >> $fastq_path
     done
 fi
