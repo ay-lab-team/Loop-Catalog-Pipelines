@@ -1,0 +1,208 @@
+#!/bin/bash -ex
+
+#SBATCH --job-name=combine_srrs
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1gb
+#SBATCH --time=100:00:00
+#SBATCH --output=results/fastqs/chipseq_v2/logs/combine_srrs/combine_srrs.%A.%a.out
+#SBATCH --error=results/fastqs/chipseq_v2/logs/combine_srrs/combine_srrs.%A.%a.err
+#SBATCH --mail-type=ALL
+
+# example run:
+# 1) sbatch --array=0-31 workflow/scripts/chipseq/combine_srrs.qsh
+
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: run_combine_srrs"
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+if [[ ! -v SLURM_ARRAY_TASK_ID ]];
+then
+    SLURM_ARRAY_TASK_ID=$1
+    SLURM_SUBMIT_DIR="."
+fi
+
+# make sure to work starting from the base directory for this project 
+cd $SLURM_SUBMIT_DIR
+
+# source tool paths
+source workflow/source_paths.sh
+
+# extract the sample information using the PBS ARRAYID
+IFS=$'\t'
+#samplesheet="results/samplesheets/chipseq/chipseq.srr_id.combos.batch2.txt"
+samplesheet="results/samplesheets/chipseq/chipseq.srr_id.combos.batch1.txt"
+srr_combos=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
+
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "srr_combos: $srr_combos"
+echo "samplesheet: $samplesheet"
+echo
+
+# make the output directory
+outdir="results/fastqs/chipseq_v2/srr-geo-combos/$srr_combos/"
+mkdir -p $outdir
+
+###############################################################################
+# funtion to print the logging termination
+###############################################################################
+function logging_termination {
+    echo
+    echo "# Logging termination"
+
+    # print end message
+    echo "Ended: combine_srrs"
+
+    # print end time message
+    end_time=$(date "+%Y.%m.%d.%H.%M")
+    echo "End time: $end_time"
+}
+
+##############################################################################
+# check that this SRR COMBO hasn't already been created 
+##############################################################################
+echo "# check that this SRR COMBO hasn't already been created"
+# else continue
+if [ ! -z "$(compgen -G "$outdir/$srr_combos*")" ]; then
+    echo "Skipping: $srr_combos already exists in $outdir."
+    logging_termination
+    exit
+fi
+
+
+###############################################################################
+# determine if a single srr or combo
+###############################################################################
+# continue processing if there are multiple SRRs otherwise just softlink
+# the srr directory and exit
+echo
+echo "# determine if a single srr or combo"
+
+# extract srr combo into an array
+IFS="-" read -ra srr_combos_split <<< "$srr_combos"
+
+# softlink single srr samples
+srrdir="results/fastqs/chipseq_v2/srr/"
+if [[ ${#srr_combos_split[@]} -eq 1 ]];
+then
+    # removing due to initialized outdir for all other cases
+    if [ -d $outdir ];
+    then
+        rmdir $outdir 
+    fi
+    symdir="results/fastqs/chipseq_v2/srr-geo-combos/"
+    source_srr_dir=$(readlink -f "$srrdir/$srr_combos")
+    target_srr_dir=$(readlink -f "$symdir")
+    echo "ln -s -f $source_srr_dir $target_srr_dir"
+    ln -s -f $source_srr_dir $target_srr_dir
+    echo "This sample is a single SRR."
+    echo "Softlinked the directory."
+    logging_termination
+    exit
+else
+    echo "This sample is a combination of SRRs."
+fi
+
+
+###############################################################################
+# determine if single or paired data
+###############################################################################
+echo
+echo "# determine if single or paired data"
+
+# listing and spliting fastqs
+first_srr_id=${srr_combos_split[0]}
+first_fastqs_str=$(ls ${srrdir}/${first_srr_id}/${first_srr_id}*.fastq.gz | tr '[:space:]' ' ')
+IFS=" " read -a first_fastqs <<< "$first_fastqs_str"
+
+# checking the number of fastqs, either 1 (single-end) or 2 (paired-end)
+if [ ${#first_fastqs[@]} -gt 1 ];
+then
+    paired_flag="True"
+    echo "This sample used paired-end sequencing."
+else
+    paired_flag="False"
+    echo "This sample used single-end sequencing."
+fi
+
+
+###############################################################################
+# organize files into concated formats
+###############################################################################
+echo
+echo "# organize files into concated formats"
+
+function correct_file {
+    srrdir=$1
+    srr_id=$2
+    test_fn="${srrdir}/${srr_id}/${srr_id}.fastq.gz"
+    test_1_fn="${srrdir}/${srr_id}/${srr_id}_1.fastq.gz"
+    if [[ -f "$test_fn" ]]
+    then
+        echo $test_fn
+    elif [[ -f "$test_1_fn" ]]
+    then
+        echo $test_1_fn
+    else
+        echo "PROBLEM: Check path of ${srr_id}"
+    fi
+}
+
+if [ "$paired_flag" == "True" ];
+then
+    # instantiate the r1 and r2 concat files
+    r1_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combos}/${srr_combos}_1.fastq.gz"
+    r2_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combos}/${srr_combos}_2.fastq.gz"
+
+    # ensure the files are not present
+    rm -f $r1_path 
+    rm -f $r2_path
+
+    # perform the concatination
+    for srr_id in ${srr_combos_split[@]};
+    do
+        r1_fastq="$srrdir/${srr_id}/${srr_id}_1.fastq.gz"
+        r2_fastq="$srrdir/${srr_id}/${srr_id}_2.fastq.gz"
+        cat $r1_fastq >> $r1_path
+        cat $r2_fastq >> $r2_path
+    done
+else
+    # instantiate the concat file
+    fastq_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combos}/${srr_combos}.fastq.gz"
+
+    # ensure the files are not present
+    rm -f $fastq_path
+
+    # perform the concatination
+    for srr_id in ${srr_combos_split[@]};
+    do
+        curr_fastq=$(correct_file "$srrdir" "$srr_id")
+        cat $curr_fastq >> $fastq_path
+    done
+fi
+
+
+################################################################################
+## logging termination
+################################################################################
+logging_termination
+#echo
+#echo "# Logging termination"
+#
+## print end message
+#echo "Ended: combine_srrs"
+#
+## print end time message
+#end_time=$(date "+%Y.%m.%d.%H.%M")
+#echo "End time: $end_time"

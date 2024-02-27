@@ -1,0 +1,147 @@
+#!/bin/bash -ex
+
+#SBATCH --job-name=align_control_samples
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=20gb
+#SBATCH --time=100:00:00
+#SBATCH --output=results/fastqs/chipseq_v2/logs/align_control_samples/align_control_samples.%A.%a.out
+#SBATCH --error=results/fastqs/chipseq_v2/logs/align_control_samples/align_control_samples.%A.%a.err
+#SBATCH --mail-type=ALL
+
+# example run:
+# 1) sbatch --array=0-31 workflow/scripts/chipseq/align_control_samples.qsh
+
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: align_control_samples"
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+if [[ ! -v SLURM_ARRAY_TASK_ID ]];
+then
+    SLURM_ARRAY_TASK_ID=$1
+    SLURM_SUBMIT_DIR="."
+fi
+
+# make sure to work starting from the base directory for this project 
+cd $SLURM_SUBMIT_DIR
+
+# source tool paths
+source workflow/source_paths.sh
+
+#########################################################################################
+# setup metadata
+#########################################################################################
+echo "# setup metadata"
+
+# extract the sample information using the PBS ARRAYID
+IFS=$'\t'
+#samplesheet="results/samplesheets/chipseq/chipseq.srr_ids_to_ref_genome.combos.batch2.txt"
+samplesheet="results/samplesheets/chipseq/chipseq.srr_ids_to_ref_genome.combos.batch1.txt"
+sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
+
+# begin to construct the name of the control directory
+srr_combo="${sample_info[0]}"
+ref_genome="${sample_info[1]}"
+
+# set the reference genome
+if [ "$ref_genome" = "grch38" ]; then
+    echo "Using GRCh38"
+    bowtie2_index="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/hg38/hg38"
+elif [ "$ref_genome" = "mm10" ]; then
+    echo "Using mm10"
+    bowtie2_index="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/mm10/mm10"
+elif [ "$ref_genome" = "t2t" ]; then
+    echo "Using T2T"
+    bowtie2_index="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/index/chm13"
+fi
+
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "srr_combo: $srr_combo"
+echo "samplesheet: $samplesheet"
+echo "ref_genome: $ref_genome"
+echo
+
+###############################################################################
+# determine if single or paired data
+###############################################################################
+echo
+echo "# determine if single or paired data"
+
+# extract srr combo into an array
+IFS="-" read -ra srr_combo_split <<< "$srr_combo"
+
+srr_combo_dir="results/fastqs/chipseq_v2/srr-geo-combos/$srr_combo/"
+
+# listing and spliting fastqs
+fastqs_str=$(ls ${srr_combo_dir}/${srr_combo}*.fastq.gz | tr '[:space:]' ' ')
+IFS=" " read -a fastqs_array <<< "$fastqs_str"
+
+# checking the number of fastqs, either 1 (single-end) or 2 (paired-end)
+if [ ${#fastqs_array[@]} -gt 1 ];
+then
+    paired_flag="True"
+    echo "This sample used paired-end sequencing."
+else
+    paired_flag="False"
+    echo "This sample used single-end sequencing."
+fi
+
+
+#########################################################################################
+# perform the alignment 
+#########################################################################################
+echo
+echo "# perform the alignment"
+
+fastq_dir="results/fastqs/chipseq_v2/srr-geo-combos/$srr_combo/"
+outdir="results/fastqs/chipseq_v2/control_alignments/$srr_combo/"
+mkdir -p $outdir
+
+# check whether the bam files were already generated
+# align the fastq files, since all checks have been passed
+
+# already generated case
+if [ -f "${outdir}/${srr_combo}*.bam" ]; then
+    echo "The file ${outdir}/${srr_combo}*.bam already exists"
+
+# aligning single end samples
+elif [ ${#fastqs_array[@]} -eq 1 ]; then
+    fastq_path="${fastq_dir}/${srr_combo}.fastq.gz"
+    bam_path="$outdir/${srr_combo}.bam"
+    cmd="${bowtie2} -p 4 -x $bowtie2_index -U ${fastq_path} | $samtools view -bS - > $bam_path"
+
+# aligning paired-ended samples
+elif [ ${#fastqs_array[@]} -eq 2 ]; then
+    r1_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combo}/${srr_combo}_1.fastq.gz"
+    r2_path="results/fastqs/chipseq_v2/srr-geo-combos/${srr_combo}/${srr_combo}_2.fastq.gz"
+    bam_path="$outdir/${srr_combo}.bam"
+    cmd="${bowtie2} -p 4 -x $bowtie2_index -1 "${r1_path}" -2 ${r2_path} | $samtools view -bS - > $bam_path"
+fi
+
+echo "Running: $cmd"
+eval $cmd
+
+
+###############################################################################
+# logging termination
+###############################################################################
+echo
+echo "# Logging termination"
+
+# print end message
+echo "Ended: align_control_samples"
+
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"

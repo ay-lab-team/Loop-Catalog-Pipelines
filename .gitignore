@@ -25,3 +25,13 @@ tables/peaks.xlsx
 workflow/scripts/ucsc/
 tables/*
 workflow/scripts/visualizations/samplesheets/samplesheet.*.txt
+workflow/scripts/misc/add_tech_bio_rep/test.tsv
+
+
+workflow/scripts/chipseq/samplesheets/srr_ids.txt
+workflow/scripts/chipseq/samplesheets/Batch-2-ChIP-seq-Tracker_8.16.22-10.23.23_All-Tracker.tsv
+workflow/scripts/chipseq/samplesheets/SraRunTable.txt
+workflow/scripts/chipseq/samplesheets/chipseq.chipline.batch2.txt
+workflow/scripts/chipseq/samplesheets/chipseq_srr_ids_to_ref_genome.combos.batch2.txt
+workflow/scripts/chipseq/samplesheets/srr_to_ref_genome.control_only.txt
+workflow/scripts/chipseq/samplesheets/srr_id.combos.txt

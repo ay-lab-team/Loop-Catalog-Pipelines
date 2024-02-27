@@ -70,7 +70,7 @@ outdir="results/fastqs/stats/${sample_name}/"
 mkdir -p $outdir
 outfn="results/fastqs/stats/${sample_name}/${sample_name}.${srr_id}.num_reads.txt"
 
-# get the file names
+# get the file names (note: current implementation counts R2 files as well)
 sample_dir="results/fastqs/raw/${sample_name}/"
 readarray -t fns < <(find ${sample_dir}/ -name "${srr_id}*.fastq.gz")
 

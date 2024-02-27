@@ -1,0 +1,93 @@
+#!/bin/bash -ex
+
+#SBATCH --job-name=download_chipseq_fastqs
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=10gb
+#SBATCH --time=100:00:00
+#SBATCH --output=results/fastqs/chipseq_v2/logs/download_chipseq_fastqs/download_chipseq_fastqs.%A.%a.out
+#SBATCH --error=results/fastqs/chipseq_v2/logs/download_chipseq_fastqs/download_chipseq_fastqs.%A.%a.err
+#SBATCH --mail-type=ALL
+
+# example run:
+# 1) sbatch --array=0-31 workflow/scripts/chipseq/download_chipseq_fastqs.qsh
+
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: run_download_chipseq_fastqs"
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+if [[ ! -v SLURM_ARRAY_TASK_ID ]];
+then
+    SLURM_ARRAY_TASK_ID=$1
+    SLURM_SUBMIT_DIR="."
+fi
+
+# make sure to work starting from the base directory for this project 
+cd $SLURM_SUBMIT_DIR
+
+# source tool paths
+source workflow/source_paths.sh
+
+# extract the sample information using the SLURM_ARRAY_TASK_ID
+# Generated using: hichip-db-loop-calling/workflow/scripts/chipseq/samplesheets/ChIP-seq-Tracker.Batch*.ipynb
+IFS=$'\t'
+# batch 1 - sbatch --array="1-149" workflow/scripts/chipseq/download_chipseq_fastqs.qsh
+samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.batch1.txt"
+
+# batch 2 - sbatch --array="2-149" workflow/scripts/chipseq/download_chipseq_fastqs.qsh
+#samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.batch2.txt"  
+
+srr_id=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
+IFS=$'\n'
+
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "srr_id: $srr_id"
+echo "samplesheet: $samplesheet"
+echo
+
+# make the output directory
+outdir="results/fastqs/chipseq_v2/srr/$srr_id/"
+mkdir -p $outdir
+
+# run fasterq-dump 
+echo "# running fasterq-dump"
+retries=8
+threads=4
+
+# check that this SRR ID hasn't already been downloaded before downloading
+# condition works by finding negative of empty directory
+if [ ! -n "$(find "$outdir" -maxdepth 1 -type f -print -quit)" ]; then
+
+    cmd="$fasterq_dump --split-files -t /mnt/hpcscratch/hichip-db-loop-calling/ --outdir $outdir $srr_id"
+    echo "Running: ${cmd}"
+    eval $cmd
+
+    # also compressing
+    fns=( $(ls $outdir/*) )
+    for fn in "${fns[@]}";
+    do
+        cmd="$bgzip $fn"
+        echo "Compressing: $fn"
+        eval $cmd
+    done
+else
+    echo "Skipping: $srr_id already exists in $outdir."
+fi
+
+# print end message
+echo "Ended: download_chipseq_fastqs"
+
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"

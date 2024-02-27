@@ -101,7 +101,7 @@ function rename_dir {
 #rename_dir "peaks/fithichip/" "NaN" "tree"
 #rename_dir "peaks/hichip-peaks/" "NaN" "tree"
 #rename_dir "loops/fithichip/" "_fithichip.peaks" "tree"
-#rename_dir "loops/fithichip/" "_hichip-peaks.peaks" "tree"
+rename_dir "loops/fithichip/" "_hichip-peaks.peaks" "tree"
 #rename_dir "loops/fithichip/" "_chipseq.peaks" "tree"
 #rename_dir visualizations/washu/fithichip_loops_chipseq/ NaN tree
 #rename_dir motif_analysis/meme/fimo/ NaN tree
