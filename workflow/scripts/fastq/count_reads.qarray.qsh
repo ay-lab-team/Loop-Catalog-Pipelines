@@ -1,33 +1,26 @@
-#PBS -l nodes=1:ppn=1
-#PBS -l mem=1gb
-#PBS -l walltime=200:00:00
-#PBS -e results/fastqs/raw/logs/
-#PBS -o results/fastqs/raw/logs/
-#PBS -N count_reads
-#PBS -V
-#PBS -t 1-997
-
-# Usage: (out of date)
-# Initially I wanted this script to work with a qsub array but 
-# there are some technical issues I haven't figured out yet. For now
-# we can use this script doing submitting each sample one by one:
-# job_ids="1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 21 22 23 24 26 27 28 29 30 31 32 33 34 35 36 37 39 40 41 43 45 46 47 48 49 50 51 52 53 54 55"
-# for i in $job_ids; do bash workflow/scripts/hicpro/run_hicpro.qarray.sh $i; done
+#SBATCH --job-name count_reads
+#SBATCH --mem=1gb
+#SBATCH --nodes=1
+#SBATCH --time=30:00:00
+#SBATCH --error results/fastqs/raw/logs/count_reads.%A.%a.err
+#SBATCH --output results/fastqs/raw/logs/count_reads.%A.%a.out
+#SBATCH --array 1-997
 
 # # run bash in strict mode
 set -euo pipefail
 IFS=$'\n\t'
 
-# dummy pbs array environment values
+# dummy slurm array environment values
 # dummy value when not running with qsub
 echo
-if [[ -z ${PBS_ARRAYID+x} ]]
+if [[ -z ${SLURM_ARRAY_TASK_ID+x} ]]
 then
-    echo "Running with bash, setting PBS_ARRAYID=\$1=$1"
-    PBS_ARRAYID=$1
-    PBS_O_WORKDIR="/mnt/bioadhoc-temp/Groups/vd-ay/hichip-db-loop-calling"
+    echo "Running with bash, setting SLURM_ARRAY_TASK_ID=\$2=$2"
+    samplesheet=$1
+    SLURM_ARRAY_TASK_ID=$2
+    SLURM_SUBMIT_DIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
 else
-    echo "Running with qsub, PBS_ARRAYID=$PBS_ARRAYID"
+    echo "Running with qsub, SLURM_ARRAY_TASK_ID=$SLURM_ARRAY_TASK_ID"
 fi
 echo
 
@@ -38,20 +31,15 @@ echo "Start time: $start_time"
 # print start message
 echo "Started: count_reads"
 
-# run bash in strict mode
-set -euo pipefail
-IFS=$'\n\t'
-
 # make sure to work starting from the base directory for this project 
-cd $PBS_O_WORKDIR
+cd $SLURM_SUBMIT_DIR
 
 # source tool paths
 source workflow/source_paths.sh
 
 # extract the sample name + directory listing (no samplesheet) using the PBS ARRAYID
 IFS=$'\t'
-samplesheet='results/samplesheets/fastq/read_counts.tsv'
-sample_info=( $(cat $samplesheet | sed -n "${PBS_ARRAYID}p") )
+sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 sample_name="${sample_info[0]}"
 srr_file="${sample_info[1]}"
 srr_id=$(echo $srr_file | sed -e 's/_R1.fastq.gz//' -e 's/_1.fastq.gz//')
@@ -74,20 +62,28 @@ outfn="results/fastqs/stats/${sample_name}/${sample_name}.${srr_id}.num_reads.tx
 sample_dir="results/fastqs/raw/${sample_name}/"
 readarray -t fns < <(find ${sample_dir}/ -name "${srr_id}*.fastq.gz")
 
-# count the number of lines
-num_lines=0
-for fn in "${fns[@]}";
-do
-    echo $fn
-    curr_lines=$(zcat $fn | wc -l)
-    num_lines=$(expr $num_lines + $curr_lines)
-    echo $curr_lines
-done
+# run if the output file has not already been generated
+if [! -e $outfn ];
+then
+    # count the number of lines
+    echo "# count the number of lines"
+    num_lines=0
+    for fn in "${fns[@]}";
+    do
+        echo $fn
+        curr_lines=$(zcat $fn | wc -l)
+        num_lines=$(expr $num_lines + $curr_lines)
+        echo $curr_lines
+    done
 
-# determine the number of read by dividing by 4
-num_reads=$(expr $num_lines / 4)
-echo $num_reads 
-echo $num_reads > $outfn
+    # determine the number of read by dividing by 4
+    echo "# determine the number of read by dividing by 4"
+    num_reads=$(expr $num_lines / 4)
+    echo $num_reads 
+    #echo $num_reads > $outfn
+else
+    echo "Already generated results at: $outfn"
+fi
 
 # print end message
 echo "Ended: count_reads"
