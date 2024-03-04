@@ -13,6 +13,10 @@
 start_time=$(date "+%Y.%m.%d.%H.%M")
 echo "Start time: $start_time"
 
+# source tool paths
+source workflow/source_paths.sh
+source workflow/source_funcs.sh
+
 # print start message
 echo "Started: fithichip_hp_to_washu"
 
@@ -20,21 +24,19 @@ echo "Started: fithichip_hp_to_washu"
 set -euo pipefail
 IFS=$'\n\t'
 
-# make sure to work starting from the github base directory for this script 
-cd $SLURM_SUBMIT_DIR
-
 # make useable from the command line as well
 if [[ ! -v "SLURM_ARRAY_TASK_ID" ]];
 then 
     SLURM_ARRAY_TASK_ID=$1
+    SLURM_SUBMIT_DIR="."
+    samplesheet="results/samplesheets/post-hicpro/fithichip_hp_to_washu.samplesheet.txt"
 fi
 
-# source tool paths
-source workflow/source_paths.sh
-source workflow/source_funcs.sh
+# make sure to work starting from the github base directory for this script 
+cd $SLURM_SUBMIT_DIR
 
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/post-hicpro/fithichip_hp_to_washu.samplesheet.txt"
+script="workflow/scripts/visualizations/longrange/fithichip_hp_to_washu.qarray.qsh"
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 sample_name="${sample_info[0]}"
 
@@ -42,6 +44,8 @@ sample_name="${sample_info[0]}"
 echo
 echo "Processing"
 echo "----------"
+echo "script: $script"
+echo "samplesheet: $samplesheet"
 echo "sample_name: $sample_name"
 echo
 
@@ -74,7 +78,7 @@ function convert(){
                             right=$1 ":" $2 "-" $3 "," score; \
                             print $4, $5, $6, right \
                         } \
-                    }' $infile | sed '1d' | sort -k1,1 -k2,2n > $prefix_file
+                    }' $infile | sed '1,2d' | sort -k1,1 -k2,2n > $prefix_file
 
         # compress and idnex
         bgzip -f $prefix_file
@@ -96,7 +100,7 @@ resolutions_short=( "5" "10" "25")
 stringency="S"
 stringency_no="1"
 stringency_long="stringent"
-hub_dir_tmpl="${project_dir}/results/shortcuts/ref-replace/loops/hichip/hichip/fithichip-utility/${stringency_long}/"
+hub_dir_tmpl="results/lji_lcsd_hub/release-0.1/hub/ref-replace/loops/hichip/hichip/fithichip-utility/${stringency_long}/"
 for i in "${!resolutions[@]}";
 do
 
@@ -183,8 +187,4 @@ do
 done
 
 # print end message
-echo "Ended: converting to washu format"
-
-# print end time message
-end_time=$(date "+%Y.%m.%d.%H.%M")
-echo "End time: $end_time"
+ended_job_message "converting to washu format"

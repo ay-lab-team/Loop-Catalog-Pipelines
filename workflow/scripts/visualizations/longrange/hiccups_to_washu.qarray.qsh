@@ -5,28 +5,38 @@
 #SBATCH --output=results/visualizations/logs/washu/hiccups_to_washu/hiccups_to_washu.job_%A.task_%a.out
 #SBATCH --error=results/visualizations/logs/washu/hiccups_to_washu/hiccups_to_washu.job_%A.task_%a.err
 #SBATCH --job-name=hiccups_to_washu
-#SBATCH --array 1-176
+#SBATCH --array 1-289
+
+# sbatch workflow/scripts/visualizations/longrange/hiccups_to_washu.sarray.sh
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
 echo "Start time: $start_time"
 
+# source tool paths
+source workflow/source_paths.sh
+source workflow/source_funcs.sh
+
 # print start message
-echo "Started: to_washu"
+echo "Started: hiccups_to_washu"
 
 # run bash in strict mode
 set -euo pipefail
 IFS=$'\n\t'
 
+# make useable from the command line as well
+if [[ ! -v "SLURM_ARRAY_TASK_ID" ]];
+then 
+    SLURM_ARRAY_TASK_ID=$1
+    SLURM_SUBMIT_DIR="."
+    samplesheet="results/samplesheets/post-hicpro/hiccups_to_washu.samplesheet.txt"
+fi
+
 # make sure to work starting from the github base directory for this script 
 cd $SLURM_SUBMIT_DIR
 
-# source tool paths
-source workflow/source_paths.sh
-source workflow/source_funcs.sh
-
 # extract the sample information using the PBS ARRAYID
-samplesheet="results/samplesheets/post-hicpro/hiccups_to_washu.samplesheet.txt"
+script="workflow/scripts/visualizations/longrange/fithichip_hp_to_washu.qarray.qsh"
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 sample_name="${sample_info[0]}"
 
@@ -34,6 +44,8 @@ sample_name="${sample_info[0]}"
 echo
 echo "Processing"
 echo "----------"
+echo "script: $script"
+echo "samplesheet: $samplesheet"
 echo "sample_name: $sample_name"
 echo
 
@@ -81,7 +93,7 @@ function convert(){
 
 # converting hiccups files for 5000, 10000, 25000 and merged
 # also adding a softlink to the correct hub location
-hub_dir_tmpl="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/shortcuts/ref-replace/loops/hichip/hiccups/"
+hub_dir_tmpl="results/lji_lcsd_hub/release-0.1/hub/ref-replace/loops/hichip/hiccups/"
 resolutions=( "5000" "10000" "25000" "merged" )
 for res in "${resolutions[@]}";
 do
@@ -89,9 +101,9 @@ do
     # get input file
     if [[ $res == "merged" ]];
     then
-        infile="results/loops/hiccups/whole_genome/${sample_name}/merged_loops.bedpe"
+        infile="results/loops/hiccups/whole_genome_all_batches/${sample_name}/merged_loops.bedpe"
     else
-        infile="results/loops/hiccups/whole_genome/${sample_name}/postprocessed_pixels_${res}.bedpe"
+        infile="results/loops/hiccups/whole_genome_all_batches/${sample_name}/postprocessed_pixels_${res}.bedpe"
     fi
 
     # get output file
