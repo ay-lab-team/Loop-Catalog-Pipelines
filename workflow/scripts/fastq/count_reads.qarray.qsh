@@ -1,10 +1,11 @@
+#!/bin/sh
 #SBATCH --job-name count_reads
 #SBATCH --mem=1gb
 #SBATCH --nodes=1
 #SBATCH --time=30:00:00
-#SBATCH --error results/fastqs/raw/logs/count_reads.%A.%a.err
-#SBATCH --output results/fastqs/raw/logs/count_reads.%A.%a.out
-#SBATCH --array 1-997
+#SBATCH --error results/fastqs/raw/logs/count_reads/count_reads.%A.%a.err
+#SBATCH --output results/fastqs/raw/logs/count_reads/count_reads.%A.%a.out
+#SBATCH --array 1-556
 
 # # run bash in strict mode
 set -euo pipefail
@@ -44,15 +45,6 @@ sample_name="${sample_info[0]}"
 srr_file="${sample_info[1]}"
 srr_id=$(echo $srr_file | sed -e 's/_R1.fastq.gz//' -e 's/_1.fastq.gz//')
 
-# printing sample information
-echo
-echo "Processing"
-echo "----------"
-echo "sample_name: $sample_name"
-echo "srr_file: $srr_file"
-echo "srr_id: $srr_id"
-echo
-
 # make the output directory 
 outdir="results/fastqs/stats/${sample_name}/"
 mkdir -p $outdir
@@ -60,17 +52,28 @@ outfn="results/fastqs/stats/${sample_name}/${sample_name}.${srr_id}.num_reads.tx
 
 # get the file names (note: current implementation counts R2 files as well)
 sample_dir="results/fastqs/raw/${sample_name}/"
-readarray -t fns < <(find ${sample_dir}/ -name "${srr_id}*.fastq.gz")
+fns=( $(find "${sample_dir}/" -name "${srr_id}_1.fastq.gz" ) )
+
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "sample_name: $sample_name"
+echo "srr_file: $srr_file"
+echo "srr_id: $srr_id"
+echo "fns: $fns"
+echo "outfn: $outfn"
+echo
 
 # run if the output file has not already been generated
-if [! -e $outfn ];
+if [ ! -e $outfn ];
 then
     # count the number of lines
     echo "# count the number of lines"
     num_lines=0
     for fn in "${fns[@]}";
     do
-        echo $fn
+        echo "fn: $fn"
         curr_lines=$(zcat $fn | wc -l)
         num_lines=$(expr $num_lines + $curr_lines)
         echo $curr_lines
@@ -80,7 +83,7 @@ then
     echo "# determine the number of read by dividing by 4"
     num_reads=$(expr $num_lines / 4)
     echo $num_reads 
-    #echo $num_reads > $outfn
+    echo $num_reads > $outfn
 else
     echo "Already generated results at: $outfn"
 fi
