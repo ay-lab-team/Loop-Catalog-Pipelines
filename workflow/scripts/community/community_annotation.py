@@ -2,7 +2,8 @@ import os
 import sys
 import glob
 import pandas as pd
-os.chdir('/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/Community-Detection/results/communities_temp/louvain/All_Samples/')
+
+os.chdir('results/comm_detect/louvain/All_Samples/')
 
 sample = sys.argv[1]
 

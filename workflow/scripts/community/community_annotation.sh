@@ -1,14 +1,14 @@
 #!/bin/sh
-#SBATCH --job-name=run_community_annotation
+#SBATCH --job-name=community_annotation
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=5g
 #SBATCH --time=10:00:00
-#SBATCH --output=results/community/logs/job-%j.out
-#SBATCH --error=results/community/logs/job-%j.error
+#SBATCH --output=results/community/logs/community_annotation/community_annotation.%A.%a.out
+#SBATCH --error=results/community/logs/community_annotation/community_annotation.%A.%a.err
 
-# TO RUN: sbatch --array=<index> workflow/scripts/community/community_annotation.sh
+# TO RUN: sbatch --array=1-151 workflow/scripts/community/community_annotation.sh
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
@@ -22,16 +22,26 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # make sure to work starting from the github base directory for this script 
+if [[ ! -v "SLURM_ARRAY_TASK_ID" ]];
+then
+    SLURM_ARRAY_TASK_ID=$1
+    SLURM_SUBMIT_DIR="./"
+fi
+    
 cd $SLURM_SUBMIT_DIR
 work_dir=$SLURM_SUBMIT_DIR
 
 # source tool paths
 source workflow/source_paths.sh
+source workflow/source_funcs.sh
 
 # get sample list
-samplesheet="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/Community-Detection/results/communities_temp/louvain/All_Samples/community_samplesheet.txt"
+script="workflow/scripts/community/community_annotation.sh"
+samplesheet="results/samplesheets/comm_detect/samples.with_cytoscape.txt"
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 sample_name="${sample_info[0]}"
+echo "script: $script"
+echo "samplesheet: $samplesheet"
 echo "Sample: $sample_name"
 
 # run python script
@@ -39,8 +49,4 @@ echo "Sample: $sample_name"
 
 # print end message
 echo
-echo "# Ended: community_annotation"
-
-# print end time message
-end_time=$(date "+%Y.%m.%d.%H.%M")
-echo "End time: $end_time"
+ended_job_message "# Ended: community_annotation"

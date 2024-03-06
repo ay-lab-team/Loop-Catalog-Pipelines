@@ -9,6 +9,7 @@
 #SBATCH --error=results/comm_detect/logs/job-parse_ep_network-%j.error
 
 # TO RUN: sbatch --array=<index> workflow/scripts/community/parse_ep_network.sarray.sh
+# TO RUN: sbatch --array=1-217 workflow/scripts/community/parse_ep_network.sarray.sh
 
 # print start time message
 start_time=$(date "+%Y.%m.%d.%H.%M")
@@ -35,7 +36,7 @@ work_dir=$SLURM_SUBMIT_DIR
 source workflow/source_paths.sh
 
 # get sample list
-samplesheet="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/Community-Detection/results/communities_temp/louvain/All_Samples/community_samplesheet.txt"
+samplesheet="/mnt/BioHome/jreyna/hichip-db-loop-calling/results/samplesheets/comm_detect/samples.txt"
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 sample_name="${sample_info[0]}"
 echo "Sample: $sample_name"
@@ -48,7 +49,6 @@ run_cytoscape_conversion() {
     network_file="${sample_dir}/${chrom}/network.annotated.txt"
     subcomm_file="${sample_dir}/${chrom}/${comm}/community.txt"
     cytoscape_json_file="${sample_dir}/${chrom}/${comm}/network.annotated.cytoscape.json"
-
 
     if [[ -e "$network_file" ]] && [[ -e "$subcomm_file" ]];
     then
@@ -63,9 +63,9 @@ run_cytoscape_conversion() {
         # run command
         cmd="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/python3 \
                 workflow/scripts/community/parse_ep_network.py \
-                    --network-file $network_file \
                     --subcomm-file $subcomm_file \
-                    --cytoscape-json-file ${sample_dir}/${chrom}/${comm}/network.annotated.cytoscape.json"
+                    --network-file $network_file \
+                    --cytoscape-json-file ${cytoscape_json_file}"
         echo $cmd
         eval $cmd
     fi
@@ -83,7 +83,9 @@ do
     # cycle through the comm dirs
     for comm in $(ls $sample_chrom_dir/ | grep "^comm");
     do
-        run_cytoscape_conversion $sample_dir $chrom $comm
+        cmd="run_cytoscape_conversion $sample_dir $chrom $comm"
+        echo "Running: $cmd"
+        eval $cmd
     done
 done
 

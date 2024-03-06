@@ -7,8 +7,8 @@ import seaborn as sns
 """ 
     example run: 
     python parse_ep_network.py \
-        --network-file /loopcatalog_storage/release-0.1/hub/hg38/comm_detect/Nonclassical_Monocyte_1800.phs001703v4p1.Homo_Sapiens.H3K27ac.b2/S5/chr2/network.annotated.txt \
         --subcomm-file /loopcatalog_storage/release-0.1/hub/hg38/comm_detect/Nonclassical_Monocyte_1800.phs001703v4p1.Homo_Sapiens.H3K27ac.b2/S5/chr2/comm2/community.txt \
+        --network-file /loopcatalog_storage/release-0.1/hub/hg38/comm_detect/Nonclassical_Monocyte_1800.phs001703v4p1.Homo_Sapiens.H3K27ac.b2/S5/chr2/network.annotated.txt \
         --cytoscape-json-file /loopcatalog_storage/release-0.1/hub/hg38/comm_detect/Nonclassical_Monocyte_1800.phs001703v4p1.Homo_Sapiens.H3K27ac.b2/S5/chr2/comm2/network.annotated.cytoscape.json
 """
 
