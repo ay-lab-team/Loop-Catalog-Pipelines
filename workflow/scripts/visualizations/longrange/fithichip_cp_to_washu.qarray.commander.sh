@@ -16,4 +16,6 @@ samplesheet="results/samplesheets/post-hicpro/fithichip_cp_to_washu.samplesheet.
 ###############################################################################
 # run with slurm
 ###############################################################################
-sbatch --array 1-315 workflow/scripts/visualizations/longrange/fithichip_cp_to_washu.qarray.qsh
+samplesheet="results/samplesheets/post-hicpro/fithichip_cp_to_washu.samplesheet.txt"
+export_vars="samplesheet=${samplesheet}"
+sbatch --array 1-315 --export="$export_vars" workflow/scripts/visualizations/longrange/fithichip_cp_to_washu.qarray.qsh

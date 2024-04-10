@@ -27,7 +27,9 @@ IFS=$'\n\t'
 # make useable from the command line as well
 if [[ ! -v "SLURM_ARRAY_TASK_ID" ]];
 then 
-    SLURM_ARRAY_TASK_ID=$1
+    #samplesheet="results/samplesheets/post-hicpro/fithichip_cp_to_washu.samplesheet.txt"
+    samplesheet=$1
+    SLURM_ARRAY_TASK_ID=$2
     SLURM_SUBMIT_DIR="."
 fi
 
@@ -36,7 +38,6 @@ cd $SLURM_SUBMIT_DIR
 
 # extract the sample information using the PBS ARRAYID
 script="workflow/scripts/visualizations/longrange/fithichip_cp_to_washu.qarray.qsh"
-samplesheet="results/samplesheets/post-hicpro/fithichip_cp_to_washu.samplesheet.txt"
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 sample_name="${sample_info[0]}"
 

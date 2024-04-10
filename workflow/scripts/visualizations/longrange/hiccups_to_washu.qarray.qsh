@@ -30,6 +30,7 @@ then
     SLURM_ARRAY_TASK_ID=$1
     SLURM_SUBMIT_DIR="."
     samplesheet="results/samplesheets/post-hicpro/hiccups_to_washu.samplesheet.txt"
+    batch="regular"
 fi
 
 # make sure to work starting from the github base directory for this script 
@@ -94,6 +95,16 @@ function convert(){
 # converting hiccups files for 5000, 10000, 25000 and merged
 # also adding a softlink to the correct hub location
 hub_dir_tmpl="results/lji_lcsd_hub/release-0.1/hub/ref-replace/loops/hichip/hiccups/"
+
+# switching between regular and biorep-merged directories
+if [ $batch == "regular" ];
+then
+    indir="results/loops/hiccups/whole_genome_all_batches/"
+elif [ $batch == "biorep-merged" ];
+then
+    indir="results/biorep_merged/results/loops/hiccups/whole_genome/"
+fi
+
 resolutions=( "5000" "10000" "25000" "merged" )
 for res in "${resolutions[@]}";
 do
@@ -101,9 +112,9 @@ do
     # get input file
     if [[ $res == "merged" ]];
     then
-        infile="results/loops/hiccups/whole_genome_all_batches/${sample_name}/merged_loops.bedpe"
+        infile="${indir}/${sample_name}/merged_loops.bedpe"
     else
-        infile="results/loops/hiccups/whole_genome_all_batches/${sample_name}/postprocessed_pixels_${res}.bedpe"
+        infile="${indir}/${sample_name}/postprocessed_pixels_${res}.bedpe"
     fi
 
     # get output file
