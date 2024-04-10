@@ -33,6 +33,7 @@ results_fn="results/tables/read_counts/fastq.read_counts.v2.tsv"
 # scractch since their symlink is broken. Will look for the files later on.
 results1_fn="results/tables/read_counts/fastq.read_counts.v1.correct_div-two.tsv"
 results2_fn="results/tables/read_counts/fastq.read_counts.v2.tsv"
+results3_manual_fn="results/tables/read_counts/fastq.read_counts.manual_entries.v2.tsv"
 results_fn="results/tables/read_counts/fastq.read_counts.final.tsv"
 tmp_fn="results/tables/read_counts/fastq.read_counts.temp.tsv"
 
@@ -43,7 +44,7 @@ cut -f 1,2 $results2_fn > $results2_tmp_fn
 grep -v -f $results2_tmp_fn $results1_fn | sed '1d' | awk 'NF == 3' > $tmp_fn
 
 # adding all of results2 
-cat $results2_fn | awk 'NF == 3' >> $tmp_fn
+cat $results2_fn $results3_manual_fn | awk 'NF == 3' >> $tmp_fn
 
 # sorting the final data
 sort $tmp_fn | uniq > $tmp_fn.sorted
