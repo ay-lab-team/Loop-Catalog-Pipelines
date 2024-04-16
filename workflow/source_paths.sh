@@ -31,3 +31,4 @@ samtools="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforg
 project_dir="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/"
 bowtie2="/mnt/BioAdHoc/Groups/vd-ay/nrao/hichip_database/chipline/software/bowtie2/bowtie2-2.4.5/bowtie2"
 seqkit="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/lc-pipelines/bin/seqkit"
+bedtools="/mnt/BioApps/bedtools/bin/bedtools"

@@ -1,4 +1,23 @@
 
+# determining the reference genome
+function get_genomesizes_from_ref() {
+
+    if [[ $ref == "hg38" ]];
+    then
+        genome_sizes="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes"
+    elif [[ $ref == "t2t" ]];
+    then
+        genome_sizes="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/chrsize/chm13.chrom.sizes"
+    elif [[ $ref == "mm10" ]];
+    then
+        genome_sizes="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/mm10.chrom.sizes"
+    else
+        echo "Incorrect reference: ${ref} used."
+    fi
+
+    echo $genome_sizes
+}
+
 # function to get the reference from the sample name
 # this function only make sense for mm10 versus hg38
 # because t2t data is stored at another location
