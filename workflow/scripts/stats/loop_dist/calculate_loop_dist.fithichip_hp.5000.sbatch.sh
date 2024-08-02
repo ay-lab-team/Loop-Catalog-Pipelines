@@ -1,5 +1,5 @@
 #!/bin/sh
-#SBATCH --job-name=loop_dists.fithichip_cp.5000
+#SBATCH --job-name=loop_dists.fithichip_hp.5000
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
@@ -9,13 +9,15 @@
 #SBATCH --error=results/loops/logs/loop_dists/%x.job-%A.array-%a.error
 
 # example run with slurm:
-# sbatch --array=1-274 --export=start=1 workflow/scripts/loops/loop_dist/calculate_loop_dist.fithichip_cp.5000.sbatch.sh
+# sbatch --array=1-1000 --export=start=1 workflow/scripts/stats/loop_dist/calculate_loop_dist.fithichip_hp.5000.sbatch.sh
+# sbatch --array=1-1050 --export=start=1000 workflow/scripts/stats/loop_dist/calculate_loop_dist.fithichip_hp.5000.sbatch.sh
+
 
 # example run with bash:
-# bash workflow/scripts/loops/workflow/scripts/loops/loop_dist/calculate_loop_dist.fithichip_cp.5000.sbatch.sh 1 1
+# bash workflow/scripts/loops/loop_dist/calculate_loop_dist.fithichip_hp.5000.sbatch.sh 1 1 
 
 # setting global vars
-samplesheet="results/samplesheets/loops/fithichip_cp.samples.tsv"
+samplesheet="results/samplesheets/loops/fithichip_hp.samples.tsv"
 res=5000
 
 # print start time message
@@ -49,12 +51,12 @@ sample_idx=$(expr $start - 1 + $SLURM_ARRAY_TASK_ID)
 sample_name=$(sed -n "${sample_idx}p" $samplesheet)
 
 # input file
-fn="results/loops/fithichip/${sample_name}_chipseq.peaks/S5/"
+fn="results/loops/fithichip/${sample_name}_hichip-peaks.peaks/S5/"
 fn+="FitHiChIP_Peak2ALL_b${res}_L20000_U2000000/P2PBckgr_1/Coverage_Bias/FitHiC_BiasCorr/"
 fn+="FitHiChIP-S5.interactions_FitHiC_Q0.01.bed"
 
 # output file
-outfn="results/loops/fithichip/${sample_name}_chipseq.peaks/S5/"
+outfn="results/loops/fithichip/${sample_name}_hichip-peaks.peaks/S5/"
 outfn+="FitHiChIP_Peak2ALL_b${res}_L20000_U2000000/P2PBckgr_1/Coverage_Bias/FitHiC_BiasCorr/"
 outfn+="FitHiChIP-S5.interactions_FitHiC_Q0.01.loop_dist.txt"
 
