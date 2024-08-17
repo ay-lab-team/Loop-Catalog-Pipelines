@@ -40,10 +40,14 @@ source workflow/source_paths.sh
 # Generated using: hichip-db-loop-calling/workflow/scripts/chipseq/samplesheets/ChIP-seq-Tracker.Batch*.ipynb
 IFS=$'\t'
 # batch 1 - sbatch --array="1-149" workflow/scripts/chipseq/download_chipseq_fastqs.qsh
-samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.batch1.txt"
+#samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.batch1.txt"
 
 # batch 2 - sbatch --array="2-149" workflow/scripts/chipseq/download_chipseq_fastqs.qsh
 #samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.batch2.txt"  
+
+# rerun sample
+# sbatch --array=0-21 workflow/scripts/chipseq/download_chipseq_fastqs.qsh
+samplesheet="results/samplesheets/chipseq/chipseq.srr_ids.2024-rerun-samples.txt"
 
 srr_id=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
 IFS=$'\n'

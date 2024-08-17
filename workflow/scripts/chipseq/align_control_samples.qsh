@@ -44,7 +44,13 @@ echo "# setup metadata"
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
 #samplesheet="results/samplesheets/chipseq/chipseq.srr_ids_to_ref_genome.combos.batch2.txt"
-samplesheet="results/samplesheets/chipseq/chipseq.srr_ids_to_ref_genome.combos.batch1.txt"
+#samplesheet="results/samplesheets/chipseq/chipseq.srr_ids_to_ref_genome.combos.batch1.txt"
+
+# samples from 2024
+# sbatch --array=1-3 workflow/scripts/chipseq/align_control_samples.qsh
+samplesheet="results/samplesheets/chipseq/chipseq.srr_ids_to_ref_genome.combos.2024-rerun-samples.txt"
+
+# get sample info
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 
 # begin to construct the name of the control directory

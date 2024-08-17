@@ -39,7 +39,11 @@ source workflow/source_paths.sh
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
 #samplesheet="results/samplesheets/chipseq/chipseq.srr_id.combos.batch2.txt"
-samplesheet="results/samplesheets/chipseq/chipseq.srr_id.combos.batch1.txt"
+#samplesheet="results/samplesheets/chipseq/chipseq.srr_id.combos.batch1.txt"
+
+# rerun samples
+# sbatch --array=0-9 workflow/scripts/chipseq/combine_srrs.qsh
+samplesheet="results/samplesheets/chipseq/chipseq.srr_id.combos.2024-rerun-samples.txt"
 srr_combos=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
 
 # printing sample information

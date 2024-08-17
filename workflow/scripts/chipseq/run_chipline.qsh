@@ -40,10 +40,6 @@ PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pyp
 PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/homer/bin/:$PATH # HOMER
 PATH=/home/jreyna/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/chipline-R/bin/:$PATH # R, nikhil was able to successfully use 3.6.1
 # DEPRECATED, set by configuration instead PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/deeptools/bin/:$PATH # deeptools
-
-echo "which samtools?"
-which samtools
-
 #PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/chipline-python-v2/bin/:$PATH
 
 
@@ -68,6 +64,8 @@ CodeExec="$CodeDir/bin/pipeline.sh"
 IFS=$'\t'
 samplesheet="results/samplesheets/chipseq/chipseq.chipline.batch2.txt"
 samplesheet="results/samplesheets/chipseq/chipseq.chipline.batch1.txt"
+samplesheet="results/samplesheets/chipseq/chipseq.chipline.pieqtls.txt"
+samplesheet="results/samplesheets/chipseq/chipseq.chipline.2024-rerun-samples.txt"
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 
 sample_name="${sample_info[0]}"
@@ -179,6 +177,8 @@ debug=0 # no
 chipline_command="$CodeExec ${read_args} -C $configfile \
                     -n $prefix -g $bowtie2_index -d $outdir -t 16 \
                     -m 16G -T 0 -q 30 -D ${debug} -p ${macs2_genomesize} -O $overwrite ${control_bam_arg}"
+
+echo $chipline_command
 
 # run the command
 echo "Running: $chipline_command"
