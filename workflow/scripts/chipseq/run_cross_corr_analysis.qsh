@@ -1,0 +1,39 @@
+#!/bin/bash -ex
+
+#SBATCH --job-name=run_cross_corr_analysis
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=10gb
+#SBATCH --time=20:00:00
+#SBATCH --output=results/peaks/chipline_v2/logs/run_chipline/run_chipline.%A.%a.out
+#SBATCH --error=results/peaks/chipline_v2/logs/run_chipline/run_chipline.%A.%a.err
+#SBATCH --mail-type=ALL,ARRAY_TASKS
+
+# print start time message
+start_time=$(date "+%Y.%m.%d.%H.%M")
+echo "Start time: $start_time"
+
+# print start message
+echo "Started: run_chipline"
+
+# run bash in strict mode
+set -euo pipefail
+IFS=$'\n\t'
+
+# make sure to work starting from the base directory for this project 
+cd $SLURM_SUBMIT_DIR
+
+# run phantompeakqualtools
+rscript=/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/Rscript
+run_spp=/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/phantompeakqualtools/phantompeakqualtools/run_spp.R
+
+tag_align="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/peaks/chipline_v2/HUDEP-2-Mut1.GSE131052.Homo_Sapiens.H3K27ac.b1/chipSampleMaster.tagAlign.gz"
+tab_file="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/peaks/chipline_v2/HUDEP-2-Mut1.GSE131052.Homo_Sapiens.H3K27ac.b1/chipSampleMaster.tagAlign.tab"
+
+$rscript $run_spp -c=$tag_align -savp -out=$tab_file
+
+
+# print end time message
+end_time=$(date "+%Y.%m.%d.%H.%M")
+echo "End time: $end_time"
