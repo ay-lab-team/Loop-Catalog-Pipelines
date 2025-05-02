@@ -35,3 +35,5 @@ workflow/scripts/chipseq/samplesheets/chipseq.chipline.batch2.txt
 workflow/scripts/chipseq/samplesheets/chipseq_srr_ids_to_ref_genome.combos.batch2.txt
 workflow/scripts/chipseq/samplesheets/srr_to_ref_genome.control_only.txt
 workflow/scripts/chipseq/samplesheets/srr_id.combos.txt
+workflow/scripts/trackers/config.py
+workflow/scripts/trackers/analysis.hiccups.07.24.22_FROZEN.ipynb workflow/scripts/trackers/analysis.hiccups.10.30.2022_FROZEN_ALL_HUMAN.ipynb workflow/scripts/trackers/analysis.hiccups_2.13.23_FROZEN.ipynb workflow/scripts/trackers/analysis.hiccups.4.23.22_FROZEN.ipynb workflow/scripts/trackers/analysis.hiccups-mouse_2.13.23_FROZEN.ipynb workflow/scripts/trackers/tracker.run_hicpro.7.011.22-FROZEN.338-human-samples.ipynb
