@@ -14,7 +14,7 @@ IFS=$'\n\t'
 
 cell="NK"
 
-BaseDir="/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/peaks/chipline_v2"
+BaseDir="${SLURM_SUBMIT_DIR}/results/peaks/chipline_v2"
 
 OutBaseDir="${BaseDir}/${cell}_merged_donors.phs001703v3p1.Homo_Sapiens.H3K27ac.b1"
 #mkdir -p $OutBaseDir

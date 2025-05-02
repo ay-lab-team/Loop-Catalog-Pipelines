@@ -73,7 +73,7 @@ threads=4
 # condition works by finding negative of empty directory
 if [ ! -n "$(find "$outdir" -maxdepth 1 -type f -print -quit)" ]; then
 
-    cmd="$fasterq_dump --split-files -t /mnt/hpcscratch/hichip-db-loop-calling/ --outdir $outdir $srr_id"
+    cmd="$fasterq_dump --split-files -t ${SCRATCH} --outdir $outdir $srr_id"
     echo "Running: ${cmd}"
     eval $cmd
 

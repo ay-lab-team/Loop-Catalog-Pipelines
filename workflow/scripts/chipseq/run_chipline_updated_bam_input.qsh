@@ -24,23 +24,19 @@ IFS=$'\n\t'
 # make sure to work starting from the base directory for this project 
 cd $SLURM_SUBMIT_DIR
 
+source workflow/source_paths.sh
+
 # set paths to softwares
-PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/bowtie2/bowtie2-2.4.5:$PATH # bowtie2
+PATH=${bowtie2}:$PATH # bowtie2
 PATH=/share/apps/picard-tools/picard-tools-2.7.1/:$PATH # picard
-PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/phantompeakqualtools/:$PATH # phantompeakqualtools
-PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software:$PATH # Utilities "bedGraphToBigWig", "bedSort", "bigBedToBed", "hubCheck", "fetchChromSizes"
-PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/lc-pipelines/bin/:$PATH # samtools + others
-PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/macs2/bin:$PATH # macs2
-PATH=/mnt/bioadhoc-temp/Groups/vd-ay/nrao/hichip_database/software/homer/bin/:$PATH # HOMER
-#PATH=/home/jreyna/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/chipline-R/bin/:$PATH # R, nikhil was able to successfully use 3.6.1
-PATH=/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/:$PATH
-# DEPRECATED, set by configuration instead PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/deeptools/bin/:$PATH # deeptools
+PATH=${phantompeakqualtools}:$PATH # phantompeakqualtools
+PATH=${software}:$PATH # Utilities "bedGraphToBigWig", "bedSort", "bigBedToBed", "hubCheck", "fetchChromSizes"
+PATH=${mamba_env}/lc-pipelines/bin/:$PATH # samtools + others
+PATH=${mamba_env}/macs2/bin:$PATH # macs2
+PATH=${hichip_db_env}:$PATH
 
 echo "which samtools?"
 which samtools
-
-#PATH=/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/chipline-python-v2/bin/:$PATH
-
 
 #=================
 # main executable script of the ChIP seq pipeline
@@ -52,7 +48,7 @@ which samtools
 # La Jolla Institute for Allergy and Immunology
 #=================
 
-CodeDir="/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/chipline/ChIPLine/"
+CodeDir="${HOME}/packages/chipline/ChIPLine/"
 CodeExec="$CodeDir/bin/pipeline.sh"
 
 #########################################################################################
@@ -64,25 +60,20 @@ IFS=$'\t'
 
 cell="NCM"
 sample_name="${cell}_merged_donors.phs001703v4p1.Homo_Sapiens.H3K27ac.b1"
-bam_input="/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/peaks/chipline_v2/${sample_name}/${cell}_merged.bam"
+bam_input="${SLURM_SUBMIT_DIR}/results/peaks/chipline_v2/${sample_name}/${cell}_merged.bam"
 ref_genome="grch38"
 
 # set the reference genome
 if [ "$ref_genome" = "grch38" ]; then
     echo "Using GRCh38"
-    bowtie2_index="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/hg38/hg38"
+    bowtie2_index="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/bowtie2_index/hg38/hg38"
     macs2_genomesize="hs"
     config="config/chipline/configfile.grch38.txt"
 elif [ "$ref_genome" = "mm10" ]; then
     echo "Using mm10"
-    bowtie2_index="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/bowtie2_index/mm10/mm10"
+    bowtie2_index="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/bowtie2_index/mm10/mm10"
     macs2_genomesize="mm"
     config="config/chipline/configfile.mm10.txt"
-elif [ "$ref_genome" = "t2t" ]; then
-    echo "Using T2T"
-    bowtie2_index="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/index/chm13"
-    macs2_genomesize="hs"
-    config="config/chipline/configfile.t2t.txt"
 fi
 
 ###############################################################################

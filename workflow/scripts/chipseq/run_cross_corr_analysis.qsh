@@ -25,11 +25,11 @@ IFS=$'\n\t'
 cd $SLURM_SUBMIT_DIR
 
 # run phantompeakqualtools
-rscript=/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/Rscript
-run_spp=/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/phantompeakqualtools/phantompeakqualtools/run_spp.R
+rscript=${HOME}/packages/mambaforge/envs/hichip-db/bin/Rscript
+run_spp=${HOME}/packages/phantompeakqualtools/phantompeakqualtools/run_spp.R
 
-tag_align="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/peaks/chipline_v2/HUDEP-2-Mut1.GSE131052.Homo_Sapiens.H3K27ac.b1/chipSampleMaster.tagAlign.gz"
-tab_file="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/peaks/chipline_v2/HUDEP-2-Mut1.GSE131052.Homo_Sapiens.H3K27ac.b1/chipSampleMaster.tagAlign.tab"
+tag_align="${SLURM_SUBMIT_DIR}/results/peaks/chipline_v2/HUDEP-2-Mut1.GSE131052.Homo_Sapiens.H3K27ac.b1/chipSampleMaster.tagAlign.gz"
+tab_file="${SLURM_SUBMIT_DIR}/results/peaks/chipline_v2/HUDEP-2-Mut1.GSE131052.Homo_Sapiens.H3K27ac.b1/chipSampleMaster.tagAlign.tab"
 
 $rscript $run_spp -c=$tag_align -savp -out=$tab_file
 
