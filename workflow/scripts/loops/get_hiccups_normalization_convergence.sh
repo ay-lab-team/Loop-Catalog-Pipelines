@@ -27,7 +27,7 @@ source workflow/source_paths.sh
 
 echo "# run python script"
 
-/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/python3 workflow/scripts/loops/get_hiccups_normalization_convergence.py
+${fithichip_python} workflow/scripts/loops/get_hiccups_normalization_convergence.py
 
 echo "done"
 echo

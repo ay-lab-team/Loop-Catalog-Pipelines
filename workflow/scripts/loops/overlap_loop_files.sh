@@ -28,11 +28,11 @@ source workflow/source_paths.sh
 
 # input file
 sample_name=${1}
-f1="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/loops/hiccups"
-f2="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/loops/hiccups_vc"
+f1="${LOOP_CATALOG_DIR}/results/loops/hiccups"
+f2="${LOOP_CATALOG_DIR}/results/loops/hiccups_vc"
 
 # output file
-outdir="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/loops/overlaps/hiccups_vc_kr"
+outdir="${LOOP_CATALOG_DIR}/results/loops/overlaps/hiccups_vc_kr"
 
 # find overlaps
 for res in 5000 10000 25000; 

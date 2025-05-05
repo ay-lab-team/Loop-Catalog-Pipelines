@@ -125,11 +125,11 @@ fi
 ## determine correct chrsize file
 if [[ "$org" == "Homo_Sapiens" ]];
 then
-    ChrSizeFile="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes"
+    ChrSizeFile="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/chrsize/hg38.chrom.sizes"
     echo "chrsizes: $ChrSizeFile"
 elif [[ "$org" == "Mus_Musculus" ]];
 then
-    ChrSizeFile="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/mm10.chrom.sizes"
+    ChrSizeFile="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/chrsize/mm10.chrom.sizes"
     echo "chrsizes: $ChrSizeFile"
 else
     echo "org not found"
