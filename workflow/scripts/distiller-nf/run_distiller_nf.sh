@@ -53,7 +53,7 @@ echo "org: $org"
 echo
 
 # softlink fastqs to a sample directory with "_R"
-fastq_dir="/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/fastqs/raw/revisions/${sample_name}"
+fastq_dir="${SLURM_SUBMIT_DIR}/results/fastqs/raw/revisions/${sample_name}"
 sample_fastq_dir="fastq/"
 mkdir -p $sample_fastq_dir
 
