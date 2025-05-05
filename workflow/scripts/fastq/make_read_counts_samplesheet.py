@@ -1,5 +1,8 @@
-fns = glob.glob('/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/fastqs/raw/*/*_1.fastq.gz')
-fns += glob.glob('/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/fastqs/raw/*/*_R1.fastq.gz')
+import config 
+import glob
+
+fns = glob.glob(config.LOOP_CATALOG_DIR + 'results/fastqs/raw/*/*_1.fastq.gz')
+fns += glob.glob(config.LOOP_CATALOG_DIR + '/results/fastqs/raw/*/*_R1.fastq.gz')
 
 outfn = 'results/samplesheets/fastq/read_counts.tsv'
 with open(outfn, 'w') as fw:
