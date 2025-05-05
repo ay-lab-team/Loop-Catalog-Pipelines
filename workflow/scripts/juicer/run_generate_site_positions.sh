@@ -43,7 +43,7 @@ final_dir="results/revisions/juicer/restriction_sites/kyra"
 cd $final_dir
 
 # run generate site positions
-juicer_dir="/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/revisions/juicer"
+juicer_dir="${LOOP_CATALOG_DIR}/results/revisions/juicer"
 
 python ${juicer_dir}/misc/generate_site_positions.py $re $org 
 
