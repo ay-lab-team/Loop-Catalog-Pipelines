@@ -31,15 +31,15 @@ echo "genome: $1"
 echo
 
 # output file
-outdir="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/refs/effective_genome_size"
+outdir="${LOOP_CATALOG_DIR}/results/refs/effective_genome_size"
 
 # reference genome file
 # use for human chm13
-#ref_fasta="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/fasta/chm13v2.0.fa.gz"
+#ref_fasta="${LOOP_CATALOG_DIR}/ref_genome/chm13_refgenome/fasta/chm13v2.0.fa.gz"
 # use for human hg38
-#ref_fasta="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/fasta/hg38/hg38.fa"
+#ref_fasta="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/fasta/hg38/hg38.fa"
 # Use for mouse mm10:
-ref_fasta="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/fasta/mm10/GRCm38.P6.primary_assembly.genome.fa"
+ref_fasta="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/fasta/mm10/GRCm38.P6.primary_assembly.genome.fa"
 
 # find unque khmers
 #zcat ${ref_fasta} > "${outdir}/chm13.fa"

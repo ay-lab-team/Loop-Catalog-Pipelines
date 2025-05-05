@@ -33,14 +33,14 @@ echo "sites: ${@:3}"
 echo
 
 # output file
-outdir="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/restriction_fragment"
+outdir="${LOOP_CATALOG_DIR}/ref_genome/chm13_refgenome/restriction_fragment"
 output="${outdir}/${1}_${2}_digestion.bed"
 
 # reference genome file
 # use for human
-ref_fasta="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/fasta/chm13.fa"
+ref_fasta="${LOOP_CATALOG_DIR}/ref_genome/chm13_refgenome/fasta/chm13.fa"
 # Use for mouse mm10:
-#ref_fasta="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/fasta/mm10/GRCm38.P6.primary_assembly.genome.fa"
+#ref_fasta="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/fasta/mm10/GRCm38.P6.primary_assembly.genome.fa"
 
 # digest the genome
 $hicpro_python $hicpro_digest -r ${@:3} -o $output $ref_fasta
