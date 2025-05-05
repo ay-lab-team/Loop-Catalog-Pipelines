@@ -52,12 +52,12 @@ mkdir -p $outdir
 if [ ! -f $base/input_fasta.fa ]; then
     # convert input bed to fasta
     if [ $1 == "293T" ]; then
-      infile="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/znf_data/chipseq_293T_krabopedia_hg38/ZNF460_pubM_vs_293T_TI_sampled_peaks.bed"
+      infile="${LOOP_CATALOG_DIR}/data/znf_data/chipseq_293T_krabopedia_hg38/ZNF460_pubM_vs_293T_TI_sampled_peaks.bed"
     else 
-      #infile="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/znf_data/chipseq_hepg2_encode_hg38/ENCFF261NJZ.bed"
-      infile="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/biorep_merged/results/motif_analysis/meme/znf_chipseq_streme/293T_HepG2_Intersect/znf460_293T_HepG2.intersect.bed"
+      #infile="${LOOP_CATALOG_DIR}/data/znf_data/chipseq_hepg2_encode_hg38/ENCFF261NJZ.bed"
+      infile="${LOOP_CATALOG_DIR}/results/biorep_merged/results/motif_analysis/meme/znf_chipseq_streme/293T_HepG2_Intersect/znf460_293T_HepG2.intersect.bed"
     fi 
-    genome="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/hg38/hg38.fa"
+    genome="${LOOP_CATALOG_DIR}/data/hg38/hg38.fa"
     echo $infile
     bed2fasta -o $base/input_fasta.fa -both $infile $genome
 fi

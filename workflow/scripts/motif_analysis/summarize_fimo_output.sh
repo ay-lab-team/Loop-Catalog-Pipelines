@@ -47,7 +47,7 @@ bedtools pairtobed -a "$outdir/loops.txt" -b "$outdir/motifs.txt" >> "$outdir/lo
 sort -k1,1 -k2,2n "$outdir/loops_overlap_motifs.txt" > "$outdir/loops_overlap_motifs.sorted.txt"
 uniq "$outdir/loops_overlap_motifs.sorted.txt" > "$outdir/loops_overlap_motifs.sorted.uniq.txt"
 
-/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/python3 workflow/scripts/motif_analysis/clean_up_fimo_summary.py ${sample_name}
+${fithichip_python} workflow/scripts/motif_analysis/clean_up_fimo_summary.py ${sample_name}
 
 # compile all chipseq peaks used as input into peaks.txt
 #awk -F'[>: -]' '{if (/^>/) {print $2"\t"$3"\t"$4"\t"$5}}' $fasta > $outdir/peaks.txt

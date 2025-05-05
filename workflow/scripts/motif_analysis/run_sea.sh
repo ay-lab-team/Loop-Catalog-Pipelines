@@ -53,7 +53,7 @@ mkdir -p $outdir
 
 if [ ! -f $base/input_fasta.fa ]; then
     # convert input bed to fasta
-    genome="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/hg38/hg38.fa"
+    genome="${LOOP_CATALOG_DIR}/data/hg38/hg38.fa"
     bed2fasta -o $base/input_fasta.fa -both "$base/conserved_anchors.sorted.bed" $genome
 fi
 

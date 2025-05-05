@@ -1,7 +1,8 @@
 import os
 import sys
 import pandas as pd
-os.chdir('/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling')
+import config
+os.chdir(config.LOOP_CATALOG_DIR)
 
 sample = sys.argv[1]
 base = "biorep_merged/results/motif_analysis/meme/fimo/" + sample + "/summarize_results/"

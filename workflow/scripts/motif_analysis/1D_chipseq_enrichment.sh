@@ -85,7 +85,7 @@ awk -F["\t"] '{print $1"\t"$2"\t"$3}' ${chipseq_peaks} | sort -k1,1 -k2,2n -k3,3
 bedtools intersect -u -a ${outdir}/foreground_regions_overlapping_motif.sorted.bed -b ${outdir}/${protein}.chipseq_peaks.sorted.bed | sort -k1,1 -k2,2n -k3,3n > ${outdir}/foreground_regions_overlapping_chipseq.sorted.bed
 
 # convert foreground sequences into a fasta file
-bedtools getfasta -fi /mnt/BioAdHoc/Groups/vd-ay/kfetter/genome/fasta/hg38.fa -bed ${outdir}/foreground_regions_overlapping_motif.sorted.bed > ${outdir}/${motifs}.${cell_type}.foreground_regions_overlapping_motif.fa
+bedtools getfasta -fi ${GENOME}/fasta/hg38.fa -bed ${outdir}/foreground_regions_overlapping_motif.sorted.bed > ${outdir}/${motifs}.${cell_type}.foreground_regions_overlapping_motif.fa
 
 # calculate summary stats
 num_foreground=$( wc -l ${outdir}/foreground_regions_overlapping_motif.sorted.bed | awk '{print $1}' )
@@ -109,8 +109,8 @@ echo "# Get Background Seqs"
 echo
 
 # generate fasta which skips motif sites so that these regions are not chosen
-bedtools subtract -a /mnt/BioAdHoc/Groups/vd-ay/kfetter/genome/fasta/hg38.bed -b ${outdir}/${motifs}.motif_sites.filt.sorted.bed > ${outdir}/${motifs}.${cell_type}.good_regions.bed
-bedtools getfasta -fi /mnt/BioAdHoc/Groups/vd-ay/kfetter/genome/fasta/hg38.fa -bed ${outdir}/${motifs}.${cell_type}.good_regions.bed > ${outdir}/${motifs}.${cell_type}.hg38_motif_sites_masked.fa
+bedtools subtract -a ${GENOME}/fasta/hg38.bed -b ${outdir}/${motifs}.motif_sites.filt.sorted.bed > ${outdir}/${motifs}.${cell_type}.good_regions.bed
+bedtools getfasta -fi ${GENOME}/fasta/hg38.fa -bed ${outdir}/${motifs}.${cell_type}.good_regions.bed > ${outdir}/${motifs}.${cell_type}.hg38_motif_sites_masked.fa
 
 # generate control seqs (mask soft-masked seqs, generate #foreground seqs number of control seqs of 515kb in size)
 size=$( awk -F["\t"] '{if (NR==1) print $3-$2}' ${outdir}/foreground_regions_overlapping_motif.sorted.bed )

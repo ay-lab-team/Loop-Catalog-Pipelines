@@ -49,10 +49,10 @@ echo
 echo "# running sea"
 
 if [[ $database == "jaspar" ]]; then
-    motifs="/mnt/BioAdHoc/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/motifs/motif_databases/Jaspar_CORE_2022_latest_human.meme"
+    motifs="${LOOP_CATALOG_DIR}/data/motifs/motif_databases/Jaspar_CORE_2022_latest_human.meme"
 fi
 if [[ $database == "hocomoco" ]]; then
-    motifs="/mnt/BioAdHoc/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/motifs/motif_databases/HUMAN/HOCOMOCOv11_core_HUMAN_mono_meme_format.meme"
+    motifs="${LOOP_CATALOG_DIR}/data/motifs/motif_databases/HUMAN/HOCOMOCOv11_core_HUMAN_mono_meme_format.meme"
 fi
 
 fimo --oc $outdir/${database}_conserved_masked_q0.1 --parse-genomic-coord --qv-thresh --thresh ​0.1 $motifs $sea_dir/input_fasta.fa.2.7.7.80.10.50.500.mask

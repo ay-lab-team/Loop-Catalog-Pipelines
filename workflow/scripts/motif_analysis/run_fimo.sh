@@ -42,7 +42,7 @@ if [[ $sample_name == *"Mus_Musculus"* ]]; then
     genome="mm10"
 fi
 
-ref_genome="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/${genome}/${genome}.fa"
+ref_genome="${LOOP_CATALOG_DIR}/data/${genome}/${genome}.fa"
 
 # set loop config
 config="S5"
@@ -136,7 +136,7 @@ bedtools pairtobed -a "$outdir/loops.txt" -b "$outdir/motifs.txt" >> "$outdir/lo
 sort -k1,1 -k2,2n "$outdir/loops_overlap_motifs.txt" > "$outdir/loops_overlap_motifs.sorted.txt"
 uniq "$outdir/loops_overlap_motifs.sorted.txt" > "$outdir/loops_overlap_motifs.sorted.uniq.txt"
 
-/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/python3 workflow/scripts/motif_analysis/clean_up_fimo_summary.py ${sample_name}
+${fithichip_python} workflow/scripts/motif_analysis/clean_up_fimo_summary.py ${sample_name}
 
 # print end message
 echo

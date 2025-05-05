@@ -34,7 +34,7 @@ outdir_sea="results/motif_analysis/conserved_anchors_11_06_2024/sea/${cell_type}
 outdir_anchors="results/motif_analysis/conserved_anchors_11_06_2024/conserved_anchor_results/${cell_type}/${loop_type}"
 
 # run TRF
-genome="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/fasta/hg38/hg38.fa"
+genome="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/fasta/hg38/hg38.fa"
 bed2fasta -o $outdir_sea/input_fasta.fa -both "${outdir_anchors}/conserved_anchors.bed" $genome
 cd ${outdir_sea}
 trf input_fasta.fa 2 7 7 80 10 50 500 -f -h -m

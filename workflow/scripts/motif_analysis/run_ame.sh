@@ -80,7 +80,7 @@ if [ ! -f $outdir/input_fasta.fa ]; then
     awk -F["\t"] '{print $7"\t"$8"\t"$9"\t"$4"\t"$6}' "$outdir/anchors_overlap_peaks_sorted_best_peak.txt" > $input
 
     # convert input bed to fasta
-    genome="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/hg38/hg38.fa"
+    genome="${LOOP_CATALOG_DIR}/data/hg38/hg38.fa"
     bed2fasta -o $outdir/input_fasta.fa -both $input $genome
 fi
 

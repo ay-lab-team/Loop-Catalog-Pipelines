@@ -52,7 +52,7 @@ mkdir -p $outdir
 echo
 echo "# running tomtom"
 
-motifs="/mnt/BioAdHoc/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/motifs/motif_databases/Jaspar_CORE_2022_latest_human.meme"
+motifs="${LOOP_CATALOG_DIR}/data/motifs/motif_databases/Jaspar_CORE_2022_latest_human.meme"
 query="results/biorep_merged/results/motif_analysis/meme/tomtom/all.meme"
 
 tomtom $query $motifs --oc $outdir -png
