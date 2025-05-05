@@ -12,6 +12,9 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+# source tool paths
+source workflow/source_paths.sh
+
 # dummy slurm array environment values
 # dummy value when not running with sbatch
 echo
@@ -19,7 +22,7 @@ if [[ -z ${SLURM_ARRAY_TASK_ID+x} ]]
 then
     echo "Running with bash, setting SLURM_ARRAY_TASK_ID=\$1=$1"
     SLURM_ARRAY_TASK_ID=$1
-    SLURM_SUBMIT_DIR="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling"
+    SLURM_SUBMIT_DIR="${LOOP_CATALOG_DIR}"
 else
     echo "Running with sbatch, SLURM_ARRAY_TASK_ID=$SLURM_ARRAY_TASK_ID"
 fi
@@ -38,9 +41,6 @@ IFS=$'\n\t'
 
 # make sure to work starting from the base directory for this project 
 cd $SLURM_SUBMIT_DIR
-
-# source tool paths
-source workflow/source_paths.sh
 
 # extract the sample information using the slurm ARRAYID
 IFS=$'\t'

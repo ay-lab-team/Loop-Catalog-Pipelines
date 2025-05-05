@@ -17,6 +17,9 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+# source tool paths
+source workflow/source_paths.sh
+
 # dummy pbs array environment values
 # dummy value when not running with qsub
 echo
@@ -24,7 +27,7 @@ if [[ -z ${PBS_ARRAYID+x} ]]
 then
     echo "Running with bash, setting PBS_ARRAYID=\$1=$1"
     PBS_ARRAYID=$1
-    PBS_O_WORKDIR="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling"
+    PBS_O_WORKDIR="${LOOP_CATALOG_DIR}"
 else
     echo "Running with qsub, PBS_ARRAYID=$PBS_ARRAYID"
 fi
@@ -39,9 +42,6 @@ IFS=$'\n\t'
 
 # make sure to work starting from the base directory for this project 
 cd $PBS_O_WORKDIR
-
-# source tool paths
-source workflow/source_paths.sh
 
 # extract the sample information using the PBS ARRAYID
 IFS=$'\t'
