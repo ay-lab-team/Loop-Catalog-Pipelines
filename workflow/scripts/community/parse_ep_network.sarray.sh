@@ -36,7 +36,7 @@ work_dir=$SLURM_SUBMIT_DIR
 source workflow/source_paths.sh
 
 # get sample list
-samplesheet="/mnt/BioHome/jreyna/hichip-db-loop-calling/results/samplesheets/comm_detect/samples.txt"
+samplesheet="results/samplesheets/comm_detect/samples.txt"
 sample_info=( $(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p") )
 sample_name="${sample_info[0]}"
 echo "Sample: $sample_name"
@@ -61,7 +61,7 @@ run_cytoscape_conversion() {
         echo
 
         # run command
-        cmd="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/python3 \
+        cmd="${fithichip_python} \
                 workflow/scripts/community/parse_ep_network.py \
                     --subcomm-file $subcomm_file \
                     --network-file $network_file \

@@ -45,7 +45,7 @@ echo "samplesheet: $samplesheet"
 echo "Sample: $sample_name"
 
 # run python script
-/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/bin/python3 workflow/scripts/community/community_annotation.py ${sample_name}
+${fithichip_python} workflow/scripts/community/community_annotation.py ${sample_name}
 
 # print end message
 echo
