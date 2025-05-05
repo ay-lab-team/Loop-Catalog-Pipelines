@@ -41,13 +41,12 @@ unset IFS
 sample_info=( $(grep "${sample_name}" ${file_samplesheet}) )
 
 genome="hg38"
-chr_sizes="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/${genome}.chrom.sizes"
+chr_sizes="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/chrsize/${genome}.chrom.sizes"
 
 # call overlaps if necessary peak files present
 if [ -f "${sample_info[4]}" ]; then
 
     cs_file=${sample_info[4]}
-    #cs_file="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/data/encode_chipseq/ENCFF361XMX_GM12878_H3K27ac.bed"
     cs_file_s="results/peaks/overlaps/05_10_2023/${sample_name}.chipseq.$genome.bed"
     awk -F["\t"] '{print $1"\t"$2"\t"$3}' $cs_file | sort -k1,1 -k2,2n -k3,3n -u > $cs_file_s
 

@@ -58,12 +58,12 @@ hicpro_dir="results/hicpro/$sample_name/hic_results/data/$sample_name"
 
 if [[ "$org" == "Homo_Sapiens" ]];
 then
-    resfrag="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/hg38/hg38_${re}_digestion.bed"
-    chrsizes="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes"
+    resfrag="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/Restriction_Fragment/hg38/hg38_${re}_digestion.bed"
+    chrsizes="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/chrsize/hg38.chrom.sizes"
 elif [[ "$org" == "Mus_Musculus" ]];
 then
-    resfrag="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/Restriction_Fragment/mm10/mm10_${re}_digestion.bed"
-    chrsizes="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/mm10.chrom.sizes"
+    resfrag="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/Restriction_Fragment/mm10/mm10_${re}_digestion.bed"
+    chrsizes="${Database_HiChIP_eQTL_GWAS}/Data/RefGenome/chrsize/mm10.chrom.sizes"
 else
     echo "valid org not found"
     exit
