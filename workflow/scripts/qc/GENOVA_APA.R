@@ -1,5 +1,5 @@
 # change R package library to bioadhoc-temp (as opposed to BioAdHoc), where GENOVA is installed
-.libPaths("/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/lib/R/library")
+.libPaths("../../../packages/mambaforge/envs/hichip-db/lib/R/library")
 library(optparse)
 library(GENOVA)
 library(ggplot2)
@@ -68,16 +68,7 @@ APA_ratio <- function(APA_Matrix){
 	return(round(APA_Ratio_Central_Rest, 2))
 }
 
-#workdir <- "/mnt/BioAdHoc/Groups/vd-ay/dsfigueroa/projects/IKAROS"
-#hicfile <- paste0(workdir, "/datasets/DNAnexus_JUICER_HIC/HIC/NOVASEQ_JUICER_HIC_STDST_mergedRPL/HIC_WT7001_851_Merge_allValidPairsMBOI.hic")
-#hicfile <- paste0(workdir, "/March2022/Data/Juicer_hic_files_NOVA_AVP/Merged._his_files/HICHIP_H3K27AC_WT.851.7001_AVP.hic")
-#loops <- read.delim(paste0(workdir, "/March2022/Figure1/Data/H3K27ac_WT_851_7001_FITHICHIP.10K.P2AS.NOVA.interactions_Q0.001.txt"))
-#sig_val <- "Q.Value_Bias"
-#outFile <- paste0(workdir, "/March2022/Figure1/Results/APA_plots/H3K27Ac_WT_851_7001_HICHIP_APA.pdf")
-#res <- 10000
-
-
-# Dani's function to read a .hic file
+# read a .hic file
 #contacts <- load_contacts(hicfile, 
 					#resolution = res,
 					#balancing = TRUE,

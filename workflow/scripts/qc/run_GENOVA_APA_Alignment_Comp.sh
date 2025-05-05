@@ -15,7 +15,7 @@ IFS=$'\n\t'
 cd $SLURM_SUBMIT_DIR
 source workflow/source_paths.sh
 
-Rscript="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/lib/R/bin/Rscript"
+Rscript="${HOME}/packages/mambaforge/envs/hichip-db/lib/R/bin/Rscript"
 APA=${SLURM_SUBMIT_DIR}/workflow/scripts/qc/GENOVA_APA.R
 
 # extract the sample information

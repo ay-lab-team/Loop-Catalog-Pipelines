@@ -14,7 +14,7 @@ cd $PBS_O_WORKDIR
 source workflow/source_paths.sh
 
 CODE=${PBS_O_WORKDIR}/workflow/scripts/qc/GENOVA_APA.R
-Rscript="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/packages/mambaforge/envs/hichip-db/lib/R/bin/Rscript"
+Rscript="${HOME}/packages/mambaforge/envs/hichip-db/lib/R/bin/Rscript"
 
 for rep in b1 b2 b3; do
 	for norm in kr_unique vc_unique overlaps; do
