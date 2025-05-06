@@ -26,17 +26,17 @@ cd $SLURM_SUBMIT_DIR
 source workflow/source_paths.sh
 
 # alignment tool comparison
-#cd /mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/revisions/alignment_comparison/loops/CD34+-Cord-Blood.GSE165207.Homo_Sapiens.H3K27ac.b1
+#cd <kyra-project-dir>/results/revisions/alignment_comparison/loops/CD34+-Cord-Blood.GSE165207.Homo_Sapiens.H3K27ac.b1
 
 # hiccups normalization comparison
 sample="CD34+-Cord-Blood.GSE165207.Homo_Sapiens.H3K27ac.b1"
-cd /mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/revisions/hiccups/whole_genome/overlaps_09.09.24/${sample}
+cd <project-dir>/results/revisions/hiccups/whole_genome/overlaps_09.09.24/${sample}
 
 # alignment tool comparison
-#Rscript /mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/workflow/scripts/misc/Utilities/Loop_Overlap_Venn/Venn_Interactions.r --FileList S5_hicpro/FitHiChIP_Peak2ALL_b5000_L20000_U2000000/P2PBckgr_1/Coverage_Bias/FitHiC_BiasCorr/FitHiChIP-S5.interactions_FitHiC_Q0.01.bed,S5_juicer/FitHiChIP_Peak2ALL_b5000_L20000_U2000000/P2PBckgr_1/Coverage_Bias/FitHiC_BiasCorr/FitHiChIP-S5.interactions_FitHiC.bed,S5_distiller/FitHiChIP_Peak2ALL_b5000_L20000_U2000000/P2PBckgr_1/Coverage_Bias/FitHiC_BiasCorr/FitHiChIP-S5.interactions_FitHiC.bed --Labels HiC-Pro,Juicer,distiller-nf --OutDir venn_01.05.2025_dump
+#Rscript <kyra-project-dir>/workflow/scripts/misc/Utilities/Loop_Overlap_Venn/Venn_Interactions.r --FileList S5_hicpro/FitHiChIP_Peak2ALL_b5000_L20000_U2000000/P2PBckgr_1/Coverage_Bias/FitHiC_BiasCorr/FitHiChIP-S5.interactions_FitHiC_Q0.01.bed,S5_juicer/FitHiChIP_Peak2ALL_b5000_L20000_U2000000/P2PBckgr_1/Coverage_Bias/FitHiC_BiasCorr/FitHiChIP-S5.interactions_FitHiC.bed,S5_distiller/FitHiChIP_Peak2ALL_b5000_L20000_U2000000/P2PBckgr_1/Coverage_Bias/FitHiC_BiasCorr/FitHiChIP-S5.interactions_FitHiC.bed --Labels HiC-Pro,Juicer,distiller-nf --OutDir venn_01.05.2025_dump
 
 # hiccups normalization comparison
-Rscript /mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/workflow/scripts/misc/Utilities/Loop_Overlap_Venn/Venn_Interactions.r --FileList postprocessed_pixels_5000.SCALE.sorted.bedpe,postprocessed_pixels_5000.VC.sorted.bedpe,postprocessed_pixels_5000.VC_SQRT.sorted.bedpe --HeaderList 0,0,0 --Labels SCALE,VC,VC_SQRT --OutDir venn_01.13.2025_dump
+Rscript <kyra-project-dir>/workflow/scripts/misc/Utilities/Loop_Overlap_Venn/Venn_Interactions.r --FileList postprocessed_pixels_5000.SCALE.sorted.bedpe,postprocessed_pixels_5000.VC.sorted.bedpe,postprocessed_pixels_5000.VC_SQRT.sorted.bedpe --HeaderList 0,0,0 --Labels SCALE,VC,VC_SQRT --OutDir venn_01.13.2025_dump
 
 # print end message
 echo

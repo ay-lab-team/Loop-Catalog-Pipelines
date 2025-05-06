@@ -4,7 +4,7 @@
 # files all samples desired (see to_washu.sh)
 
 # input washu folder with all individual sample washu tracks
-washu_folder='/mnt/BioAdHoc/Groups/vd-ay/kfetter/hichip-db-loop-calling/results/loops/hiccups/threshold_200_10kb_loops/washu/'
+washu_folder='<project-dir>/results/loops/hiccups/threshold_200_10kb_loops/washu/'
 cd $washu_folder
 
 # create empty hub json file

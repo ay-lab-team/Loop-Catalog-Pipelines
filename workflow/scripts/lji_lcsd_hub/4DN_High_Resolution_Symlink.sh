@@ -19,7 +19,7 @@ ref_dict["GRCm38"]="mm10"
 # Symlinking the longrange files
 ###############################################################################
 
-main_dir="/mnt/BioAdHoc/Groups/vd-ay/calimarandi/mustache-master/mustache/new_data_output/new_data"
+main_dir="<jj-data-dir>/new_data_output/new_data"
 for fn in $(find $main_dir -wholename "*/*/*/*_combined*longrange.bed.gz*"); do
 
     # directories that are named with meta data
@@ -60,7 +60,7 @@ done
 # Symlinking the raw files
 ###############################################################################
 
-#main_dir="/mnt/bioadhoc-temp/Groups/vd-ay/calimarandi/mustache-master/mustache/new_data_output/new_data"
+#main_dir="<jj-data-dir>/new_data_output/new_data"
 #for fn in $(find $main_dir -wholename "*/*/*/*_combined_*_*.tsv" |  grep -v combined_.*_combined); do
 #
 #    # directories that are named with meta data

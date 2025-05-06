@@ -19,7 +19,7 @@ lji_lcsd_hub_dir="results/lji_lcsd_hub/release-0.1/hub/hg38/loops/hic/mustache/"
 summary_fn="results/lji_lcsd_hub/release-0.1/hub/hg38/loops/hic/mustache/summary.txt"
 truncate -s 0 $summary_fn
 
-main_dir="/mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/lji_lcsd_hub/release-0.1/hub/hg38/loops/hic/mustache/"
+main_dir="<project-dir>/results/lji_lcsd_hub/release-0.1/hub/hg38/loops/hic/mustache/"
 for fn in $(find $main_dir -wholename "*.*.*.combined.tsv"); do
 
     # extracting the basename, here's an example: 4DNFIP71EWXC.1kb.raw.combined.tsv

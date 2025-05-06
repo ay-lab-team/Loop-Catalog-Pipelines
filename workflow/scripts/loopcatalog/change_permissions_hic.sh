@@ -3,7 +3,7 @@
 ###############################################################################
 
 ## hg38 unmerged sample files (DONE)
-for fn in $(find /mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/loops/hiccups/chr1_all_batches/*/*.hic)
+for fn in $(find <project-dir>/results/loops/hiccups/chr1_all_batches/*/*.hic)
 do
       echo chmod 664 $(readlink -f $fn)
       chmod 664 $(readlink -f $fn)
@@ -14,7 +14,7 @@ done
 ###############################################################################
 
 # hg38 merged sample files (in progress)
-#for fn in $(find /mnt/BioAdHoc/Groups/vd-ay/hichip-db-loop-calling/results/biorep_merged/results/hicpro/*Homo_Sapiens*/*.allValidPairs);
+#for fn in $(find <project-dir>/results/biorep_merged/results/hicpro/*Homo_Sapiens*/*.allValidPairs);
 #do
 #    # create the path to the new link
 #    bn=$(basename $fn)

@@ -25,9 +25,9 @@ then
 fi
 
 # defining a named array for the chromsize files
-hg38_chromsize="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/hg38.chrom.sizes"
-mm10_chromsize="/mnt/BioAdHoc/Groups/vd-ay/Database_HiChIP_eQTL_GWAS/Data/RefGenome/chrsize/mm10.chrom.sizes"
-t2t_chromsize="/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/ref_genome/chm13_refgenome/chrsize/chm13.chrom.sizes"
+hg38_chromsize="<data-dir>/hg38.chrom.sizes"
+mm10_chromsize="<data-dir>/mm10.chrom.sizes"
+t2t_chromsize="<data-dir>/chm13.chrom.sizes"
 declare -A chromsizes=(
   ["hg38"]="$hg38_chromsize"
   ["mm10"]="$mm10_chromsize"
@@ -57,7 +57,7 @@ echo $ref
 output=$(echo $input | sed 's/bed$/interaction.bb/')
 autosql="results/refs/ucsc/interact.autoSql.txt"
 type="hiccups"
-bedToBigBed="/mnt/BioAdHoc/Groups/vd-ay/kfetter/packages/ucsc_genome_browser/bedToBigBed"
+bedToBigBed="<software-dir>/ucsc_genome_browser/bedToBigBed"
 
 echo "input: $input"
 echo "output: $output"
@@ -67,7 +67,7 @@ echo "type: $type"
 
 # running the interact_to_bigbed.py script
 echo 'running the interact_to_bigbed.py script'
-cmd="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10 \
+cmd="<path-to-python-bin>/python3.10 \
   workflow/scripts/visualizations/biginter/interactions_to_bigInteract.py \
     --input-file $input \
 		--output-file $output \
